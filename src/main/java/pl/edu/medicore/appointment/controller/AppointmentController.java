@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
+import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.appointment.service.AppointmentService;
 
 import java.time.LocalDate;
@@ -26,5 +28,10 @@ public class AppointmentController {
             Pageable pageable
     ) {
         return appointmentService.getAppointmentsInRange(id, startDate, endDate, pageable);
+    }
+
+    @PutMapping
+    public void cancelAppointment(@RequestParam Long id) {
+        appointmentService.updateStatus(id, Status.CANCELLED);
     }
 }
