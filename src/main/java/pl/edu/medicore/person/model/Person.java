@@ -20,7 +20,7 @@ public abstract class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "username", length = 20, nullable = false)
+    @Column(name = "username", length = 20, nullable = false, unique = true)
     private String username;
     @Column(name = "password", nullable = false)
     private String password;
@@ -28,7 +28,7 @@ public abstract class Person {
     private String firstName;
     @Column(name = "last_name", length = 20, nullable = false)
     private String lastName;
-    @Column(name = "email", length = 60, nullable = false)
+    @Column(name = "email", length = 60, nullable = false, unique = true)
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;

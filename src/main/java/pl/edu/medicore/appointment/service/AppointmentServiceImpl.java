@@ -1,0 +1,34 @@
+package pl.edu.medicore.appointment.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
+import pl.edu.medicore.appointment.mapper.AppointmentMapper;
+import pl.edu.medicore.appointment.repository.AppointmentRepository;
+import pl.edu.medicore.person.model.Role;
+import pl.edu.medicore.person.service.PersonService;
+
+import java.time.LocalDate;
+
+@Service
+@RequiredArgsConstructor
+public class AppointmentServiceImpl implements AppointmentService {
+    private final PersonService personService;
+    private final AppointmentRepository appointmentRepository;
+    private final AppointmentMapper appointmentMapper;
+
+    @Override
+    public Page<AppointmentInfoDto> getAppointmentsInRange(Long id, LocalDate start, LocalDate end, Pageable pageable) {
+        Role role = personService.getRoleById(id);
+        if (role == Role.PATIENT) {
+            return appointmentRepository.findByPatientIdAndDateBetween(id, start, end, pageable)
+                    .map(appointmentMapper::toPatientDto);
+        } else if (role == Role.DOCTOR) {
+            return appointmentRepository.findByDoctorIdAndDateBetween(id, start, end, pageable)
+                    .map(appointmentMapper::toDoctorDto);
+        }
+        throw new IllegalArgumentException("Invalid role");
+    }
+}

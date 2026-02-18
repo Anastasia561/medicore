@@ -16,7 +16,7 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping
-    public Page<PatientResponseDto> getPatients(Pageable pageable) {
+    public Page<PatientResponseDto> getAllPageable(Pageable pageable) {
         return patientService.findAll(pageable);
     }
 }
