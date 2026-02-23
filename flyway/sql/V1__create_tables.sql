@@ -30,7 +30,6 @@ CREATE TABLE address
 CREATE TABLE person
 (
     id         BIGSERIAL PRIMARY KEY,
-    username   varchar(20)  NOT NULL UNIQUE,
     password   varchar(255) NOT NULL,
     first_name varchar(20)  NOT NULL,
     last_name  varchar(20)  NOT NULL,

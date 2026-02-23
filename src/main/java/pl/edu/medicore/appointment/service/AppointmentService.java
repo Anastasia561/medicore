@@ -7,13 +7,11 @@ import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 public interface AppointmentService {
     Page<AppointmentInfoDto> getAppointmentsInRange(Long id, LocalDate start, LocalDate end, Pageable pageable);
 
-    void updateStatus(Long id, Status status);
+    void cancel(Long id);
 
 //    long create(Long patientId, Long doctorId, LocalDate date, LocalTime time);
 

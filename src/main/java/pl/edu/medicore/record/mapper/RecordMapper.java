@@ -13,6 +13,7 @@ import pl.edu.medicore.record.model.Record;
 public interface RecordMapper {
 
     @Mapping(source = "appointment.doctor", target = "doctor")
+    @Mapping(source = "appointment.patient", target = "patient")
     @Mapping(source = "appointment.date", target = "date")
     @Mapping(source = "prescriptions", target = "prescriptions")
     RecordDto toDto(Record record);

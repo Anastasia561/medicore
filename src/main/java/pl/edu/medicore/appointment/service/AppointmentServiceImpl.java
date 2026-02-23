@@ -40,9 +40,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public void updateStatus(Long id, Status status) {
+    public void cancel(Long id) {
         Appointment appointment = getById(id);
-        appointment.setStatus(status);
+        appointment.setStatus(Status.CANCELLED);
     }
 
 //    @Override

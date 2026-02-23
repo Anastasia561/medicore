@@ -3,3 +3,7 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}

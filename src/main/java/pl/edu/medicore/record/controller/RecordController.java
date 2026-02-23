@@ -5,13 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.dto.RecordDto;
 import pl.edu.medicore.record.dto.RecordForDoctorPreviewDto;
@@ -25,26 +29,32 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 public class RecordController {
     private final RecordService recordService;
 
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/appointment/{appointmentId}")
     public ResponseWrapper<RecordDto> getByAppointmentId(@PathVariable Long appointmentId) {
         return ResponseWrapper.ok(recordService.getByAppointmentId(appointmentId));
     }
 
-    @GetMapping("/patient/{patientId}/doctor/{doctorId}")
+    @PreAuthorize("hasRole('DOCTOR')")
+    @GetMapping
     public ResponseWrapper<Page<RecordForDoctorPreviewDto>> getAllForDoctorAndPatient(
-            @PathVariable Long doctorId,
-            @PathVariable Long patientId,
+            @RequestParam Long patientId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             Pageable pageable) {
+        Long doctorId = userDetails.getId();
         return ResponseWrapper.ok(recordService.getAllByDoctorAndPatientId(doctorId, patientId, pageable));
     }
 
-    @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasRole('PATIENT')")
+    @GetMapping
     public ResponseWrapper<Page<RecordForPatientPreviewDto>> getAllForPatient(
-            @PathVariable Long patientId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             Pageable pageable) {
+        Long patientId = userDetails.getId();
         return ResponseWrapper.ok(recordService.getAllByPatientId(patientId, pageable));
     }
 
+    @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseWrapper<Long> create(@Valid @RequestBody RecordCreateDto dto) {

@@ -23,16 +23,16 @@ public class AppointmentController {
 
     @GetMapping
     public ResponseWrapper<Page<AppointmentInfoDto>> getAppointmentsInDateRange(
-            @RequestParam Long id,
+            @RequestParam Long userId,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
             Pageable pageable
     ) {
-        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(id, startDate, endDate, pageable));
+        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(userId, startDate, endDate, pageable));
     }
 
     @PutMapping
     public void cancelAppointment(@RequestParam Long id) {
-        appointmentService.updateStatus(id, Status.CANCELLED);
+        appointmentService.cancel(id);
     }
 }

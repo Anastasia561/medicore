@@ -36,28 +36,29 @@ VALUES ('Paulista Ave', 321, 5);
 
 
 -- PERSON
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('jdoe', 'John', 'Doe', 'john.doe@example.com', '111', 'PATIENT');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('asmith', 'Anna', 'Smith', 'anna.smith@example.com', '111', 'PATIENT');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('pnowak', 'Piotr', 'Nowak', 'piotr.nowak@example.com', '111', 'PATIENT');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('yamada', 'Taro', 'Yamada', 'taro.yamada@example.com', '111', 'PATIENT');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('mferreira', 'Maria', 'Ferreira', 'maria.ferreira@example.com', '111', 'PATIENT');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('rgarcia', 'Rafael', 'Garcia', 'rafael.garcia@example.com', '111', 'DOCTOR');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('ljohnson', 'Laura', 'Johnson', 'laura.johnson@example.com', '111', 'DOCTOR');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('tadams', 'Tom', 'Adams', 'tom.adams@example.com', '111', 'DOCTOR');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('hbrown', 'Hannah', 'Brown', 'hannah.brown@example.com', '111', 'DOCTOR');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('klee', 'Kevin', 'Lee', 'kevin.lee@example.com', '111', 'DOCTOR');
-INSERT INTO person (username, first_name, last_name, email, password, role)
-VALUES ('adam', 'Adam', 'Test', 'admin@example.com', '111', 'ADMIN');
+INSERT INTO person (first_name, last_name, email, password, role)
+VALUES ( 'John', 'Doe', 'john.doe@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT');
+INSERT INTO person (first_name, last_name, email, password, role)
+VALUES ( 'Anna', 'Smith', 'anna.smith@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT');
+INSERT INTO person (first_name, last_name, email, password, role)
+VALUES ( 'Piotr', 'Nowak', 'piotr.nowak@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT');
+INSERT INTO person (first_name, last_name, email, password, role)
+VALUES ( 'Taro', 'Yamada', 'taro.yamada@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT');
+INSERT INTO person ( first_name, last_name, email, password, role)
+VALUES ( 'Maria', 'Ferreira', 'maria.ferreira@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT');
+INSERT INTO person ( first_name, last_name, email, password, role)
+VALUES ( 'Rafael', 'Garcia', 'rafael.garcia@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR');
+INSERT INTO person ( first_name, last_name, email, password, role)
+VALUES ( 'Laura', 'Johnson', 'laura.johnson@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR');
+INSERT INTO person ( first_name, last_name, email, password, role)
+VALUES ( 'Tom', 'Adams', 'tom.adams@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR');
+INSERT INTO person ( first_name, last_name, email, password, role)
+VALUES ( 'Hannah', 'Brown', 'hannah.brown@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR');
+INSERT INTO person (first_name, last_name, email, password, role)
+VALUES ( 'Kevin', 'Lee', 'kevin.lee@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR');
+INSERT INTO person (first_name, last_name, email, password, role)
+VALUES ( 'Adam', 'Test', 'admin@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'ADMIN');
+-- pass 111
 
 -- PATIENT
 INSERT INTO patient (id, birth_date, phone_number, address_id)

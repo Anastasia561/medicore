@@ -3,6 +3,7 @@ package pl.edu.medicore.consultation.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,17 +32,20 @@ public class ConsultationController {
         return ResponseWrapper.ok(consultationService.findByDoctorId(doctorId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseWrapper<Long> create(@RequestBody @Valid ConsultationCreateDto dto) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, consultationService.create(dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{consultationId}")
     public ResponseWrapper<Long> update(@RequestBody @Valid ConsultationUpdateDto dto, @PathVariable Long consultationId) {
         return ResponseWrapper.ok(consultationService.update(consultationId, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{consultationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long consultationId) {

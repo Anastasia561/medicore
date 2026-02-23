@@ -3,6 +3,7 @@ package pl.edu.medicore.prescription.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
 
+    @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseWrapper<Long> create(@Valid @RequestBody PrescriptionCreateDto dto) {
