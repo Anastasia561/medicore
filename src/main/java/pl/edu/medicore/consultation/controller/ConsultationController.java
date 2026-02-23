@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.consultation.dto.ConsultationCreateDto;
@@ -27,8 +26,8 @@ import java.util.List;
 public class ConsultationController {
     private final ConsultationService consultationService;
 
-    @GetMapping
-    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@RequestParam Long doctorId) {
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@PathVariable Long doctorId) {
         return ResponseWrapper.ok(consultationService.findByDoctorId(doctorId));
     }
 

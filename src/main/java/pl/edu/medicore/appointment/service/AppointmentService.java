@@ -3,6 +3,7 @@ package pl.edu.medicore.appointment.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
+import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
 
 import java.time.LocalDate;
@@ -16,5 +17,7 @@ public interface AppointmentService {
 
 //    long create(Long patientId, Long doctorId, LocalDate date, LocalTime time);
 
-//    List<LocalTime> getAvailableTimes(Long doctorId, LocalDate date);
+    //    List<LocalTime> getAvailableTimes(Long doctorId, LocalDate date);
+
+    Appointment getById(Long id);
 }

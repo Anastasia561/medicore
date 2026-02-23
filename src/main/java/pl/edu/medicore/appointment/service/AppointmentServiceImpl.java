@@ -16,8 +16,6 @@ import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.service.PersonService;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +56,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 //        doctorService.getById(doctorId);
 //    }
 
-    private Appointment getById(Long id) {
+    @Override
+    public Appointment getById(Long id) {
         return appointmentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Appointment not found"));
     }

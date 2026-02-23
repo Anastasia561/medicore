@@ -93,8 +93,8 @@ CREATE TABLE appointment
 CREATE TABLE record
 (
     id             BIGSERIAL PRIMARY KEY,
-    diagnosis      varchar(60) NOT NULL,
-    summary        varchar(80) NOT NULL,
+    diagnosis      varchar(100) NOT NULL,
+    summary        varchar(255) NOT NULL,
     appointment_id BIGINT      NOT NULL,
     CONSTRAINT record_appointment
         FOREIGN KEY (appointment_id) REFERENCES appointment (id)
@@ -104,11 +104,11 @@ CREATE TABLE record
 CREATE TABLE prescription
 (
     id         BIGSERIAL PRIMARY KEY,
-    medicine   varchar(40) NOT NULL,
+    medicine   varchar(60) NOT NULL,
     dosage     varchar(20) NOT NULL,
     start_date date        NOT NULL,
     end_date   date,
-    frequency  varchar(30) NOT NULL,
+    frequency  varchar(50) NOT NULL,
     record_id  BIGINT      NOT NULL,
     CONSTRAINT prescription_record
         FOREIGN KEY (record_id) REFERENCES record (id)
