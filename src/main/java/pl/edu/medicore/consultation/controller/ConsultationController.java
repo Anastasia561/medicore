@@ -17,6 +17,7 @@ import pl.edu.medicore.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.consultation.dto.ConsultationDto;
 import pl.edu.medicore.consultation.dto.ConsultationUpdateDto;
 import pl.edu.medicore.consultation.service.ConsultationService;
+import pl.edu.medicore.wrapper.ResponseWrapper;
 
 import java.util.List;
 
@@ -27,22 +28,23 @@ public class ConsultationController {
     private final ConsultationService consultationService;
 
     @GetMapping
-    public List<ConsultationDto> getAllForDoctor(@RequestParam Long doctorId) {
-        return consultationService.findByDoctorId(doctorId);
+    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@RequestParam Long doctorId) {
+        return ResponseWrapper.ok(consultationService.findByDoctorId(doctorId));
     }
 
     @PostMapping
-    public long create(@RequestBody @Valid ConsultationCreateDto dto) {
-        return consultationService.create(dto);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseWrapper<Long> create(@RequestBody @Valid ConsultationCreateDto dto) {
+        return ResponseWrapper.withStatus(HttpStatus.CREATED, consultationService.create(dto));
     }
 
     @PutMapping("/{consultationId}")
-    public long update(@RequestBody @Valid ConsultationUpdateDto dto, @PathVariable Long consultationId) {
-        return consultationService.update(consultationId, dto);
+    public ResponseWrapper<Long> update(@RequestBody @Valid ConsultationUpdateDto dto, @PathVariable Long consultationId) {
+        return ResponseWrapper.ok(consultationService.update(consultationId, dto));
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{consultationId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long consultationId) {
         consultationService.delete(consultationId);
     }

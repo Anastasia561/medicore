@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.appointment.service.AppointmentService;
+import pl.edu.medicore.wrapper.ResponseWrapper;
 
 import java.time.LocalDate;
 
@@ -21,13 +22,13 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @GetMapping
-    public Page<AppointmentInfoDto> getAppointmentsInDateRange(
+    public ResponseWrapper<Page<AppointmentInfoDto>> getAppointmentsInDateRange(
             @RequestParam Long id,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
             Pageable pageable
     ) {
-        return appointmentService.getAppointmentsInRange(id, startDate, endDate, pageable);
+        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(id, startDate, endDate, pageable));
     }
 
     @PutMapping

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.service.PatientService;
+import pl.edu.medicore.wrapper.ResponseWrapper;
 
 @RestController
 @RequestMapping("/patients")
@@ -16,7 +17,7 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping
-    public Page<PatientResponseDto> getAllPageable(Pageable pageable) {
-        return patientService.findAll(pageable);
+    public ResponseWrapper<Page<PatientResponseDto>> getAllPageable(Pageable pageable) {
+        return ResponseWrapper.ok(patientService.findAll(pageable));
     }
 }
