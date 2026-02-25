@@ -9,10 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.appointment.service.AppointmentService;
+import pl.edu.medicore.auth.core.CustomUserDetails;
+import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.dto.RecordDto;
-import pl.edu.medicore.record.dto.RecordForDoctorPreviewDto;
-import pl.edu.medicore.record.dto.RecordForPatientPreviewDto;
+import pl.edu.medicore.record.dto.RecordPreviewDto;
 import pl.edu.medicore.record.mapper.RecordMapper;
 import pl.edu.medicore.record.repository.RecordRepository;
 import pl.edu.medicore.record.model.Record;
@@ -32,15 +33,15 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Page<RecordForPatientPreviewDto> getAllByPatientId(Long patientId, Pageable pageable) {
-        return recordRepository.findByPatientId(patientId, pageable)
-                .map(recordMapper::toPatientPreviewDto);
-    }
-
-    @Override
-    public Page<RecordForDoctorPreviewDto> getAllByDoctorAndPatientId(Long doctorId, Long patientId, Pageable pageable) {
-        return recordRepository.findByDoctorAndPatientId(doctorId, patientId, pageable)
-                .map(recordMapper::toDoctorPreviewDto);
+    public Page<RecordPreviewDto> getAllById(CustomUserDetails userDetails, Pageable pageable) {
+        Role role = userDetails.getRole();
+        if (role == Role.DOCTOR) {
+            return recordRepository.findByDoctorId(userDetails.getId(), pageable)
+                    .map(recordMapper::toDoctorPreviewDto);
+        } else {
+            return recordRepository.findByPatientId(userDetails.getId(), pageable)
+                    .map(recordMapper::toPatientPreviewDto);
+        }
     }
 
     @Override

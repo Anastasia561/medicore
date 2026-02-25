@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.repository.DoctorRepository;
 
-
 @Service
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {

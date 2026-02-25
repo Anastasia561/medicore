@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String BEARER_PREFIX = "Bearer ";
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            unauthorized(response, "JWT token is missing");
+            filterChain.doFilter(request, response);
             return;
         }
 

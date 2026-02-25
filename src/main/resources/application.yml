@@ -27,6 +27,8 @@ app:
     working-hours:
       start: "08:00"
       end: "17:00"
+  scheduling:
+    slot-duration-minutes: 60
 
   jwt:
     accessTokenExpirationTimeMs: 900_000      # 15 min

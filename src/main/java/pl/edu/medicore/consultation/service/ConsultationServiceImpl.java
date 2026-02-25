@@ -14,8 +14,11 @@ import pl.edu.medicore.consultation.model.Workday;
 import pl.edu.medicore.consultation.repository.ConsultationRepository;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
+import pl.edu.medicore.exception.DoctorNotAvailableException;
 import pl.edu.medicore.properties.ConsultationProperties;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -30,9 +33,23 @@ public class ConsultationServiceImpl implements ConsultationService {
     @Override
     public List<ConsultationDto> findByDoctorId(Long doctorId) {
         doctorService.checkExistsById(doctorId);
+
         return consultationRepository.findByDoctorId(doctorId)
                 .stream().map(consultationMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public Consultation findByDoctorIdAndDate(Long doctorId, LocalDate date) {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+            throw new DoctorNotAvailableException("Doctor is not available on weekends");
+        }
+        Workday workday = Workday.valueOf(date.getDayOfWeek().name());
+
+        doctorService.checkExistsById(doctorId);
+        return consultationRepository.findByDoctorIdAndWorkday(doctorId, workday)
+                .orElseThrow(() -> new DoctorNotAvailableException("Doctor is not available"));
     }
 
     @Override
@@ -42,6 +59,7 @@ public class ConsultationServiceImpl implements ConsultationService {
         validateTime(dto.startTime(), dto.endTime());
 
         Doctor doctor = doctorService.getById(dto.doctorId());
+
         Consultation consultation = consultationMapper.toEntity(dto, doctor);
         return consultationRepository.save(consultation).getId();
     }

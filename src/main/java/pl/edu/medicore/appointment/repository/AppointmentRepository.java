@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import pl.edu.medicore.appointment.model.Appointment;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     @Query("""
@@ -27,5 +29,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
                                                     LocalDate endDate, Pageable pageable
     );
 
+    @Query("""
+            SELECT a.time
+            FROM Appointment a
+            WHERE a.doctor.id = :doctorId
+            AND a.date = :date
+            AND a.status = 'SCHEDULED'
+            """)
+    List<LocalTime> getScheduledTimesForDoctorAndDate(Long doctorId, LocalDate date);
 
 }

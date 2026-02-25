@@ -22,9 +22,7 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     @Query("""
                 SELECT r
                 FROM Record r
-                WHERE r.appointment.doctor.id = :doctorId AND
-                      r.appointment.patient.id= :patientId
+                WHERE r.appointment.doctor.id = :doctorId
             """)
-    Page<Record> findByDoctorAndPatientId(@Param("doctorId") Long doctorId, @Param("patientId") Long patientId,
-                                          Pageable pageable);
+    Page<Record> findByDoctorId(@Param("doctorId") Long doctorId, Pageable pageable);
 }

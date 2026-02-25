@@ -1,11 +1,11 @@
 package pl.edu.medicore.record.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import pl.edu.medicore.doctor.dto.DoctorForRecordDto;
 
-import java.time.LocalDate;
-
-public record RecordForPatientPreviewDto(
-        DoctorForRecordDto doctor,
-        LocalDate date
-) {
+@Getter
+@Setter
+public class RecordForPatientPreviewDto extends RecordPreviewDto {
+    private DoctorForRecordDto doctor;
 }

@@ -1,11 +1,13 @@
 package pl.edu.medicore.patient.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.mapper.PatientMapper;
+import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.repository.PatientRepository;
 
 @Service
@@ -17,5 +19,11 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Page<PatientResponseDto> findAll(Pageable pageable) {
         return patientRepository.findAll(pageable).map(patientMapper::patientToPatientResponseDto);
+    }
+
+    @Override
+    public Patient getById(Long id) {
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
     }
 }

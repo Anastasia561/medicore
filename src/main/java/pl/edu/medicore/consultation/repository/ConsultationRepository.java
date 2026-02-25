@@ -6,6 +6,7 @@ import pl.edu.medicore.consultation.model.Consultation;
 import pl.edu.medicore.consultation.model.Workday;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ConsultationRepository extends JpaRepository<Consultation, Long> {
     List<Consultation> findByDoctorId(Long doctorId);
@@ -17,4 +18,12 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
                 AND c.workday = :workday
             """)
     boolean existsByDoctorIdAndWorkday(Long doctorId, Workday workday);
+
+    @Query("""
+                SELECT c
+                FROM Consultation c
+                WHERE c.doctor.id = :doctorId
+                AND c.workday = :workday
+            """)
+    Optional<Consultation> findByDoctorIdAndWorkday(Long doctorId, Workday workday);
 }

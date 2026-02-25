@@ -27,8 +27,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
-    public ResponseEntity<ResponseWrapper<Object>> handleIllegalArgument(IllegalArgumentException ex) {
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class,
+            DoctorNotAvailableException.class})
+    public ResponseEntity<ResponseWrapper<Object>> handleIllegalArgument(RuntimeException ex) {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 

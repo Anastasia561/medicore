@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.dto.RecordDto;
-import pl.edu.medicore.record.dto.RecordForDoctorPreviewDto;
-import pl.edu.medicore.record.dto.RecordForPatientPreviewDto;
+import pl.edu.medicore.record.dto.RecordPreviewDto;
 import pl.edu.medicore.record.service.RecordService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
@@ -35,23 +33,12 @@ public class RecordController {
         return ResponseWrapper.ok(recordService.getByAppointmentId(appointmentId));
     }
 
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping
-    public ResponseWrapper<Page<RecordForDoctorPreviewDto>> getAllForDoctorAndPatient(
-            @RequestParam Long patientId,
+    public ResponseWrapper<Page<RecordPreviewDto>> getAllPageable(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             Pageable pageable) {
-        Long doctorId = userDetails.getId();
-        return ResponseWrapper.ok(recordService.getAllByDoctorAndPatientId(doctorId, patientId, pageable));
-    }
-
-    @PreAuthorize("hasRole('PATIENT')")
-    @GetMapping
-    public ResponseWrapper<Page<RecordForPatientPreviewDto>> getAllForPatient(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            Pageable pageable) {
-        Long patientId = userDetails.getId();
-        return ResponseWrapper.ok(recordService.getAllByPatientId(patientId, pageable));
+        return ResponseWrapper.ok(recordService.getAllById(userDetails, pageable));
     }
 
     @PreAuthorize("hasRole('DOCTOR')")
