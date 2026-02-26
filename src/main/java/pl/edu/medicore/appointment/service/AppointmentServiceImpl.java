@@ -7,11 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.appointment.dto.AppointmentCreateDto;
+import pl.edu.medicore.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.appointment.mapper.AppointmentMapper;
 import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.appointment.repository.AppointmentRepository;
+import pl.edu.medicore.appointment.repository.specification.AppointmentSpecification;
 import pl.edu.medicore.consultation.model.Consultation;
 import pl.edu.medicore.consultation.service.ConsultationService;
 import pl.edu.medicore.doctor.model.Doctor;
@@ -39,16 +41,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final ConsultationService consultationService;
 
     @Override
-    public Page<AppointmentInfoDto> getAppointmentsInRange(Long id, LocalDate start, LocalDate end, Pageable pageable) {
-        Role role = personService.getRoleById(id);
-        if (role == Role.PATIENT) {
-            return appointmentRepository.findByPatientIdAndDateBetween(id, start, end, pageable)
-                    .map(appointmentMapper::toDoctorDto);
-        } else if (role == Role.DOCTOR) {
-            return appointmentRepository.findByDoctorIdAndDateBetween(id, start, end, pageable)
-                    .map(appointmentMapper::toPatientDto);
-        }
-        throw new IllegalArgumentException("Invalid role");
+    public Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable) {
+        Role role = personService.getRoleById(filter.userId());
+
+        if (filter.endDate().isBefore(filter.startDate()))
+            throw new IllegalArgumentException("End date must be after start date");
+
+        Page<Appointment> all = appointmentRepository
+                .findAll(AppointmentSpecification.withFilter(filter), pageable);
+
+        return role == Role.DOCTOR ? all.map(appointmentMapper::toPatientDto)
+                : all.map(appointmentMapper::toDoctorDto);
     }
 
     @Override

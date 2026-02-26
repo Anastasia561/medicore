@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.appointment.dto.AppointmentCreateDto;
+import pl.edu.medicore.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.appointment.service.AppointmentService;
 import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.wrapper.ResponseWrapper;
-
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/appointments")
@@ -31,12 +30,9 @@ public class AppointmentController {
 
     @GetMapping
     public ResponseWrapper<Page<AppointmentInfoDto>> getAppointmentsInDateRange(
-            @RequestParam Long userId,
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate,
-            Pageable pageable
-    ) {
-        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(userId, startDate, endDate, pageable));
+            @Valid AppointmentFilterDto filter,
+            Pageable pageable) {
+        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(filter, pageable));
     }
 
     @PutMapping
