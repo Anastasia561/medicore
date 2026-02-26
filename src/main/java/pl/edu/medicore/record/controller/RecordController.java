@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.dto.RecordDto;
+import pl.edu.medicore.record.dto.RecordFilterDto;
 import pl.edu.medicore.record.dto.RecordPreviewDto;
 import pl.edu.medicore.record.service.RecordService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
@@ -37,8 +38,9 @@ public class RecordController {
     @GetMapping
     public ResponseWrapper<Page<RecordPreviewDto>> getAllPageable(
             @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid RecordFilterDto filter,
             Pageable pageable) {
-        return ResponseWrapper.ok(recordService.getAllById(userDetails, pageable));
+        return ResponseWrapper.ok(recordService.getAllById(userDetails, filter, pageable));
     }
 
     @PreAuthorize("hasRole('DOCTOR')")

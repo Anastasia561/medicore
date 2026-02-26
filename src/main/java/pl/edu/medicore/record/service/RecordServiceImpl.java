@@ -13,10 +13,12 @@ import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.dto.RecordDto;
+import pl.edu.medicore.record.dto.RecordFilterDto;
 import pl.edu.medicore.record.dto.RecordPreviewDto;
 import pl.edu.medicore.record.mapper.RecordMapper;
 import pl.edu.medicore.record.repository.RecordRepository;
 import pl.edu.medicore.record.model.Record;
+import pl.edu.medicore.record.repository.specification.RecordSpecification;
 
 @Service
 @RequiredArgsConstructor
@@ -33,15 +35,17 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Page<RecordPreviewDto> getAllById(CustomUserDetails userDetails, Pageable pageable) {
+    public Page<RecordPreviewDto> getAllById(CustomUserDetails userDetails, RecordFilterDto filter, Pageable pageable) {
         Role role = userDetails.getRole();
-        if (role == Role.DOCTOR) {
-            return recordRepository.findByDoctorId(userDetails.getId(), pageable)
-                    .map(recordMapper::toDoctorPreviewDto);
-        } else {
-            return recordRepository.findByPatientId(userDetails.getId(), pageable)
-                    .map(recordMapper::toPatientPreviewDto);
-        }
+        if (filter.startDate() != null && filter.endDate() != null
+                && filter.startDate().isAfter(filter.endDate()))
+            throw new IllegalArgumentException("Start date should be before end date");
+
+        Page<Record> all = recordRepository.findAll(RecordSpecification
+                .withFilter(userDetails.getId(), role, filter), pageable);
+
+        return role == Role.DOCTOR ? all.map(recordMapper::toDoctorPreviewDto)
+                : all.map(recordMapper::toPatientPreviewDto);
     }
 
     @Override
