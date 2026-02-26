@@ -7,5 +7,5 @@ import pl.edu.medicore.patient.model.Patient;
 
 @Mapper(componentModel = "spring", uses = AddressMapper.class)
 public interface PatientMapper {
-    PatientResponseDto patientToPatientResponseDto(Patient patient);
+    PatientResponseDto toPatientResponseDto(Patient patient);
 }

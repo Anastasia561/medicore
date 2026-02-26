@@ -6,7 +6,7 @@ import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.model.Patient;
 
 public interface PatientService {
-    Page<PatientResponseDto> findAll(Pageable pageable);
+    Page<PatientResponseDto> findAll(String search, Pageable pageable);
 
     Patient getById(Long id);
 }

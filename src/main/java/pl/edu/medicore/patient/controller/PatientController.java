@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.service.PatientService;
@@ -19,7 +20,9 @@ public class PatientController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping
-    public ResponseWrapper<Page<PatientResponseDto>> getAllPageable(Pageable pageable) {
-        return ResponseWrapper.ok(patientService.findAll(pageable));
+    public ResponseWrapper<Page<PatientResponseDto>> getAllPageable(
+            @RequestParam(required = false) String search,
+            Pageable pageable) {
+        return ResponseWrapper.ok(patientService.findAll(search, pageable));
     }
 }
