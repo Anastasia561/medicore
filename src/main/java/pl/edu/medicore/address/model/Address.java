@@ -1,5 +1,6 @@
 package pl.edu.medicore.address.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +23,7 @@ public class Address {
     private String street;
     @Column(name = "number", nullable = false)
     private Integer number;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "city_id")
     private City city;
 }

@@ -34,7 +34,8 @@ CREATE TABLE person
     first_name varchar(20)  NOT NULL,
     last_name  varchar(20)  NOT NULL,
     email      varchar(60)  NOT NULL UNIQUE,
-    role       varchar(20)  NOT NULL
+    role       varchar(20)  NOT NULL,
+    status     varchar(40)  NOT NULL
 );
 
 -- Table: doctor (inherits ID from person)
@@ -94,7 +95,7 @@ CREATE TABLE record
     id             BIGSERIAL PRIMARY KEY,
     diagnosis      varchar(100) NOT NULL,
     summary        varchar(255) NOT NULL,
-    appointment_id BIGINT      NOT NULL,
+    appointment_id BIGINT       NOT NULL,
     CONSTRAINT record_appointment
         FOREIGN KEY (appointment_id) REFERENCES appointment (id)
 );

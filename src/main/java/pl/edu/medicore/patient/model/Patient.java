@@ -1,5 +1,6 @@
 package pl.edu.medicore.patient.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -19,7 +20,7 @@ public class Patient extends Person {
     private LocalDate birthDate;
     @Column(name = "phone_number", length = 20, nullable = false)
     private String phoneNumber;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id")
     private Address address;
 }

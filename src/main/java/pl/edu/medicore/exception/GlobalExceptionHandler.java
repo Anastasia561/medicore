@@ -28,7 +28,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class,
-            DoctorNotAvailableException.class})
+            DoctorNotAvailableException.class, UserNotVerifiedException.class})
     public ResponseEntity<ResponseWrapper<Object>> handleIllegalArgument(RuntimeException ex) {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }

@@ -30,4 +30,6 @@ public class Person {
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

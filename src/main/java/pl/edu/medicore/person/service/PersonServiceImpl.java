@@ -3,8 +3,10 @@ package pl.edu.medicore.person.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.edu.medicore.exception.UserNotVerifiedException;
 import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.model.Role;
+import pl.edu.medicore.person.model.Status;
 import pl.edu.medicore.person.repository.PersonRepository;
 
 @Service
@@ -20,7 +22,10 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Person getByEmail(String email) {
-        return personRepository.findByEmail(email)
+        Person p = personRepository.findByEmail(email.toLowerCase())
                 .orElseThrow(() -> new EntityNotFoundException("Person not found"));
+        if (p.getStatus() == Status.UNVERIFIED)
+            throw new UserNotVerifiedException("User not verified");
+        return p;
     }
 }
