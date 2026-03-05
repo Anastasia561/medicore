@@ -1,5 +1,7 @@
 package pl.edu.medicore.prescription.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,12 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 
 @RestController
 @RequestMapping("/prescriptions")
+@Tag(name = "Prescriptions", description = "Endpoints for managing medical prescriptions")
 @RequiredArgsConstructor
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
 
+    @Operation(summary = "Create prescription")
     @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

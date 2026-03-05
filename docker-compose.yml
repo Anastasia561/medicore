@@ -8,6 +8,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
+      - RESOURCE_SERVER_URL=${RESOURCE_SERVER_URL}
     ports:
       - "8080:8080"
     depends_on:

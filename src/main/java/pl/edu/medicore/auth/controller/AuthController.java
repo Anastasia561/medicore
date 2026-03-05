@@ -1,5 +1,7 @@
 package pl.edu.medicore.auth.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -20,11 +22,13 @@ import pl.edu.medicore.auth.service.AuthService;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Auth", description = "Managing login and logout operations")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
     private final JwtProperties jwtProperties;
 
+    @Operation(summary = "Login endpoint")
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody AuthRequestDto authRequestDto) {
         TokenResponseDto dto = authService.login(authRequestDto);
@@ -40,6 +44,7 @@ public class AuthController {
                 .body(new AuthResponseDto(dto.accessToken()));
     }
 
+    @Operation(summary = "Endpoint for token refresh")
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponseDto> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
         TokenResponseDto dto = authService.refresh(refreshToken);
@@ -55,6 +60,7 @@ public class AuthController {
                 .body(new AuthResponseDto(dto.accessToken()));
     }
 
+    @Operation(summary = "Logout endpoint")
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken) {

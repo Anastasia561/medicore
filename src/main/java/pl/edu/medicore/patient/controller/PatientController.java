@@ -1,5 +1,7 @@
 package pl.edu.medicore.patient.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,11 +25,13 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 
 @RestController
 @RequestMapping("/patients")
+@Tag(name = "Patients", description = "Endpoints for managing patients")
 @RequiredArgsConstructor
 public class PatientController {
     private final PatientService patientService;
     private final VerificationTokenService tokenService;
 
+    @Operation(summary = "Get page of patients with searching possibility")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping
     public ResponseWrapper<Page<PatientResponseDto>> getAllPageable(
@@ -36,12 +40,14 @@ public class PatientController {
         return ResponseWrapper.ok(patientService.findAll(search, pageable));
     }
 
+    @Operation(summary = "Register patient")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
     public ResponseWrapper<Long> register(@RequestBody @Valid PatientRegisterDto dto) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, patientService.register(dto));
     }
 
+    @Operation(summary = "Verify email after registration for profile activation")
     @PostMapping("/verify-email")
     public void verifyEmail(@RequestParam String token, @RequestParam String email) {
         tokenService.validateToken(token, TokenType.EMAIL_VERIFICATION, email);

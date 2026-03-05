@@ -7,3 +7,7 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET}
+
+openapi:
+  resource-server-url: ${RESOURCE_SERVER_URL}
+  server-description: Development server

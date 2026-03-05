@@ -1,5 +1,7 @@
 package pl.edu.medicore.consultation.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,15 +25,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/consultations")
+@Tag(name = "Consultations", description = "Endpoints for managing doctor schedule (consultations)")
 @RequiredArgsConstructor
 public class ConsultationController {
     private final ConsultationService consultationService;
 
+    @Operation(summary = "Get all doctor consultations")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @GetMapping("/doctor/{doctorId}")
     public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@PathVariable Long doctorId) {
         return ResponseWrapper.ok(consultationService.findByDoctorId(doctorId));
     }
 
+    @Operation(summary = "Create consultation")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -39,12 +45,14 @@ public class ConsultationController {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, consultationService.create(dto));
     }
 
+    @Operation(summary = "Update doctor schedule")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{consultationId}")
     public ResponseWrapper<Long> update(@RequestBody @Valid ConsultationUpdateDto dto, @PathVariable Long consultationId) {
         return ResponseWrapper.ok(consultationService.update(consultationId, dto));
     }
 
+    @Operation(summary = "Delete doctor consultation")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{consultationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

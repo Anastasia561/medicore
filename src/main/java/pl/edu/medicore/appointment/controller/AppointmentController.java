@@ -1,5 +1,7 @@
 package pl.edu.medicore.appointment.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,10 +26,13 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 
 @RestController
 @RequestMapping("/appointments")
+@Tag(name = "Appointments", description = "Endpoints for managing appointments")
 @RequiredArgsConstructor
 public class AppointmentController {
     private final AppointmentService appointmentService;
 
+    @Operation(summary = "Get page of appointments in date range with filtering")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @GetMapping
     public ResponseWrapper<Page<AppointmentInfoDto>> getAppointmentsInDateRange(
             @Valid AppointmentFilterDto filter,
@@ -35,11 +40,14 @@ public class AppointmentController {
         return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(filter, pageable));
     }
 
+    @Operation(summary = "Cancel appointment")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @PutMapping
     public void cancel(@RequestParam Long id) {
         appointmentService.cancel(id);
     }
 
+    @Operation(summary = "Schedule an appointment")
     @PreAuthorize("hasRole('PATIENT')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

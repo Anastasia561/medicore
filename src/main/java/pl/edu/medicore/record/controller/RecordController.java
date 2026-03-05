@@ -1,5 +1,7 @@
 package pl.edu.medicore.record.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,16 +26,19 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 
 @RestController
 @RequestMapping("/records")
+@Tag(name = "Records", description = "Endpoints for managing medical records")
 @RequiredArgsConstructor
 public class RecordController {
     private final RecordService recordService;
 
+    @Operation(summary = "Find medical record by appointment id")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/appointment/{appointmentId}")
     public ResponseWrapper<RecordDto> getByAppointmentId(@PathVariable Long appointmentId) {
         return ResponseWrapper.ok(recordService.getByAppointmentId(appointmentId));
     }
 
+    @Operation(summary = "Get page of medical records with filtering")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping
     public ResponseWrapper<Page<RecordPreviewDto>> getAllPageable(
@@ -43,6 +48,7 @@ public class RecordController {
         return ResponseWrapper.ok(recordService.getAllById(userDetails, filter, pageable));
     }
 
+    @Operation(summary = "Create medical record after consultation")
     @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

@@ -1,5 +1,7 @@
 package pl.edu.medicore.doctor.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +23,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/doctors")
+@Tag(name = "Doctors", description = "Endpoints for managing doctors data")
 @RequiredArgsConstructor
 public class DoctorController {
     private final AppointmentService appointmentService;
     private final DoctorService doctorService;
 
+    @Operation(summary = "Get free slots for selected doctor")
     @PreAuthorize("hasRole('PATIENT')")
     @GetMapping("/{doctorId}/times")
     public ResponseWrapper<List<LocalTime>> getAvailableTimes(@PathVariable Long doctorId,
@@ -33,6 +37,7 @@ public class DoctorController {
         return ResponseWrapper.ok(appointmentService.getAvailableTimes(doctorId, date));
     }
 
+    @Operation(summary = "Get page of doctors with filtering")
     @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
     @GetMapping
     public ResponseWrapper<Page<DoctorResponseDto>> getAll(DoctorFilterDto filter, Pageable pageable) {
