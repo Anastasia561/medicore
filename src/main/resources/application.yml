@@ -14,9 +14,11 @@ spring:
 
   flyway:
     enabled: true
-    locations: classpath:db/migration
     baseline-on-migrate: false
     validate-on-migrate: true
+
+  config:
+    import: optional:file:.env[.properties]
 
 server:
   servlet:

@@ -1,0 +1,18 @@
+spring:
+  flyway:
+    enabled: true
+    locations:
+      - filesystem:${user.dir}/flyway/sql/schema
+      - classpath:flyway/sql
+
+testcontainers:
+  postgres:
+    image: postgres:15-alpine
+    username: ${TEST_USER}
+    password: ${TEST_PASSWORD}
+    database: ${TEST_DB}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+
