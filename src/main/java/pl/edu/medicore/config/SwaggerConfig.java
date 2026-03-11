@@ -24,9 +24,9 @@ public class SwaggerConfig {
         String securitySchemeName = "bearer-jwt";
 
         return new OpenAPI().info(new Info()
-                        .title("Library API Documentation")
+                        .title("Medicore API Documentation")
                         .version("1.0")
-                        .description("Provides REST endpoints for managing books in library system"))
+                        .description("Provides REST endpoints for managing doctors, patients and appointments"))
                 .servers(List.of(new Server().url(openApiProperties.getResourceServerUrl())
                         .description(openApiProperties.getServerDescription())))
                 .components(new Components().addSecuritySchemes(securitySchemeName,
