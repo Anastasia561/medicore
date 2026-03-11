@@ -18,6 +18,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
 
+    @Override
     public void checkExistsById(Long doctorId) {
         if (!doctorRepository.existsById(doctorId)) {
             throw new EntityNotFoundException("Doctor not found");
