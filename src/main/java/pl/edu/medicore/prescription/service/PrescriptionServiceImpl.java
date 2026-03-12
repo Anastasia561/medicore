@@ -19,7 +19,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Override
     @Transactional
     public long create(PrescriptionCreateDto dto) {
-        if (dto.startDate().isAfter(dto.endDate())) {
+        if (dto.endDate() != null && dto.startDate().isAfter(dto.endDate())) {
             throw new IllegalArgumentException("Start date must be after end date");
         }
         Prescription prescription = prescriptionMapper.toEntity(dto, recordService.getById(dto.recordId()));
