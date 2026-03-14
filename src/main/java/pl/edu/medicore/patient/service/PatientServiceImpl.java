@@ -19,6 +19,8 @@ import pl.edu.medicore.person.model.Status;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.service.VerificationTokenService;
 
+import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 public class PatientServiceImpl implements PatientService {
@@ -54,7 +56,8 @@ public class PatientServiceImpl implements PatientService {
         patient.setAddress(address);
         patient.setPassword(passwordEncoder.encode(dto.password()));
         patient.setEmail(dto.email().toLowerCase());
-        String token = verificationTokenService.createToken(dto.email(), TokenType.EMAIL_VERIFICATION);
+        String token = verificationTokenService.createToken(dto.email(), TokenType.EMAIL_VERIFICATION,
+                Duration.ofMinutes(5));
         //send via email
         System.out.println("Token: " + token);
         return patientRepository.save(patient).getId();

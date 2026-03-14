@@ -1,6 +1,7 @@
-package pl.edu.medicore.statistics;
+package pl.edu.medicore.statistics.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,13 +17,15 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 public class StatisticsController {
     private final StatisticsService statisticsService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public ResponseWrapper<AdminStatisticsResponseDto> getAdminStatistics() {
         return ResponseWrapper.ok(statisticsService.getAdminStatistics());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping("/doctor/{id}")
-    public ResponseWrapper<DoctorStatisticsResponseDto> getAdminStatistics(@PathVariable Long id) {
+    public ResponseWrapper<DoctorStatisticsResponseDto> getDoctorStatistics(@PathVariable Long id) {
         return ResponseWrapper.ok(statisticsService.getDoctorStatistics(id));
     }
 }

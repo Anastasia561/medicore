@@ -23,11 +23,10 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
 
     @Override
     @Transactional
-    public String createToken(String email, TokenType tokenType) {
+    public String createToken(String email, TokenType tokenType, Duration duration) {
         String rawToken = UUID.randomUUID().toString();
         String tokenHash = passwordEncoder.encode(rawToken);
-        VerificationTokenCreateDto dto = new VerificationTokenCreateDto(tokenType, tokenHash,
-                email, Duration.ofMinutes(5));
+        VerificationTokenCreateDto dto = new VerificationTokenCreateDto(tokenType, tokenHash, email, duration);
         tokenRepository.save(tokenMapper.toEntity(dto));
         return rawToken;
     }

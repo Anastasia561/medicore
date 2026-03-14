@@ -12,6 +12,7 @@ import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.model.VerificationToken;
 import pl.edu.medicore.verification.repository.VerificationTokenRepository;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -48,7 +49,7 @@ class VerificationTokenServiceTest {
         when(tokenMapper.toEntity(any())).thenReturn(entity);
         when(tokenRepository.save(entity)).thenReturn(entity);
 
-        String rawToken = tokenService.createToken(email, tokenType);
+        String rawToken = tokenService.createToken(email, tokenType, Duration.ofMinutes(5));
 
         assertNotNull(rawToken);
         assertFalse(rawToken.isBlank());
