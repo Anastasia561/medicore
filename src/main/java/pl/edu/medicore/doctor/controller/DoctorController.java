@@ -51,6 +51,7 @@ public class DoctorController {
         return ResponseWrapper.ok(doctorService.getAll(filter, pageable));
     }
 
+    @Operation(summary = "Invite doctor for registration")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/invite")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -58,6 +59,7 @@ public class DoctorController {
         doctorService.invite(request.email());
     }
 
+    @Operation(summary = "Register a new doctor")
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseWrapper<Long> register(@Valid @RequestBody DoctorRegistrationDto dto) {
