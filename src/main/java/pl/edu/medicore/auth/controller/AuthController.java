@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,13 +17,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.auth.dto.AuthRequestDto;
 import pl.edu.medicore.auth.dto.AuthResponseDto;
+import pl.edu.medicore.auth.dto.PasswordResetDto;
+import pl.edu.medicore.auth.dto.PasswordResetRequestDto;
 import pl.edu.medicore.auth.dto.TokenResponseDto;
 import pl.edu.medicore.auth.jwt.JwtProperties;
 import pl.edu.medicore.auth.service.AuthService;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Auth", description = "Managing login and logout operations")
+@Tag(name = "Auth", description = "Managing login and logout, password reset operations")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
@@ -61,6 +64,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Logout endpoint")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
@@ -74,5 +78,19 @@ public class AuthController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
+    }
+
+    @Operation(summary = "Request password reset endpoint")
+    @PostMapping("/reset-password/request")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void requestPasswordReset(@Valid @RequestBody PasswordResetRequestDto dto) {
+        authService.createResetToken(dto.email());
+    }
+
+    @Operation(summary = "Reset password endpoint")
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void resetPassword(@Valid @RequestBody PasswordResetDto dto) {
+        authService.resetPassword(dto);
     }
 }

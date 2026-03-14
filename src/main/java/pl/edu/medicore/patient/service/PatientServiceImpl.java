@@ -23,7 +23,7 @@ import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
-public class PatientServiceImpl implements PatientService {
+class PatientServiceImpl implements PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
     private final AddressMapper addressMapper;

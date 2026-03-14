@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class VerificationTokenServiceImpl implements VerificationTokenService {
+class VerificationTokenServiceImpl implements VerificationTokenService {
     private final VerificationTokenRepository tokenRepository;
     private final VerificationTokenMapper tokenMapper;
     private final PasswordEncoder passwordEncoder;

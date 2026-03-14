@@ -16,7 +16,7 @@ import pl.edu.medicore.profile.mapper.ProfileMapper;
 
 @Service
 @RequiredArgsConstructor
-public class ProfileServiceImpl implements ProfileService {
+class ProfileServiceImpl implements ProfileService {
     private final PersonService personService;
     private final PatientService patientService;
     private final DoctorService doctorService;

@@ -24,7 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ConsultationServiceImpl implements ConsultationService {
+class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationRepository consultationRepository;
     private final ConsultationMapper consultationMapper;
     private final DoctorService doctorService;

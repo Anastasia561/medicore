@@ -22,7 +22,7 @@ import pl.edu.medicore.record.repository.specification.RecordSpecification;
 
 @Service
 @RequiredArgsConstructor
-public class RecordServiceImpl implements RecordService {
+class RecordServiceImpl implements RecordService {
     private final RecordRepository recordRepository;
     private final RecordMapper recordMapper;
     private final AppointmentService appointmentService;

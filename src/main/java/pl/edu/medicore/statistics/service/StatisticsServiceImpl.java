@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class StatisticsServiceImpl implements StatisticsService {
+class StatisticsServiceImpl implements StatisticsService {
     private final PatientService patientService;
     private final DoctorService doctorService;
     private final AppointmentService appointmentService;

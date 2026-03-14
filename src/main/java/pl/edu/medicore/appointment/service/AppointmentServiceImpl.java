@@ -32,7 +32,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AppointmentServiceImpl implements AppointmentService {
+class AppointmentServiceImpl implements AppointmentService {
     private final PersonService personService;
     private final DoctorService doctorService;
     private final PatientService patientService;

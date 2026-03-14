@@ -11,7 +11,7 @@ import pl.edu.medicore.record.service.RecordService;
 
 @Service
 @RequiredArgsConstructor
-public class PrescriptionServiceImpl implements PrescriptionService {
+class PrescriptionServiceImpl implements PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final PrescriptionMapper prescriptionMapper;
     private final RecordService recordService;

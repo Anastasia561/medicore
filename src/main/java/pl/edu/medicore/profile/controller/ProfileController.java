@@ -26,6 +26,7 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @Operation(summary = "Get user profile info")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @GetMapping
     public ResponseWrapper<ProfileResponseDto> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
         long id = userDetails.getId();

@@ -10,12 +10,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.auth.dto.AuthRequestDto;
+import pl.edu.medicore.auth.dto.PasswordResetDto;
 import pl.edu.medicore.auth.dto.TokenResponseDto;
 import pl.edu.medicore.auth.jwt.service.JwtService;
 import pl.edu.medicore.auth.refreshtoken.service.RefreshTokenService;
 import pl.edu.medicore.exception.InvalidRefreshTokenException;
 import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.service.PersonService;
+import pl.edu.medicore.verification.model.TokenType;
+import pl.edu.medicore.verification.service.VerificationTokenService;
+
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ class AuthServiceImpl implements AuthService {
     private final UserDetailsService userDetailsService;
     private final PersonService personService;
     private final RefreshTokenService refreshTokenService;
+    private final VerificationTokenService verificationTokenService;
 
     @Override
     public TokenResponseDto login(AuthRequestDto request) {
@@ -80,5 +86,21 @@ class AuthServiceImpl implements AuthService {
         }
 
         refreshTokenService.revoke(refreshToken);
+    }
+
+    @Override
+    public void createResetToken(String email) {
+        personService.getByEmail(email);
+        String token = verificationTokenService.createToken(email, TokenType.PASSWORD_RESET,
+                Duration.ofMinutes(5));
+        //send via email
+        String link = "https://medicore.com/reset-password?token=" + token;
+        System.out.println("Link: " + link);
+    }
+
+    @Override
+    public void resetPassword(PasswordResetDto dto) {
+        personService.updatePassword(dto);
+        verificationTokenService.validateToken(dto.token(), TokenType.PASSWORD_RESET, dto.email());
     }
 }
