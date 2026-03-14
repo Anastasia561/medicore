@@ -23,6 +23,7 @@ import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.service.PersonService;
 import pl.edu.medicore.properties.SchedulingProperties;
+import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -101,5 +102,30 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment getById(Long id) {
         return appointmentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Appointment not found"));
+    }
+
+    @Override
+    public long getTotalAppointmentsToday() {
+        return appointmentRepository.countByDate(LocalDate.now());
+    }
+
+    @Override
+    public long getTotalAppointmentsTodayByDoctorId(long id) {
+        return appointmentRepository.countByDateAndDoctorId(LocalDate.now(), id);
+    }
+
+    @Override
+    public List<ConsultationStatisticsDto> getMonthlyStatistics() {
+        return appointmentRepository.getMonthlyStatistics(LocalDate.now().getYear());
+    }
+
+    @Override
+    public List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id) {
+        return appointmentRepository.getMonthlyStatisticsByDoctorId(id, LocalDate.now().getYear());
+    }
+
+    @Override
+    public long getDistinctPatientsByDoctorId(long doctorId) {
+        return appointmentRepository.countDistinctPatientsByDoctorId(doctorId);
     }
 }

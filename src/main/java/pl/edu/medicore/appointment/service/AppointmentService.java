@@ -6,6 +6,7 @@ import pl.edu.medicore.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.appointment.model.Appointment;
+import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,4 +22,14 @@ public interface AppointmentService {
     Appointment getById(Long id);
 
     List<LocalTime> getAvailableTimes(Long doctorId, LocalDate date);
+
+    long getTotalAppointmentsToday();
+
+    long getTotalAppointmentsTodayByDoctorId(long id);
+
+    List<ConsultationStatisticsDto> getMonthlyStatistics();
+
+    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id);
+
+    long getDistinctPatientsByDoctorId(long doctorId);
 }

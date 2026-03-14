@@ -67,4 +67,9 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
         patient.setStatus(status);
     }
+
+    @Override
+    public long getTotalCount() {
+        return patientRepository.count();
+    }
 }

@@ -11,6 +11,9 @@ import pl.edu.medicore.doctor.mapper.DoctorMapper;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.repository.DoctorRepository;
 import pl.edu.medicore.doctor.repository.specification.DoctorSpecification;
+import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +40,15 @@ public class DoctorServiceImpl implements DoctorService {
                 : doctorRepository.findAll(DoctorSpecification.search(filter), pageable);
 
         return all.map(doctorMapper::toDoctorResponseDto);
+    }
+
+    @Override
+    public List<DoctorStatisticsDto> getDoctorBySpecialization() {
+        return doctorRepository.countDoctorsBySpecialization();
+    }
+
+    @Override
+    public long getTotalCount() {
+        return doctorRepository.count();
     }
 }

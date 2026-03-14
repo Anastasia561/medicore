@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import pl.edu.medicore.appointment.model.Appointment;
+import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,4 +19,41 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
             AND a.status = 'SCHEDULED'
             """)
     List<LocalTime> getScheduledTimesForDoctorAndDate(Long doctorId, LocalDate date);
+
+    long countByDate(LocalDate date);
+
+    long countByDateAndDoctorId(LocalDate date, Long doctorId);
+
+    @Query("""
+            SELECT new pl.edu.medicore.statistics.dto.ConsultationStatisticsDto(
+                 MONTH(a.date),
+                 a.status,
+                 COUNT(a)
+            )
+            FROM Appointment a
+            WHERE YEAR(a.date) = :year
+            GROUP BY MONTH(a.date), a.status
+            ORDER BY MONTH(a.date)
+            """)
+    List<ConsultationStatisticsDto> getMonthlyStatistics(int year);
+
+    @Query("""
+            SELECT new pl.edu.medicore.statistics.dto.ConsultationStatisticsDto(
+                 MONTH(a.date),
+                 a.status,
+                 COUNT(a)
+            )
+            FROM Appointment a
+            WHERE YEAR(a.date) = :year AND a.doctor.id= :id
+            GROUP BY MONTH(a.date), a.status
+            ORDER BY MONTH(a.date)
+            """)
+    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id, int year);
+
+    @Query("""
+            SELECT COUNT(DISTINCT a.patient.id)
+            FROM Appointment a
+            WHERE a.doctor.id = :doctorId
+            """)
+    long countDistinctPatientsByDoctorId(long doctorId);
 }

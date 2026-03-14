@@ -87,29 +87,29 @@ VALUES (10, 12, '2012-01-10', 'ONCOLOGIST');
 
 -- APPOINTMENT
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-01', '10:30:00', 'SCHEDULED', 1, 6);
+VALUES ('2026-01-01', '10:30:00', 'SCHEDULED', 1, 6);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-02', '11:00:00', 'SCHEDULED', 2, 7);
+VALUES ('2026-03-02', '11:00:00', 'SCHEDULED', 2, 7);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-06', '09:00:00', 'COMPLETED', 3, 8);
+VALUES ('2026-02-06', '09:00:00', 'COMPLETED', 3, 8);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-05', '11:00:00', 'CANCELLED', 4, 9);
+VALUES ('2026-03-05', '11:00:00', 'CANCELLED', 4, 9);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-07', '13:00:00', 'CANCELLED', 5, 10);
+VALUES ('2026-02-07', '13:00:00', 'CANCELLED', 5, 10);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-02', '13:00:00', 'SCHEDULED', 1, 6);
+VALUES ('20256-05-02', '13:00:00', 'SCHEDULED', 1, 6);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-05', '11:00:00', 'CANCELLED', 1, 6);
+VALUES ('2026-06-05', '11:00:00', 'CANCELLED', 1, 6);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-06', '12:00:00', 'SCHEDULED', 1, 6);
+VALUES ('2026-02-06', '12:00:00', 'SCHEDULED', 1, 6);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-06', '09:00:00', 'COMPLETED', 3, 9);
+VALUES ('2026-01-06', '09:00:00', 'COMPLETED', 3, 9);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-08', '09:30:00', 'COMPLETED', 2, 8);
+VALUES ('2026-03-08', '09:30:00', 'COMPLETED', 2, 8);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-06', '09:00:00', 'COMPLETED', 4, 6);
+VALUES ('2026-04-06', '09:00:00', 'COMPLETED', 4, 6);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2025-05-01', '09:30:00', 'COMPLETED', 1, 10);
+VALUES ('2026-02-01', '09:30:00', 'COMPLETED', 1, 10);
 
 
 -- MEDICAL RECORD

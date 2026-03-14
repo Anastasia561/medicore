@@ -15,4 +15,6 @@ public interface PatientService {
     long register(PatientRegisterDto dto);
 
     void updateStatus(String email, Status status);
+
+    long getTotalCount();
 }
