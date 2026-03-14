@@ -8,4 +8,6 @@ public interface PersonService {
     Role getRoleById(Long id);
 
     Person getByEmail(String email);
+
+    Person getById(Long id);
 }

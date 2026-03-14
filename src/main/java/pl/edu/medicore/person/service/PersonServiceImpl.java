@@ -28,4 +28,10 @@ public class PersonServiceImpl implements PersonService {
             throw new UserNotVerifiedException("User not verified");
         return p;
     }
+
+    @Override
+    public Person getById(Long id) {
+        return personRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Person not found"));
+    }
 }
