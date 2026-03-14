@@ -2,11 +2,16 @@ package pl.edu.medicore.profile.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.doctor.service.DoctorService;
+import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
+import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.service.PersonService;
+import pl.edu.medicore.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.profile.dto.ProfileResponseDto;
+import pl.edu.medicore.profile.dto.ProfileUpdateDto;
 import pl.edu.medicore.profile.mapper.ProfileMapper;
 
 @Service
@@ -25,5 +30,21 @@ public class ProfileServiceImpl implements ProfileService {
             case DOCTOR -> profileMapper.toDoctorDto(doctorService.getById(id));
             default -> profileMapper.toDto(personService.getById(id));
         };
+    }
+
+    @Override
+    @Transactional
+    public long updateProfile(ProfileUpdateDto dto, long id) {
+        Person person = personService.getById(id);
+        profileMapper.updatePersonFromDto(dto, person);
+        return id;
+    }
+
+    @Override
+    @Transactional
+    public long updatePatientProfile(PatientProfileUpdateDto dto, long id) {
+        Patient patient = patientService.getById(id);
+        profileMapper.updatePatientFromDto(dto, patient);
+        return id;
     }
 }
