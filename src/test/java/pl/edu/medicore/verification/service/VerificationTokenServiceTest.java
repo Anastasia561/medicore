@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.edu.medicore.verification.dto.VerificationTokenCreateDto;
@@ -13,11 +14,13 @@ import pl.edu.medicore.verification.model.VerificationToken;
 import pl.edu.medicore.verification.repository.VerificationTokenRepository;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -99,5 +102,36 @@ class VerificationTokenServiceTest {
 
         assertEquals("Invalid or expired token", ex.getMessage());
         verify(tokenRepository, never()).delete(any());
+    }
+
+    @Test
+    void shouldReturnLatestToken_whenExists() {
+        String email = "test@example.com";
+        TokenType type = TokenType.PASSWORD_RESET;
+
+        VerificationToken token = new VerificationToken();
+        List<VerificationToken> tokens = List.of(token);
+
+        Mockito.when(tokenRepository.findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET)).thenReturn(tokens);
+
+        VerificationToken result = tokenService.findLatestByEmailAndTokenType(email, type);
+
+        assertNotNull(result);
+        assertEquals(token, result);
+        verify(tokenRepository).findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET);
+    }
+
+    @Test
+    void shouldReturnNull_whenNoTokenExists() {
+        String email = "test@example.com";
+        TokenType type = TokenType.PASSWORD_RESET;
+
+        Mockito.when(tokenRepository.findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET))
+                .thenReturn(Collections.emptyList());
+
+        VerificationToken result = tokenService.findLatestByEmailAndTokenType(email, type);
+
+        assertNull(result);
+        verify(tokenRepository).findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET);
     }
 }

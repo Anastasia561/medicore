@@ -2,7 +2,6 @@ package pl.edu.medicore.email.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
@@ -41,7 +40,7 @@ class SmtpEmailService implements EmailService {
 
             mailSender.send(message);
 
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Failed to send email");
         }
     }
