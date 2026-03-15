@@ -22,7 +22,7 @@ public class RecordControllerTest extends AbstractControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.patient.firstName").value("John"))
                 .andExpect(jsonPath("$.data.patient.lastName").value("Doe"))
                 .andExpect(jsonPath("$.data.patient.email").value("john.doe@example.com"))
-                .andExpect(jsonPath("$.data.date").value("2025-05-01"))
+                .andExpect(jsonPath("$.data.date").value("2026-02-01"))
                 .andExpect(jsonPath("$.data.diagnosis").value("High cholesterol"))
                 .andExpect(jsonPath("$.data.summary").value("Elevated LDL levels"))
                 .andExpect(jsonPath("$.data.prescriptions").isArray())
