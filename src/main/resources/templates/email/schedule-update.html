@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule Update Notification</title>
+    <th:block th:replace="~{fragments/styles :: head}"></th:block>
+</head>
+<body>
+<div class="content">
+    <th:block th:replace="~{fragments/logo :: logo}"></th:block>
+
+    <div class="header">Schedule Update Notification</div>
+
+    <p>Dear <span th:text="${firstName} + ' ' + ${lastName}"></span>,</p>
+
+    <p>This is to inform you that your schedule has been updated for the following day:</p>
+
+    <div class="details">
+        <p><strong>Day:</strong> <span th:text="${day}"></span></p>
+    </div>
+
+    <p>Please review your schedule and make any necessary preparations. If you have questions or conflicts, contact the
+        administration office.</p>
+
+    <p>Best regards,<br/>Medicore Clinic Team</p>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</div>
+</body>
+</html>

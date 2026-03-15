@@ -14,6 +14,9 @@ import pl.edu.medicore.consultation.model.Workday;
 import pl.edu.medicore.consultation.repository.ConsultationRepository;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
+import pl.edu.medicore.email.dto.ScheduleEmailDto;
+import pl.edu.medicore.email.model.EmailType;
+import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.DoctorNotAvailableException;
 import pl.edu.medicore.properties.ConsultationProperties;
 
@@ -21,6 +24,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationMapper consultationMapper;
     private final DoctorService doctorService;
     private final ConsultationProperties consultationProperties;
+    private final EmailService emailService;
 
     @Override
     public List<ConsultationDto> findByDoctorId(Long doctorId) {
@@ -61,6 +66,9 @@ class ConsultationServiceImpl implements ConsultationService {
         Doctor doctor = doctorService.getById(dto.doctorId());
 
         Consultation consultation = consultationMapper.toEntity(dto, doctor);
+
+        ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation);
+        emailService.sendEmail(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
         return consultationRepository.save(consultation).getId();
     }
 
@@ -71,14 +79,20 @@ class ConsultationServiceImpl implements ConsultationService {
                 .orElseThrow(() -> new EntityNotFoundException("Consultation not found"));
         validateTime(dto.startTime(), dto.endTime());
         consultationMapper.updateConsultationFromDto(dto, consultation);
+
+        ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation);
+        emailService.sendEmail(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
         return id;
     }
 
     @Override
     public void delete(Long id) {
-        if (consultationRepository.findById(id).isEmpty()) {
+        Optional<Consultation> consultation = consultationRepository.findById(id);
+        if (consultation.isEmpty()) {
             throw new EntityNotFoundException("Consultation not found");
         }
+        ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation.get());
+        emailService.sendEmail(consultation.get().getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
         consultationRepository.deleteById(id);
     }
 
