@@ -18,9 +18,11 @@ import pl.edu.medicore.exception.InvalidRefreshTokenException;
 import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.service.PersonService;
 import pl.edu.medicore.verification.model.TokenType;
+import pl.edu.medicore.verification.model.VerificationToken;
 import pl.edu.medicore.verification.service.VerificationTokenService;
 
 import java.time.Duration;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -93,6 +95,11 @@ class AuthServiceImpl implements AuthService {
         personService.getByEmail(email);
         String token = verificationTokenService.createToken(email, TokenType.PASSWORD_RESET,
                 Duration.ofMinutes(5));
+
+        VerificationToken latestToken = verificationTokenService.findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET);
+        if (latestToken != null && latestToken.getCreatedAt().isAfter(Instant.now().minusSeconds(60))) {
+            throw new IllegalStateException("Reset password request too frequent");
+        }
         //send via email
         String link = "https://medicore.com/reset-password?token=" + token;
         System.out.println("Link: " + link);

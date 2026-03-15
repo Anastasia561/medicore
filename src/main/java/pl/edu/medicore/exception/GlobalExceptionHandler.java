@@ -33,8 +33,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(EntityExistsException.class)
-    public ResponseEntity<ResponseWrapper<Object>> handleEntityExists(EntityExistsException ex) {
+    @ExceptionHandler({EntityExistsException.class, AppointmentAlreadyCancelledException.class})
+    public ResponseEntity<ResponseWrapper<Object>> handleEntityExists(RuntimeException ex) {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 

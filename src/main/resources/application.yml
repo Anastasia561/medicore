@@ -20,6 +20,13 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
 server:
   servlet:
     context-path: /api

@@ -37,7 +37,7 @@ VALUES ('Paulista Ave', 321, 5);
 
 -- PERSON
 INSERT INTO person (first_name, last_name, email, password, role, status)
-VALUES ( 'John', 'Doe', 'john.doe@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
+VALUES ( 'John', 'Doe', 'kurulenkoanastasia@gmail.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
 INSERT INTO person (first_name, last_name, email, password, role, status)
 VALUES ( 'Anna', 'Smith', 'anna.smith@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
 INSERT INTO person (first_name, last_name, email, password, role, status)

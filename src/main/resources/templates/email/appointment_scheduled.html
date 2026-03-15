@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Appointment Confirmation</title>
+    <th:block th:replace="~{fragments/styles :: head}"></th:block>
+</head>
+<body>
+<div class="content">
+
+    <th:block th:replace="~{fragments/logo :: logo}"></th:block>
+
+    <div class="header">Appointment Confirmation</div>
+
+    <p>Dear <span th:text="${patientFirstName} + ' ' + ${patientLastName}"></span>,</p>
+    <p>We are pleased to confirm your appointment with the following details:</p>
+
+    <th:block
+            th:replace="~{fragments/appointment-details :: appointment-details(
+        ${patientFirstName},
+        ${patientLastName},
+        ${doctorFirstName},
+        ${doctorLastName},
+        ${specialization},
+        ${date},
+        ${time})}">
+    </th:block>
+
+    <p>Please arrive 10 minutes before your scheduled time. If you have any questions or need to reschedule, feel free
+        to contact our office.</p>
+
+    <p>We look forward to seeing you!</p>
+
+    <p>Best regards,<br/>Medicore Clinic Team</p>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</div>
+</body>
+</html>

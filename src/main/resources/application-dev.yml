@@ -4,6 +4,10 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
 
+  mail:
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+
 app:
   jwt:
     secret: ${JWT_SECRET}

@@ -19,4 +19,15 @@ public interface VerificationTokenRepository extends JpaRepository<VerificationT
             @Param("email") String email,
             @Param("type") TokenType type
     );
+
+    @Query("""
+            SELECT t
+            FROM VerificationToken t
+            WHERE t.email = :email
+            AND t.tokenType = :tokenType
+            ORDER BY t.createdAt DESC
+            """)
+    List<VerificationToken> findLatestByEmailAndTokenType(
+            String email,
+            TokenType tokenType);
 }

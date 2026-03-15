@@ -18,6 +18,10 @@ import pl.edu.medicore.consultation.model.Consultation;
 import pl.edu.medicore.consultation.service.ConsultationService;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
+import pl.edu.medicore.email.dto.AppointmentNotificationEmailDto;
+import pl.edu.medicore.email.model.EmailType;
+import pl.edu.medicore.email.service.EmailService;
+import pl.edu.medicore.exception.AppointmentAlreadyCancelledException;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Role;
@@ -40,6 +44,7 @@ class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentMapper appointmentMapper;
     private final SchedulingProperties schedulingProperties;
     private final ConsultationService consultationService;
+    private final EmailService emailService;
 
     @Override
     public Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable) {
@@ -59,7 +64,14 @@ class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public void cancel(Long id) {
         Appointment appointment = getById(id);
+        if (appointment.getStatus().equals(Status.CANCELLED)) {
+            throw new AppointmentAlreadyCancelledException("Appointment is already cancelled");
+        }
         appointment.setStatus(Status.CANCELLED);
+
+        AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(appointment);
+        emailService.sendEmail(appointment.getPatient().getEmail(), EmailType.APPOINTMENT_CANCELLATION, emailDto);
+        emailService.sendEmail(appointment.getDoctor().getEmail(), EmailType.APPOINTMENT_CANCELLATION, emailDto);
     }
 
     @Override
@@ -72,7 +84,11 @@ class AppointmentServiceImpl implements AppointmentService {
 
         Doctor doctor = doctorService.getById(dto.doctorId());
         Patient patient = patientService.getById(patientId);
+
         Appointment entity = appointmentMapper.toEntity(dto, doctor, patient);
+        AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(entity);
+        emailService.sendEmail(entity.getPatient().getEmail(), EmailType.APPOINTMENT_SCHEDULED, emailDto);
+
         return appointmentRepository.save(entity).getId();
     }
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Appointment Cancellation</title>
+    <th:block th:replace="~{fragments/styles :: head}"></th:block>
+</head>
+<body>
+<div class="content">
+    <th:block th:replace="~{fragments/logo :: logo}"></th:block>
+
+    <div class="header">Appointment Cancellation Notification</div>
+
+    <p>We regret to inform you that your appointment has been canceled.</p>
+
+    <th:block
+            th:replace="~{fragments/appointment-details :: appointment-details(
+        ${patientFirstName},
+        ${patientLastName},
+        ${doctorFirstName},
+        ${doctorLastName},
+        ${specialization},
+        ${date},
+        ${time})}">
+    </th:block>
+
+    <p>If you have any questions or would like to reschedule, please contact our office.</p>
+
+    <p>Best regards,<br/>Medicore Clinic Team</p>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</div>
+</body>
+</html>

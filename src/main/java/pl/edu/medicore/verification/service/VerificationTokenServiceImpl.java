@@ -41,4 +41,13 @@ class VerificationTokenServiceImpl implements VerificationTokenService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired token"));
         tokenRepository.delete(token);
     }
+
+    @Override
+    public VerificationToken findLatestByEmailAndTokenType(String email, TokenType type) {
+        return tokenRepository
+                .findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET)
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
 }

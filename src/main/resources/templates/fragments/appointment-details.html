@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<th:block th:fragment="appointment-details(patientFirstName, patientLastName, doctorFirstName, doctorLastName, specialization, date, time)">
+    <div class="details">
+        <p><strong>Patient:</strong> <span th:text="${patientFirstName} + ' ' + ${patientLastName}"></span></p>
+        <p><strong>Doctor:</strong> <span th:text="${doctorFirstName} + ' ' + ${doctorLastName}"></span></p>
+        <p><strong>Specialization:</strong> <span th:text="${specialization}"></span></p>
+        <p><strong>Date:</strong> <span th:text="${date}"></span></p>
+        <p><strong>Time:</strong> <span th:text="${time}"></span></p>
+    </div>
+</th:block>
+</body>
+</html>
