@@ -17,12 +17,7 @@
 
     <p>To complete your registration and access your account, please click the link below:</p>
 
-    <p style="text-align: center; margin: 20px 0;">
-        <a th:href="${url}"
-           style="display: inline-block; padding: 10px 20px; background-color: #1a73e8; color: white; text-decoration: none; border-radius: 5px;">
-            Complete Registration
-        </a>
-    </p>
+    <th:block th:replace="~{fragments/url-button :: url-button(${url}, 'Complete Registration')}"></th:block>
 
     <p>If you did not expect this invitation, please ignore this email.</p>
 

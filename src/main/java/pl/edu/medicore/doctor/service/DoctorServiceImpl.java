@@ -19,6 +19,7 @@ import pl.edu.medicore.email.dto.VerificationEmailDto;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
+import pl.edu.medicore.utils.UrlBuilder;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.service.VerificationTokenService;
 
@@ -32,6 +33,7 @@ class DoctorServiceImpl implements DoctorService {
     private final DoctorMapper doctorMapper;
     private final VerificationTokenService verificationTokenService;
     private final EmailService emailService;
+    private final UrlBuilder urlBuilder;
 
     @Override
     public void checkExistsById(Long doctorId) {
@@ -69,7 +71,7 @@ class DoctorServiceImpl implements DoctorService {
         String token = verificationTokenService.createToken(dto.email(), TokenType.DOCTOR_INVITATION,
                 Duration.ofDays(10));
 
-        String link = "https://medicore.com/register?token=" + token;
+        String link = urlBuilder.buildDoctorRegistrationUrl(token);
         VerificationEmailDto emailDto = new VerificationEmailDto(dto.firstName(), dto.lastName(), link);
         emailService.sendEmail(dto.email(), EmailType.DOCTOR_INVITE, emailDto);
     }

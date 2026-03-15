@@ -20,6 +20,7 @@ import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.repository.PatientRepository;
 import pl.edu.medicore.patient.repository.specification.PatientSpecification;
 import pl.edu.medicore.person.model.Status;
+import pl.edu.medicore.utils.UrlBuilder;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.service.VerificationTokenService;
 
@@ -34,6 +35,7 @@ class PatientServiceImpl implements PatientService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenService verificationTokenService;
     private final EmailService emailService;
+    private final UrlBuilder urlBuilder;
 
     @Override
     public Page<PatientResponseDto> findAll(String query, Pageable pageable) {
@@ -64,7 +66,7 @@ class PatientServiceImpl implements PatientService {
         String token = verificationTokenService.createToken(dto.email(), TokenType.EMAIL_VERIFICATION,
                 Duration.ofMinutes(5));
 
-        String link = "https://medicore.com/verify?token=" + token;
+        String link = urlBuilder.buildEmailVerificationUrl(token);
         VerificationEmailDto emailDto = new VerificationEmailDto(dto.firstName(), dto.lastName(), link);
         emailService.sendEmail(dto.email(), EmailType.EMAIL_VERIFICATION, emailDto);
         return patientRepository.save(patient).getId();

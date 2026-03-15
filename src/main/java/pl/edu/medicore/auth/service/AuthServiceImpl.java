@@ -14,9 +14,15 @@ import pl.edu.medicore.auth.dto.PasswordResetDto;
 import pl.edu.medicore.auth.dto.TokenResponseDto;
 import pl.edu.medicore.auth.jwt.service.JwtService;
 import pl.edu.medicore.auth.refreshtoken.service.RefreshTokenService;
+import pl.edu.medicore.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.email.dto.VerificationEmailDto;
+import pl.edu.medicore.email.model.EmailType;
+import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.InvalidRefreshTokenException;
+import pl.edu.medicore.person.mapper.PersonMapper;
 import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.service.PersonService;
+import pl.edu.medicore.utils.UrlBuilder;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.model.VerificationToken;
 import pl.edu.medicore.verification.service.VerificationTokenService;
@@ -34,6 +40,9 @@ class AuthServiceImpl implements AuthService {
     private final PersonService personService;
     private final RefreshTokenService refreshTokenService;
     private final VerificationTokenService verificationTokenService;
+    private final PersonMapper personMapper;
+    private final EmailService emailService;
+    private final UrlBuilder urlBuilder;
 
     @Override
     public TokenResponseDto login(AuthRequestDto request) {
@@ -92,22 +101,26 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     public void createResetToken(String email) {
-        personService.getByEmail(email);
-        String token = verificationTokenService.createToken(email, TokenType.PASSWORD_RESET,
-                Duration.ofMinutes(5));
-
         VerificationToken latestToken = verificationTokenService.findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET);
         if (latestToken != null && latestToken.getCreatedAt().isAfter(Instant.now().minusSeconds(60))) {
             throw new IllegalStateException("Reset password request too frequent");
         }
-        //send via email
-        String link = "https://medicore.com/reset-password?token=" + token;
-        System.out.println("Link: " + link);
+
+        Person person = personService.getByEmail(email);
+        String token = verificationTokenService.createToken(email, TokenType.PASSWORD_RESET,
+                Duration.ofMinutes(5));
+
+        String link = urlBuilder.buildPasswordResetUrl(token);
+        VerificationEmailDto dto = new VerificationEmailDto(person.getFirstName(), person.getLastName(), link);
+        emailService.sendEmail(person.getEmail(), EmailType.PASSWORD_RESET_REQUEST, dto);
     }
 
     @Override
     public void resetPassword(PasswordResetDto dto) {
         personService.updatePassword(dto);
         verificationTokenService.validateToken(dto.token(), TokenType.PASSWORD_RESET, dto.email());
+
+        ConfirmationEmailDto emailDto = personMapper.toEmailDto(personService.getByEmail(dto.email()));
+        emailService.sendEmail(dto.email(), EmailType.PASSWORD_RESET_CONFIRM, emailDto);
     }
 }

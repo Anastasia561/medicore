@@ -11,6 +11,7 @@ services:
       - RESOURCE_SERVER_URL=${RESOURCE_SERVER_URL}
       - EMAIL_USERNAME=${EMAIL_USERNAME}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - BASE_URL=${BASE_URL}
     ports:
       - "8080:8080"
     depends_on:

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<th:block th:fragment="url-button(url, name)">
+    <p style="text-align: center; margin: 20px 0;">
+        <a th:href="${url}"
+           style="display: inline-block; padding: 10px 20px;
+                      background-color: #1a73e8; color: white;
+                      text-decoration: none; border-radius: 5px;">
+            <span th:text="${name}">Button</span>
+        </a>
+    </p>
+</th:block>
+</body>
+</html>
