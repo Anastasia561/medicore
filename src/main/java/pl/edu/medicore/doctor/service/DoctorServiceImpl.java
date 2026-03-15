@@ -7,12 +7,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.doctor.dto.DoctorFilterDto;
+import pl.edu.medicore.doctor.dto.DoctorInvitationRequestDto;
 import pl.edu.medicore.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.doctor.mapper.DoctorMapper;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.repository.DoctorRepository;
 import pl.edu.medicore.doctor.repository.specification.DoctorSpecification;
+import pl.edu.medicore.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.email.dto.VerificationEmailDto;
+import pl.edu.medicore.email.model.EmailType;
+import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.service.VerificationTokenService;
@@ -26,6 +31,7 @@ class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
     private final VerificationTokenService verificationTokenService;
+    private final EmailService emailService;
 
     @Override
     public void checkExistsById(Long doctorId) {
@@ -59,12 +65,13 @@ class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void invite(String email) {
-        String token = verificationTokenService.createToken(email, TokenType.DOCTOR_INVITATION,
+    public void invite(DoctorInvitationRequestDto dto) {
+        String token = verificationTokenService.createToken(dto.email(), TokenType.DOCTOR_INVITATION,
                 Duration.ofDays(10));
-        //send via email
+
         String link = "https://medicore.com/register?token=" + token;
-        System.out.println("Link: " + link);
+        VerificationEmailDto emailDto = new VerificationEmailDto(dto.firstName(), dto.lastName(), link);
+        emailService.sendEmail(dto.email(), EmailType.DOCTOR_INVITE, emailDto);
     }
 
     @Override
@@ -76,6 +83,9 @@ class DoctorServiceImpl implements DoctorService {
             throw new IllegalArgumentException("Passwords don't match");
 
         Doctor entity = doctorMapper.toEntity(dto);
+
+        ConfirmationEmailDto emailDto = doctorMapper.toEmailDto(entity);
+        emailService.sendEmail(entity.getEmail(), EmailType.REGISTRATION_CONFIRMATION, emailDto);
         return doctorRepository.save(entity).getId();
     }
 }

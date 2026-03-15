@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
+import pl.edu.medicore.patient.dto.PatientVerificationRequestDto;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Status;
 import pl.edu.medicore.verification.model.TokenType;
@@ -49,8 +50,8 @@ public class PatientController {
 
     @Operation(summary = "Verify email after registration for profile activation")
     @PostMapping("/verify-email")
-    public void verifyEmail(@RequestParam String token, @RequestParam String email) {
-        tokenService.validateToken(token, TokenType.EMAIL_VERIFICATION, email);
-        patientService.updateStatus(email, Status.ACTIVE);
+    public void verifyEmail(@Valid @RequestBody PatientVerificationRequestDto dto) {
+        tokenService.validateToken(dto.token(), TokenType.EMAIL_VERIFICATION, dto.email());
+        patientService.updateStatus(dto.email(), Status.ACTIVE);
     }
 }

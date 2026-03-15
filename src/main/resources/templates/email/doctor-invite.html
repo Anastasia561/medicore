@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Invitation</title>
+    <th:block th:replace="~{fragments/styles :: head}"></th:block>
+</head>
+<body>
+<div class="content">
+    <th:block th:replace="~{fragments/logo :: logo}"></th:block>
+
+    <div class="header">Invitation to Join Medicore Clinic</div>
+
+    <p>Dear Dr. <span th:text="${firstName} + ' ' + ${lastName}"></span>,</p>
+
+    <p>We are excited to invite you to join Medicore Clinic's platform as a registered doctor.</p>
+
+    <p>To complete your registration and access your account, please click the link below:</p>
+
+    <p style="text-align: center; margin: 20px 0;">
+        <a th:href="${url}"
+           style="display: inline-block; padding: 10px 20px; background-color: #1a73e8; color: white; text-decoration: none; border-radius: 5px;">
+            Complete Registration
+        </a>
+    </p>
+
+    <p>If you did not expect this invitation, please ignore this email.</p>
+
+    <p>Best regards,<br/>Medicore Clinic Team</p>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</div>
+</body>
+</html>

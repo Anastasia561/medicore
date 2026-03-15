@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.address.mapper.AddressMapper;
 import pl.edu.medicore.address.model.Address;
+import pl.edu.medicore.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.email.dto.VerificationEmailDto;
+import pl.edu.medicore.email.model.EmailType;
+import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.mapper.PatientMapper;
@@ -29,6 +33,7 @@ class PatientServiceImpl implements PatientService {
     private final AddressMapper addressMapper;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenService verificationTokenService;
+    private final EmailService emailService;
 
     @Override
     public Page<PatientResponseDto> findAll(String query, Pageable pageable) {
@@ -58,8 +63,10 @@ class PatientServiceImpl implements PatientService {
         patient.setEmail(dto.email().toLowerCase());
         String token = verificationTokenService.createToken(dto.email(), TokenType.EMAIL_VERIFICATION,
                 Duration.ofMinutes(5));
-        //send via email
-        System.out.println("Token: " + token);
+
+        String link = "https://medicore.com/verify?token=" + token;
+        VerificationEmailDto emailDto = new VerificationEmailDto(dto.firstName(), dto.lastName(), link);
+        emailService.sendEmail(dto.email(), EmailType.EMAIL_VERIFICATION, emailDto);
         return patientRepository.save(patient).getId();
     }
 
@@ -69,6 +76,9 @@ class PatientServiceImpl implements PatientService {
         Patient patient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
         patient.setStatus(status);
+
+        ConfirmationEmailDto emailDto = patientMapper.toEmailDto(patient);
+        emailService.sendEmail(patient.getEmail(), EmailType.REGISTRATION_CONFIRMATION, emailDto);
     }
 
     @Override

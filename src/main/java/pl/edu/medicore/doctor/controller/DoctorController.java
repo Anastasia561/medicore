@@ -55,8 +55,8 @@ public class DoctorController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/invite")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inviteDoctor(@RequestBody DoctorInvitationRequestDto request) {
-        doctorService.invite(request.email());
+    public void inviteDoctor(@Valid @RequestBody DoctorInvitationRequestDto request) {
+        doctorService.invite(request);
     }
 
     @Operation(summary = "Register a new doctor")

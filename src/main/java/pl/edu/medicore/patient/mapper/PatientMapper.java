@@ -3,6 +3,7 @@ package pl.edu.medicore.patient.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import pl.edu.medicore.address.mapper.AddressMapper;
+import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.model.Patient;
@@ -16,4 +17,6 @@ public interface PatientMapper {
     @Mapping(target = "status", constant = "UNVERIFIED")
     @Mapping(target = "address", source = "address")
     Patient toEntity(PatientRegisterDto dto);
+
+    ConfirmationEmailDto toEmailDto(Patient patient);
 }

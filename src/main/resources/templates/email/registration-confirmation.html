@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Confirmation</title>
+    <th:block th:replace="~{fragments/styles :: head}"></th:block>
+</head>
+<body>
+<div class="content">
+    <th:block th:replace="~{fragments/logo :: logo}"></th:block>
+
+    <div class="header">Registration Confirmation</div>
+
+    <p>Dear <span th:text="${firstName} + ' ' + ${lastName}"></span>,</p>
+
+    <p>Welcome to Medicore Clinic! Your registration was successful.</p>
+
+    <p>You can now log in to your account and start scheduling appointments.</p>
+
+    <p>We are excited to have you with us!</p>
+
+    <p>Best regards,<br/>Medicore Clinic Team</p>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</div>
+</body>
+</html>

@@ -6,6 +6,8 @@ import pl.edu.medicore.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.model.Specialization;
+import pl.edu.medicore.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.email.dto.VerificationEmailDto;
 
 @Mapper(componentModel = "spring")
 public interface DoctorMapper {
@@ -17,4 +19,6 @@ public interface DoctorMapper {
     @Mapping(target = "status", constant = "ACTIVE")
     @Mapping(target = "employmentDate", expression = "java(java.time.LocalDate.now())")
     Doctor toEntity(DoctorRegistrationDto dto);
+
+    ConfirmationEmailDto toEmailDto(Doctor doctor);
 }
