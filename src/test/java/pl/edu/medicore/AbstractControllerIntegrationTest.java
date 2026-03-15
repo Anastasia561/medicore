@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import pl.edu.medicore.auth.dto.AuthRequestDto;
 import pl.edu.medicore.auth.service.AuthService;
 import pl.edu.medicore.config.TestContainersConfig;
-import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.model.Role;
 import tools.jackson.databind.ObjectMapper;
 
