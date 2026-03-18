@@ -99,8 +99,6 @@ class AppointmentServiceImpl implements AppointmentService {
         LocalTime endTime = consultation.getEndTime();
 
         List<LocalTime> scheduledTimes = appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date);
-        System.out.println("scheduledTimes: ");
-        scheduledTimes.forEach(System.out::println);
 
         List<LocalTime> allSlots = new ArrayList<>();
         LocalTime current = startTime;

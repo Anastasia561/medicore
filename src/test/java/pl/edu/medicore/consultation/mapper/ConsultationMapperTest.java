@@ -9,6 +9,7 @@ import pl.edu.medicore.consultation.dto.ConsultationUpdateDto;
 import pl.edu.medicore.consultation.model.Consultation;
 import pl.edu.medicore.consultation.model.Workday;
 import pl.edu.medicore.doctor.model.Doctor;
+import pl.edu.medicore.email.dto.ScheduleEmailDto;
 
 import java.time.LocalTime;
 
@@ -33,6 +34,21 @@ class ConsultationMapperTest {
         ConsultationDto result = consultationMapper.toDto(consultation);
         assertEquals(LocalTime.of(8, 30), result.startTime());
         assertEquals(LocalTime.of(17, 30), result.endTime());
+        assertEquals(Workday.FRIDAY, result.day());
+    }
+
+    @Test
+    void shouldMapToEmailDto_whenInputIsValid() {
+        Consultation consultation = new Consultation();
+        Doctor doctor = new Doctor();
+        doctor.setFirstName("John");
+        doctor.setLastName("Doe");
+        consultation.setWorkday(Workday.FRIDAY);
+        consultation.setDoctor(doctor);
+
+        ScheduleEmailDto result = consultationMapper.toEmailDto(consultation);
+        assertEquals("John", result.firstName());
+        assertEquals("Doe", result.lastName());
         assertEquals(Workday.FRIDAY, result.day());
     }
 
@@ -66,8 +82,13 @@ class ConsultationMapperTest {
     }
 
     @Test
-    void shouldReturnNull_whenConsultationIsNull() {
+    void shouldReturnNull_whenConsultationIsNullForDto() {
         assertNull(consultationMapper.toDto(null));
+    }
+
+    @Test
+    void shouldReturnNull_whenConsultationIsNullForEmailDto() {
+        assertNull(consultationMapper.toEmailDto(null));
     }
 
     @Test
