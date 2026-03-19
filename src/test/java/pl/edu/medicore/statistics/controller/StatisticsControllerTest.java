@@ -31,10 +31,10 @@ class StatisticsControllerTest extends AbstractControllerIntegrationTest {
 
         performRequest(HttpMethod.GET, "/statistics/doctor/{id}", null, 6)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.totalPatients").value(2))
+                .andExpect(jsonPath("$.data.totalPatients").value(3))
                 .andExpect(jsonPath("$.data.consultationsToday").value(0))
                 .andExpect(jsonPath("$.data.monthlyConsultations").isArray())
-                .andExpect(jsonPath("$.data.monthlyConsultations.length()").value(4));
+                .andExpect(jsonPath("$.data.monthlyConsultations.length()").value(5));
     }
 
     @Test

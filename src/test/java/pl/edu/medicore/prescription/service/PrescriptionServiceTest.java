@@ -61,7 +61,7 @@ class PrescriptionServiceTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> prescriptionService.create(dto));
 
-        assertEquals("Start date must be after end date", ex.getMessage());
+        assertEquals("End date must be after start date", ex.getMessage());
         verifyNoInteractions(prescriptionRepository, recordService);
     }
 }
