@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ConsultationServiceTest {
+class ConsultationServiceTest {
     @Mock
     private ConsultationRepository consultationRepository;
     @Mock

@@ -1,7 +1,10 @@
 package pl.edu.medicore;
 
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -49,6 +52,10 @@ public abstract class AbstractControllerIntegrationTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @RegisterExtension
+    protected static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
+            .withPerMethodLifecycle(true);
 
     private String token;
 

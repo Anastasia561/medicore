@@ -5,6 +5,13 @@ spring:
       - filesystem:${user.dir}/flyway/sql/schema
       - classpath:flyway/sql
 
+  mail:
+    host: localhost
+    port: 3025
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
+
 testcontainers:
   postgres:
     image: postgres:15-alpine
@@ -15,4 +22,3 @@ testcontainers:
 app:
   jwt:
     secret: ${JWT_SECRET}
-
