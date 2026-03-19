@@ -10,10 +10,13 @@ import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.model.Specialization;
+import pl.edu.medicore.email.dto.AppointmentNotificationEmailDto;
 import pl.edu.medicore.patient.model.Patient;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -87,6 +90,40 @@ class AppointmentMapperTest {
         assertEquals(Status.SCHEDULED, result.getStatus());
         assertEquals(LocalDate.of(2026, 10, 12), result.getDate());
         assertEquals(LocalTime.of(20, 10), result.getTime());
+    }
+
+    @Test
+    void shouldMapToAppointmentNotificationDto_whenInputIsValid() {
+        Patient patient = new Patient();
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+
+        Doctor doctor = new Doctor();
+        doctor.setFirstName("Kevin");
+        doctor.setLastName("Lee");
+        doctor.setSpecialization(Specialization.DERMATOLOGIST);
+
+        Appointment appointment = new Appointment();
+        appointment.setDate(LocalDate.of(2026, 10, 12));
+        appointment.setTime(LocalTime.of(20, 10));
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+
+        AppointmentNotificationEmailDto dto = appointmentMapper.toEmailDto(appointment);
+        assertEquals("John", dto.patientFirstName());
+        assertEquals("Doe", dto.patientLastName());
+        assertEquals("Kevin", dto.doctorFirstName());
+        assertEquals("Lee", dto.doctorLastName());
+        assertEquals(LocalDate.of(2026, 10, 12).format(dateFormatter), dto.date());
+        assertEquals(LocalTime.of(20, 10).format(timeFormatter), dto.time());
+    }
+
+    @Test
+    void shouldReturnNull_whenAppointmentForNotificationEmailDtoIsNull() {
+        assertNull(appointmentMapper.toEmailDto(null));
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.address.dto.PatientAddressDto;
 import pl.edu.medicore.address.mapper.AddressMapper;
 import pl.edu.medicore.address.model.Address;
+import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.model.Patient;
@@ -68,6 +69,23 @@ class PatientMapperTest {
         assertEquals(Status.UNVERIFIED, entity.getStatus());
         assertEquals(Role.PATIENT, entity.getRole());
         assertEquals("Poland", entity.getAddress().getCity().getCountry().getName());
+    }
+
+    @Test
+    void shouldMapToEmailDto_whenInputIsValid() {
+        Patient patient = new Patient();
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+
+        ConfirmationEmailDto dto = patientMapper.toEmailDto(patient);
+
+        assertEquals("John", dto.firstName());
+        assertEquals("Doe", dto.lastName());
+    }
+
+    @Test
+    void shouldReturnNull_whenPatientIsNullForEmailDto() {
+        assertNull(patientMapper.toEmailDto(null));
     }
 
     @Test
