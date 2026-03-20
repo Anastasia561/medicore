@@ -68,8 +68,9 @@ class PatientServiceImpl implements PatientService {
 
         String link = urlBuilder.buildEmailVerificationUrl(token);
         VerificationEmailDto emailDto = new VerificationEmailDto(dto.firstName(), dto.lastName(), link);
+        Patient saved = patientRepository.save(patient);
         emailService.sendEmail(dto.email(), EmailType.EMAIL_VERIFICATION, emailDto);
-        return patientRepository.save(patient).getId();
+        return saved.getId();
     }
 
     @Override
