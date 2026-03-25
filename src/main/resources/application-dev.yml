@@ -13,6 +13,10 @@ app:
     secret: ${JWT_SECRET}
   frontend:
     base-url: ${BASE_URL}
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+      region: ${AWS_S3_REGION}
 
 openapi:
   resource-server-url: ${RESOURCE_SERVER_URL}

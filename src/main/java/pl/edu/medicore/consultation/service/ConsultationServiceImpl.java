@@ -18,7 +18,7 @@ import pl.edu.medicore.email.dto.ScheduleEmailDto;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.DoctorNotAvailableException;
-import pl.edu.medicore.properties.ConsultationProperties;
+import pl.edu.medicore.config.properties.ConsultationProperties;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

@@ -26,7 +26,7 @@ import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.service.PersonService;
-import pl.edu.medicore.properties.SchedulingProperties;
+import pl.edu.medicore.config.properties.SchedulingProperties;
 import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
 import java.time.LocalDate;

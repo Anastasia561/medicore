@@ -12,8 +12,12 @@ services:
       - EMAIL_USERNAME=${EMAIL_USERNAME}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - BASE_URL=${BASE_URL}
+      - AWS_S3_REGION=${AWS_S3_REGION}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
     ports:
       - "8080:8080"
+    volumes:
+      - ~/.aws:/root/.aws:ro
     depends_on:
       postgres:
         condition: service_healthy

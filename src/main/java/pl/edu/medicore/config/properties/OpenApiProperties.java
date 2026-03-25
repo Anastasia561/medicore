@@ -1,4 +1,4 @@
-package pl.edu.medicore.properties;
+package pl.edu.medicore.config.properties;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

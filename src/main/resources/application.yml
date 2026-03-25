@@ -39,6 +39,12 @@ app:
   scheduling:
     slot-duration-minutes: 60
 
+  aws:
+    s3:
+      folder-name: test
+      file-name: report
+      url-duration-min: 30
+
   jwt:
     accessTokenExpirationTimeMs: 900_000      # 15 min
     refreshTokenExpirationTimeMs: 2_592_000_000 # 30 days
