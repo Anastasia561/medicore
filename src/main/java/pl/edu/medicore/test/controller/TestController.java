@@ -1,9 +1,12 @@
 package pl.edu.medicore.test.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,20 +27,27 @@ import java.net.URL;
 @RestController
 @RequestMapping("/tests")
 @RequiredArgsConstructor
+@Tag(name = "Tests", description = "Endpoints for managing patients blood tests")
 public class TestController {
     private final TestService testService;
     private final UrlGeneratorService urlGeneratorService;
 
+    @Operation(summary = "Get presigned url to view blood test file")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/view/{id}")
     public ResponseWrapper<URL> getViewUrl(@PathVariable long id) {
         return ResponseWrapper.ok(urlGeneratorService.generateViewUrl(id));
     }
 
+    @Operation(summary = "Get presigned url to download blood test file")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/download/{id}")
     public ResponseWrapper<URL> getDownloadUrl(@PathVariable long id) {
         return ResponseWrapper.ok(urlGeneratorService.generateDownloadUrl(id));
     }
 
+    @Operation(summary = "Endpoint for uploading blood test file")
+    @PreAuthorize("hasRole('PATIENT')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseWrapper<Long> upload(@ModelAttribute @Valid TestUploadRequestDto dto,
@@ -45,6 +55,8 @@ public class TestController {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, testService.save(dto, user.getId()));
     }
 
+    @Operation(summary = "Endpoint for deleting blood test file")
+    @PreAuthorize("hasAnyRole('PATIENT')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
