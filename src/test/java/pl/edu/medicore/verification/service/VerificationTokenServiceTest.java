@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 class VerificationTokenServiceTest {
@@ -73,13 +74,13 @@ class VerificationTokenServiceTest {
         VerificationToken token = new VerificationToken();
         token.setTokenHash(tokenHash);
 
-        when(tokenRepository.findActiveTokensByEmailAndType(email, type, Instant.now())).thenReturn(List.of(token));
+        when(tokenRepository.findActiveTokensByEmailAndType(eq(email), eq(type), any(Instant.class)
+        )).thenReturn(List.of(token));
         when(passwordEncoder.matches(rawToken, tokenHash)).thenReturn(true);
 
         tokenService.validateToken(rawToken, type, email);
 
         verify(tokenRepository).delete(token);
-        verify(tokenRepository).findActiveTokensByEmailAndType(email, type, Instant.now());
         verify(passwordEncoder).matches(rawToken, tokenHash);
     }
 
@@ -93,7 +94,9 @@ class VerificationTokenServiceTest {
         VerificationToken token = new VerificationToken();
         token.setTokenHash(tokenHash);
 
-        when(tokenRepository.findActiveTokensByEmailAndType(email, type, Instant.now())).thenReturn(List.of(token));
+        when(tokenRepository.findActiveTokensByEmailAndType(eq(email), eq(type), any(Instant.class)
+        )).thenReturn(List.of(token));
+
         when(passwordEncoder.matches(rawToken, tokenHash)).thenReturn(false);
 
         IllegalArgumentException ex = assertThrows(
