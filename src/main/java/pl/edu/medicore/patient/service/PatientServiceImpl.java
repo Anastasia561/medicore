@@ -81,7 +81,7 @@ class PatientServiceImpl implements PatientService {
         patient.setStatus(status);
 
         ConfirmationEmailDto emailDto = patientMapper.toEmailDto(patient);
-        emailService.sendEmail(patient.getEmail(), EmailType.REGISTRATION_CONFIRMATION, emailDto);
+        emailService.sendEmail(email, EmailType.REGISTRATION_CONFIRMATION, emailDto);
     }
 
     @Override

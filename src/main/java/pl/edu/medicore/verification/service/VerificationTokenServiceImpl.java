@@ -11,6 +11,7 @@ import pl.edu.medicore.verification.model.VerificationToken;
 import pl.edu.medicore.verification.repository.VerificationTokenRepository;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ class VerificationTokenServiceImpl implements VerificationTokenService {
 
     @Override
     public void validateToken(String rawToken, TokenType type, String email) {
-        List<VerificationToken> tokens = tokenRepository.findActiveTokensByEmailAndType(email, type);
+        List<VerificationToken> tokens = tokenRepository.findActiveTokensByEmailAndType(email, type, Instant.now());
 
         VerificationToken token = tokens.stream()
                 .filter(t -> passwordEncoder.matches(rawToken, t.getTokenHash()))
