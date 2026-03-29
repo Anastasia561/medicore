@@ -25,18 +25,27 @@ public class LabResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)
-    private Parameter parameter;
+    private String parameter;
 
     @Column(nullable = false)
     private Double value;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)
-    private Unit unit;
+    private String unit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id", nullable = false)
     private Test test;
+
+    @Override
+    public String toString() {
+        return "LabResult{" +
+                ", parameter='" + parameter + '\'' +
+                ", value=" + value +
+                ", unit='" + unit + '\'' +
+                '}';
+    }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.edu.medicore.labresult.service.LabResultService;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.test.model.Test;
@@ -17,6 +18,7 @@ class TestServiceImpl implements TestService {
     private final PatientService patientService;
     private final TestRepository testRepository;
     private final StorageService storageService;
+    private final LabResultService labResultService;
 
     @Override
     @Transactional
@@ -33,6 +35,7 @@ class TestServiceImpl implements TestService {
 
         try {
             storageService.uploadTest(dto.file(), saved.getId());
+            labResultService.processLabResults(test.getId());
             return saved.getId();
 
         } catch (Exception e) {
