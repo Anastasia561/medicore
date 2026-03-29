@@ -24,6 +24,7 @@ import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.mapper.PatientMapper;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.repository.PatientRepository;
+import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.person.model.Status;
 import pl.edu.medicore.utils.UrlBuilder;
 import pl.edu.medicore.verification.service.VerificationTokenService;
@@ -155,7 +156,7 @@ class PatientServiceTest {
     void shouldRegisterPatient_whenInputIsValid() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", LocalDate.of(2006, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8,LocalDate.of(2006, 7, 2), "123", addressDto);
 
         Address address = new Address();
         Patient patient = new Patient();
@@ -186,7 +187,7 @@ class PatientServiceTest {
     void shouldThrowIllegalArgumentException_whenPasswordsDoNotMatch() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass1", "pass2", LocalDate.of(2006, 7, 2),
+                "pass1", "pass2", Gender.MALE, 67.8, 167.9,LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -202,7 +203,7 @@ class PatientServiceTest {
     void shouldNotSendEmail_whenSavingPatientFails() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", LocalDate.of(2006, 7, 2),
+                "pass", "pass", Gender.MALE, 67.8, 167.8,LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         Address address = new Address();

@@ -23,4 +23,8 @@ public class Patient extends Person {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id")
     private Address address;
+    @Column(nullable = false)
+    private double weight;
+    @Column(nullable = false)
+    private double height;
 }

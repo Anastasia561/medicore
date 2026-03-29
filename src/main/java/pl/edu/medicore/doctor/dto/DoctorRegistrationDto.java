@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import pl.edu.medicore.doctor.model.Specialization;
+import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.validation.annotation.Password;
 import pl.edu.medicore.validation.annotation.UniqueEmail;
 
@@ -33,6 +34,9 @@ public record DoctorRegistrationDto(
 
         @NotBlank(message = "Repeat password is required")
         String repeatPassword,
+
+        @NotNull(message = "Gender is required")
+        Gender gender,
 
         @NotNull(message = "Experience is required")
         @Positive(message = "Experience must be greater than 0")

@@ -35,7 +35,8 @@ CREATE TABLE person
     last_name  varchar(20)  NOT NULL,
     email      varchar(60)  NOT NULL UNIQUE,
     role       varchar(20)  NOT NULL,
-    status     varchar(40)  NOT NULL
+    status     varchar(40)  NOT NULL,
+    gender     VARCHAR(20)  NOT NULL
 );
 
 -- Table: doctor (inherits ID from person)
@@ -53,9 +54,11 @@ CREATE TABLE doctor
 CREATE TABLE patient
 (
     id           BIGINT PRIMARY KEY,
-    birth_date   date        NOT NULL,
-    phone_number varchar(20) NOT NULL,
-    address_id   BIGINT      NOT NULL,
+    birth_date   date             NOT NULL,
+    phone_number varchar(20)      NOT NULL,
+    weight       DOUBLE PRECISION NOT NULL,
+    height       DOUBLE PRECISION NOT NULL,
+    address_id   BIGINT           NOT NULL,
     CONSTRAINT patient_person
         FOREIGN KEY (id) REFERENCES person (id),
     CONSTRAINT patient_address

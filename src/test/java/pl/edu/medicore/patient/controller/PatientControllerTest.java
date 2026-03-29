@@ -15,6 +15,7 @@ import pl.edu.medicore.coutry.model.Country;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientVerificationRequestDto;
 import pl.edu.medicore.patient.model.Patient;
+import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.model.Status;
 import pl.edu.medicore.verification.model.TokenType;
@@ -94,7 +95,7 @@ class PatientControllerTest extends AbstractControllerIntegrationTest {
     void shouldReturn400_whenValidationErrorsInRegisterPatient() throws Exception {
         PatientAddressDto addressDto = new PatientAddressDto(null, "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", null, "Doe",
-                "pass", "pass", LocalDate.of(2010, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8, LocalDate.of(2010, 7, 2), "123", addressDto);
 
 
         performRequest(HttpMethod.POST, "/patients/register", dto)
@@ -108,7 +109,7 @@ class PatientControllerTest extends AbstractControllerIntegrationTest {
     void shouldReturn400_whenPasswordsDoNotMatchForPatientRegistration() throws Exception {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "StrongPass1235!", "StrongPass123!", LocalDate.of(2003, 7, 2),
+                "StrongPass1235!", "StrongPass123!", Gender.MALE, 67.8, 167.9, LocalDate.of(2003, 7, 2),
                 "123456789", addressDto);
 
 
@@ -121,7 +122,7 @@ class PatientControllerTest extends AbstractControllerIntegrationTest {
     void shouldRegisterPatient_whenInputIsValid() throws Exception {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "TestF", "TestL",
-                "StrongPass123!", "StrongPass123!", LocalDate.of(2003, 7, 2),
+                "StrongPass123!", "StrongPass123!", Gender.MALE, 67.8, 178.9, LocalDate.of(2003, 7, 2),
                 "123456789", addressDto);
 
 
@@ -189,7 +190,7 @@ class PatientControllerTest extends AbstractControllerIntegrationTest {
         assertEquals("test@gmail.com", message.getAllRecipients()[0].toString());
     }
 
-    private void insertUnverifiedPatientAndVerificationToken(){
+    private void insertUnverifiedPatientAndVerificationToken() {
         String tokenHash = passwordEncoder.encode("token");
         VerificationToken token = new VerificationToken();
         token.setTokenHash(tokenHash);
@@ -217,6 +218,9 @@ class PatientControllerTest extends AbstractControllerIntegrationTest {
         patient.setPassword("encoded_password");
         patient.setRole(Role.PATIENT);
         patient.setStatus(Status.UNVERIFIED);
+        patient.setGender(Gender.MALE);
+        patient.setWeight(67.8);
+        patient.setHeight(195.0);
 
         patient.setBirthDate(LocalDate.of(1990, 5, 15));
         patient.setPhoneNumber("+123456789");

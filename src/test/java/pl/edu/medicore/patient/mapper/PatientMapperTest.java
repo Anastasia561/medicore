@@ -10,6 +10,7 @@ import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.model.Patient;
+import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.model.Status;
 
@@ -60,7 +61,7 @@ class PatientMapperTest {
         PatientAddressDto address = new PatientAddressDto("Poland", "Warsaw",
                 "Test street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "123", "123", LocalDate.of(1990, 10, 10),
+                "123", "123", Gender.MALE, 56.8, 167.9, LocalDate.of(1990, 10, 10),
                 "123456", address);
 
         Patient entity = patientMapper.toEntity(dto);

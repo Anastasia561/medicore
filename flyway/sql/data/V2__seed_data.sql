@@ -36,41 +36,52 @@ VALUES ('Paulista Ave', 321, 5);
 
 
 -- PERSON
-INSERT INTO person (first_name, last_name, email, password, role, status)
-VALUES ( 'John', 'Doe', 'john.doe@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
-INSERT INTO person (first_name, last_name, email, password, role, status)
-VALUES ( 'Anna', 'Smith', 'anna.smith@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
-INSERT INTO person (first_name, last_name, email, password, role, status)
-VALUES ( 'Piotr', 'Nowak', 'piotr.nowak@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
-INSERT INTO person (first_name, last_name, email, password, role, status)
-VALUES ( 'Taro', 'Yamada', 'taro.yamada@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
-INSERT INTO person ( first_name, last_name, email, password, role, status)
-VALUES ( 'Maria', 'Ferreira', 'maria.ferreira@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE');
-INSERT INTO person ( first_name, last_name, email, password, role, status)
-VALUES ( 'Rafael', 'Garcia', 'rafael.garcia@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE');
-INSERT INTO person ( first_name, last_name, email, password, role, status)
-VALUES ( 'Laura', 'Johnson', 'laura.johnson@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE');
-INSERT INTO person ( first_name, last_name, email, password, role, status)
-VALUES ( 'Tom', 'Adams', 'tom.adams@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE');
-INSERT INTO person ( first_name, last_name, email, password, role, status)
-VALUES ( 'Hannah', 'Brown', 'hannah.brown@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE');
-INSERT INTO person (first_name, last_name, email, password, role, status)
-VALUES ( 'Kevin', 'Lee', 'kevin.lee@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE');
-INSERT INTO person (first_name, last_name, email, password, role, status)
-VALUES ( 'Adam', 'Test', 'admin@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'ADMIN', 'ACTIVE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('John', 'Doe', 'john.doe@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'PATIENT', 'ACTIVE', 'MALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Anna', 'Smith', 'anna.smith@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'PATIENT', 'ACTIVE', 'FEMALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Piotr', 'Nowak', 'piotr.nowak@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'PATIENT', 'ACTIVE', 'MALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Taro', 'Yamada', 'taro.yamada@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'PATIENT', 'ACTIVE', 'MALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Maria', 'Ferreira', 'maria.ferreira@example.com',
+        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE', 'FEMALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Rafael', 'Garcia', 'rafael.garcia@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'DOCTOR', 'ACTIVE', 'MALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Laura', 'Johnson', 'laura.johnson@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'DOCTOR', 'ACTIVE', 'FEMALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Tom', 'Adams', 'tom.adams@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'DOCTOR', 'ACTIVE', 'MALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Hannah', 'Brown', 'hannah.brown@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'DOCTOR', 'ACTIVE', 'FEMALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Kevin', 'Lee', 'kevin.lee@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'DOCTOR', 'ACTIVE', 'MALE');
+INSERT INTO person (first_name, last_name, email, password, role, status, gender)
+VALUES ('Adam', 'Test', 'admin@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'ADMIN',
+        'ACTIVE', 'MALE');
 -- pass 111
 
 -- PATIENT
-INSERT INTO patient (id, birth_date, phone_number, address_id)
-VALUES (1, '1990-05-15', '+123456789', 1);
-INSERT INTO patient (id, birth_date, phone_number, address_id)
-VALUES (2, '1985-07-20', '+49123456789', 2);
-INSERT INTO patient (id, birth_date, phone_number, address_id)
-VALUES (3, '1993-03-10', '+48123456789', 3);
-INSERT INTO patient (id, birth_date, phone_number, address_id)
-VALUES (4, '1978-11-05', '+81123456789', 4);
-INSERT INTO patient (id, birth_date, phone_number, address_id)
-VALUES (5, '1980-09-25', '+55123456789', 5);
+INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
+VALUES (1, '1990-05-15', '+123456789', 1, 70.5, 170.3);
+INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
+VALUES (2, '1985-07-20', '+49123456789', 2, 80.4, 190.0);
+INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
+VALUES (3, '1993-03-10', '+48123456789', 3, 56.9, 169.8);
+INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
+VALUES (4, '1978-11-05', '+81123456789', 4, 70.3, 184);
+INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
+VALUES (5, '1980-09-25', '+55123456789', 5, 69.4, 179.4);
 
 -- DOCTOR
 INSERT INTO doctor (id, experience, employment_date, specialization)

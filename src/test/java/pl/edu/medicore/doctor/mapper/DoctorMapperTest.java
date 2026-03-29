@@ -8,6 +8,7 @@ import pl.edu.medicore.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.model.Specialization;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.model.Status;
 
@@ -46,7 +47,7 @@ class DoctorMapperTest {
     @Test
     void shouldMapToEntity_whenInputIsValid() {
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "test@gmail.com",
-                "John", "Doe", "pass", "pass", 10,
+                "John", "Doe", "pass", "pass", Gender.MALE, 10,
                 Specialization.DERMATOLOGIST);
 
         Doctor entity = doctorMapper.toEntity(dto);
