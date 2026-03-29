@@ -1,6 +1,7 @@
 package pl.edu.medicore.test.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.medicore.config.properties.S3Properties;

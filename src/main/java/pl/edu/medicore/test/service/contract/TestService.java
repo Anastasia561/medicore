@@ -1,9 +1,10 @@
 package pl.edu.medicore.test.service.contract;
 
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
+import pl.edu.medicore.test.model.Test;
 
 public interface TestService {
     long save(TestUploadRequestDto dto, Long patientId);
 
-    void delete(Long testId);
+    Test getById(Long testId);
 }

@@ -1,5 +1,6 @@
 package pl.edu.medicore.labresult.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -22,5 +23,15 @@ public enum Parameter {
 
     Parameter(ParameterConfig config) {
         this.config = config;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ParameterConfig {
+        private List<String> aliases;
+        private List<String> sections;
+        private String standardUnit;
+        private double conversionFactor;
+        private List<String> units;
     }
 }

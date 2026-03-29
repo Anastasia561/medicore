@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,13 +52,5 @@ public class TestController {
     public ResponseWrapper<Long> upload(@ModelAttribute @Valid TestUploadRequestDto dto,
                                         @AuthenticationPrincipal CustomUserDetails user) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, testService.save(dto, user.getId()));
-    }
-
-    @Operation(summary = "Endpoint for deleting blood test file")
-    @PreAuthorize("hasAnyRole('PATIENT')")
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long id) {
-        testService.delete(id);
     }
 }

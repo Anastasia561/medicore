@@ -1,9 +1,10 @@
-package pl.edu.medicore.labresult.service;
+package pl.edu.medicore.labresult.service.impl;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.labresult.model.Parameter;
+import pl.edu.medicore.labresult.service.contract.PdfParserService;
 
 import java.io.InputStream;
 
@@ -11,14 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class PdfParserService {
+class PdfParserServiceImpl implements PdfParserService{
 
     private static final List<String> KNOWN_SECTIONS = Arrays.asList(
             "HAEMATOLOGY", "BIOCHEMISTRY", "ENDOCRINOLOGY", "URINALYSIS",
             "LIPID", "THYROID", "METABOLIC", "IMMUNOLOGY", "VITAMINS"
     );
 
-    public void parse(String text, Parameter param) {
+    @Override
+    public double parse(String text, Parameter param) {
         String[] lines = text.split("\\r?\\n");
 
         boolean inSection = false;
@@ -39,13 +41,22 @@ public class PdfParserService {
                 double value = extractFirstValidNumber(line, param);
 
                 if (value > 0) {
-                    System.out.println(param.name() + " - " + value);
-                    return;
+                    return value;
                 }
             }
         }
 
-        System.out.println(param.name() + " - 0.0");
+        return 0.0;
+    }
+
+    @Override
+    public String extractText(InputStream inputStream) {
+        try (PDDocument document = PDDocument.load(inputStream)) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            return stripper.getText(document);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read PDF", e);
+        }
     }
 
     private String normalize(String line) {
@@ -117,14 +128,5 @@ public class PdfParserService {
             }
         }
         return 0.0;
-    }
-
-    public String extractText(InputStream inputStream) {
-        try (PDDocument document = PDDocument.load(inputStream)) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(document);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to read PDF", e);
-        }
     }
 }

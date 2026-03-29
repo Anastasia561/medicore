@@ -3,10 +3,11 @@ package pl.edu.medicore.test.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import pl.edu.medicore.labresult.service.LabResultService;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
+import pl.edu.medicore.test.event.FileUploadEvent;
 import pl.edu.medicore.test.model.Test;
 import pl.edu.medicore.test.repository.TestRepository;
 import pl.edu.medicore.test.service.contract.StorageService;
@@ -18,7 +19,7 @@ class TestServiceImpl implements TestService {
     private final PatientService patientService;
     private final TestRepository testRepository;
     private final StorageService storageService;
-    private final LabResultService labResultService;
+    private final ApplicationEventPublisher publisher;
 
     @Override
     @Transactional
@@ -35,7 +36,7 @@ class TestServiceImpl implements TestService {
 
         try {
             storageService.uploadTest(dto.file(), saved.getId());
-            labResultService.processLabResults(test.getId());
+            publisher.publishEvent(new FileUploadEvent(saved.getId()));
             return saved.getId();
 
         } catch (Exception e) {
@@ -45,17 +46,8 @@ class TestServiceImpl implements TestService {
     }
 
     @Override
-    @Transactional
-    public void delete(Long testId) {
-        Test test = testRepository.findById(testId)
+    public Test getById(Long testId) {
+        return testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException("Test not found"));
-
-        testRepository.delete(test);
-
-        try {
-            storageService.deleteTest(testId);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete test", e);
-        }
     }
 }
