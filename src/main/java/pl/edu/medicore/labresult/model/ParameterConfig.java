@@ -12,4 +12,7 @@ import java.util.List;
 public class ParameterConfig {
     private List<String> aliases;
     private List<String> sections;
+    private String standardUnit;
+    private double conversionFactor;
+    private List<String> units;
 }

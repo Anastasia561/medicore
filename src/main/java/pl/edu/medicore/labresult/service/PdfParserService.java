@@ -7,10 +7,16 @@ import pl.edu.medicore.labresult.model.Parameter;
 
 import java.io.InputStream;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class PdfParserService {
+
+    private static final List<String> KNOWN_SECTIONS = Arrays.asList(
+            "HAEMATOLOGY", "BIOCHEMISTRY", "ENDOCRINOLOGY", "URINALYSIS",
+            "LIPID", "THYROID", "METABOLIC", "IMMUNOLOGY", "VITAMINS"
+    );
 
     public void parse(String text, Parameter param) {
         String[] lines = text.split("\\r?\\n");
@@ -30,7 +36,7 @@ public class PdfParserService {
             }
 
             if (inSection && containsAlias(upperLine, param.getConfig().getAliases())) {
-                double value = extractFirstValidNumber(line);
+                double value = extractFirstValidNumber(line, param);
 
                 if (value > 0) {
                     System.out.println(param.name() + " - " + value);
@@ -68,46 +74,48 @@ public class PdfParserService {
     }
 
     private boolean isNewSection(String line) {
-        return line.contains("URINALYSIS") ||
-                line.contains("BIOCHEMISTRY") ||
-                line.contains("LIPID") ||
-                line.contains("THYROID") ||
-                line.contains("METABOLIC") ||
-                line.contains("ENDOCRINOLOGY");
+        return KNOWN_SECTIONS.stream().anyMatch(line::contains);
     }
 
-    private double extractFirstValidNumber(String line) {
-        line = line.replace("\u00A0", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
+    private double extractFirstValidNumber(String line, Parameter param) {
+        line = line.replace("\u00A0", " ").replaceAll("\\s+", " ").trim();
+        String upperLine = line.toUpperCase();
 
-        String[] tokens = line.split(" ");
+        boolean containsUnit = param.getConfig().getUnits().stream()
+                .anyMatch(unit -> Arrays.asList(upperLine.split("\\s+")).contains(unit.toUpperCase()));
 
-        for (String token : tokens) {
+        double num = 0.0;
+        for (String token : line.split(" ")) {
+            String upperToken = token.toUpperCase();
+            if (upperToken.contains("X10") || upperToken.contains("^") || upperToken.contains("/")) continue;
 
-            String lower = token.toLowerCase();
+            num = extractNumericFromToken(token);
+            if (num > 0) break;
+        }
 
-            if (lower.contains("x10") || token.contains("^") || lower.contains("/")) {
+        if (num > 0 && containsUnit) {
+            num *= param.getConfig().getConversionFactor();
+            num = Math.round(num * 100.0) / 100.0;
+        }
+
+        return num;
+    }
+
+    private double extractNumericFromToken(String token) {
+        String[] subtokens = token.split("[^0-9.]");
+
+        for (String sub : subtokens) {
+            if (sub.isEmpty()) continue;
+
+            if (sub.length() > 1 && sub.startsWith("0") && !sub.startsWith("0.")) {
                 continue;
             }
 
-            String[] subtokens = token.split("[^0-9.]");
-
-            for (String sub : subtokens) {
-                if (sub.isEmpty()) continue;
-
-                if (sub.length() > 1 && sub.startsWith("0") && !sub.startsWith("0.")) {
-                    continue;
-                }
-
-                try {
-                    double num = Double.parseDouble(sub);
-                    return num;
-                } catch (NumberFormatException ignored) {
-                }
+            try {
+                return Double.parseDouble(sub);
+            } catch (NumberFormatException ignored) {
             }
         }
-
         return 0.0;
     }
 
