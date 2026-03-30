@@ -2,6 +2,7 @@ package pl.edu.medicore.doctor.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import pl.edu.medicore.doctor.repository.DoctorRepository;
 import pl.edu.medicore.doctor.repository.specification.DoctorSpecification;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.email.dto.VerificationEmailDto;
+import pl.edu.medicore.email.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
@@ -32,8 +34,8 @@ class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
     private final VerificationTokenService verificationTokenService;
-    private final EmailService emailService;
     private final UrlBuilder urlBuilder;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public void checkExistsById(Long doctorId) {
@@ -73,7 +75,7 @@ class DoctorServiceImpl implements DoctorService {
 
         String link = urlBuilder.buildDoctorRegistrationUrl(token);
         VerificationEmailDto emailDto = new VerificationEmailDto(dto.firstName(), dto.lastName(), link);
-        emailService.sendEmail(dto.email(), EmailType.DOCTOR_INVITE, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(dto.email(), EmailType.DOCTOR_INVITE, emailDto));
     }
 
     @Override
@@ -87,7 +89,7 @@ class DoctorServiceImpl implements DoctorService {
         Doctor entity = doctorMapper.toEntity(dto);
 
         ConfirmationEmailDto emailDto = doctorMapper.toEmailDto(entity);
-        emailService.sendEmail(entity.getEmail(), EmailType.REGISTRATION_CONFIRMATION, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(dto.email(), EmailType.REGISTRATION_CONFIRMATION, emailDto));
         return doctorRepository.save(entity).getId();
     }
 }

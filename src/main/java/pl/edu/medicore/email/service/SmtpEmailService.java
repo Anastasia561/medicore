@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -22,7 +21,6 @@ class SmtpEmailService implements EmailService {
     private final SpringTemplateEngine templateEngine;
 
     @Override
-    @Async
     public <T> void sendEmail(String to, EmailType emailType, T dto) {
         Context context = new Context();
         context.setVariables(convertDtoToMap(dto));

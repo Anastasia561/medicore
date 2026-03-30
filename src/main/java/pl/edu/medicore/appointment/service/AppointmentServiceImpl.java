@@ -3,6 +3,7 @@ package pl.edu.medicore.appointment.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,8 @@ import pl.edu.medicore.consultation.service.ConsultationService;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.AppointmentNotificationEmailDto;
+import pl.edu.medicore.email.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.AppointmentAlreadyCancelledException;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
@@ -44,7 +45,7 @@ class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentMapper appointmentMapper;
     private final SchedulingProperties schedulingProperties;
     private final ConsultationService consultationService;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable) {
@@ -70,8 +71,10 @@ class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus(Status.CANCELLED);
 
         AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(appointment);
-        emailService.sendEmail(appointment.getPatient().getEmail(), EmailType.APPOINTMENT_CANCELLATION, emailDto);
-        emailService.sendEmail(appointment.getDoctor().getEmail(), EmailType.APPOINTMENT_CANCELLATION, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(appointment.getPatient().getEmail(),
+                EmailType.APPOINTMENT_CANCELLATION, emailDto));
+        eventPublisher.publishEvent(new SendEmailEvent<>(appointment.getDoctor().getEmail(),
+                EmailType.APPOINTMENT_CANCELLATION, emailDto));
     }
 
     @Override
@@ -87,7 +90,8 @@ class AppointmentServiceImpl implements AppointmentService {
 
         Appointment entity = appointmentMapper.toEntity(dto, doctor, patient);
         AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(entity);
-        emailService.sendEmail(entity.getPatient().getEmail(), EmailType.APPOINTMENT_SCHEDULED, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(entity.getPatient().getEmail(),
+                EmailType.APPOINTMENT_SCHEDULED, emailDto));
 
         return appointmentRepository.save(entity).getId();
     }

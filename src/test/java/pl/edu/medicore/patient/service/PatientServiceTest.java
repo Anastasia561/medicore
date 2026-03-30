@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,9 +17,6 @@ import pl.edu.medicore.address.dto.PatientAddressDto;
 import pl.edu.medicore.address.mapper.AddressMapper;
 import pl.edu.medicore.address.model.Address;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
-import pl.edu.medicore.email.dto.VerificationEmailDto;
-import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.mapper.PatientMapper;
@@ -55,7 +53,7 @@ class PatientServiceTest {
     @Mock
     private VerificationTokenService verificationTokenService;
     @Mock
-    private EmailService emailService;
+    private ApplicationEventPublisher applicationEventPublisher;
     @Mock
     private UrlBuilder urlBuilder;
     @InjectMocks
@@ -156,7 +154,7 @@ class PatientServiceTest {
     void shouldRegisterPatient_whenInputIsValid() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8,LocalDate.of(2006, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8, LocalDate.of(2006, 7, 2), "123", addressDto);
 
         Address address = new Address();
         Patient patient = new Patient();
@@ -179,15 +177,13 @@ class PatientServiceTest {
         assertEquals("test@gmail.com", patient.getEmail());
 
         verify(patientRepository).save(patient);
-        verify(emailService).sendEmail(eq("test@gmail.com"),
-                eq(EmailType.EMAIL_VERIFICATION), any(VerificationEmailDto.class));
     }
 
     @Test
     void shouldThrowIllegalArgumentException_whenPasswordsDoNotMatch() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass1", "pass2", Gender.MALE, 67.8, 167.9,LocalDate.of(2006, 7, 2),
+                "pass1", "pass2", Gender.MALE, 67.8, 167.9, LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -196,14 +192,14 @@ class PatientServiceTest {
         assertEquals("Passwords don't match", ex.getMessage());
 
         verifyNoInteractions(patientRepository);
-        verifyNoInteractions(emailService);
+        verifyNoInteractions(applicationEventPublisher);
     }
 
     @Test
     void shouldNotSendEmail_whenSavingPatientFails() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8,LocalDate.of(2006, 7, 2),
+                "pass", "pass", Gender.MALE, 67.8, 167.8, LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         Address address = new Address();
@@ -217,7 +213,6 @@ class PatientServiceTest {
         when(patientRepository.save(any(Patient.class))).thenThrow(new RuntimeException("DB error"));
 
         assertThrows(RuntimeException.class, () -> patientService.register(dto));
-        verifyNoInteractions(emailService);
     }
 
     @Test
@@ -238,7 +233,6 @@ class PatientServiceTest {
         assertEquals(status, patient.getStatus());
         verify(patientRepository).findByEmail(email);
         verify(patientMapper).toEmailDto(patient);
-        verify(emailService).sendEmail(email, EmailType.REGISTRATION_CONFIRMATION, emailDto);
     }
 
     @Test

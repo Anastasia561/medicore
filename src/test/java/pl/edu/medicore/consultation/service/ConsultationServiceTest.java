@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import pl.edu.medicore.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.consultation.dto.ConsultationDto;
 import pl.edu.medicore.consultation.dto.ConsultationUpdateDto;
@@ -17,8 +18,6 @@ import pl.edu.medicore.consultation.repository.ConsultationRepository;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.ScheduleEmailDto;
-import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.DoctorNotAvailableException;
 import pl.edu.medicore.config.properties.ConsultationProperties;
 
@@ -47,7 +46,7 @@ class ConsultationServiceTest {
     @Mock
     private ConsultationProperties consultationProperties;
     @Mock
-    private EmailService emailService;
+    private ApplicationEventPublisher eventPublisher;
     @InjectMocks
     private ConsultationServiceImpl consultationService;
 
@@ -176,7 +175,6 @@ class ConsultationServiceTest {
         verify(doctorService).getById(doctorId);
         verify(consultationMapper).toEntity(dto, doctor);
         verify(consultationMapper).toEmailDto(consultation);
-        verify(emailService).sendEmail(doctor.getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
         verify(consultationRepository).save(consultation);
     }
 
@@ -191,7 +189,7 @@ class ConsultationServiceTest {
 
         assertEquals("Doctor has consultation schedule for selected day", ex.getMessage());
         verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
-        verifyNoInteractions(doctorService, consultationMapper, emailService);
+        verifyNoInteractions(doctorService, consultationMapper, eventPublisher);
     }
 
     @Test
@@ -204,7 +202,7 @@ class ConsultationServiceTest {
 
         assertEquals("End time must be after start time", ex.getMessage());
         verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
-        verifyNoInteractions(doctorService, emailService, consultationMapper);
+        verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
@@ -218,7 +216,7 @@ class ConsultationServiceTest {
 
         assertEquals("End time must be in valid range", ex.getMessage());
         verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
-        verifyNoInteractions(doctorService, emailService, consultationMapper);
+        verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
@@ -233,7 +231,7 @@ class ConsultationServiceTest {
 
         assertEquals("Start time must be in valid range", ex.getMessage());
         verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
-        verifyNoInteractions(doctorService, emailService, consultationMapper);
+        verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
@@ -248,7 +246,7 @@ class ConsultationServiceTest {
 
         assertEquals("Consultation not found", ex.getMessage());
         verify(consultationRepository).findById(1L);
-        verifyNoInteractions(doctorService, emailService, consultationMapper);
+        verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
@@ -279,7 +277,6 @@ class ConsultationServiceTest {
         verify(consultationRepository).findById(consultationId);
         verify(consultationMapper).updateConsultationFromDto(dto, consultation);
         verify(consultationMapper).toEmailDto(consultation);
-        verify(emailService).sendEmail(doctor.getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
     }
 
     @Test
@@ -294,7 +291,7 @@ class ConsultationServiceTest {
 
         assertEquals("Consultation not found", ex.getMessage());
         verify(consultationRepository).findById(1L);
-        verifyNoInteractions(doctorService, emailService, consultationMapper);
+        verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
@@ -319,7 +316,6 @@ class ConsultationServiceTest {
 
         verify(consultationRepository).findById(consultationId);
         verify(consultationMapper).toEmailDto(consultation);
-        verify(emailService).sendEmail(doctor.getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
         verify(consultationRepository).deleteById(consultationId);
     }
 }

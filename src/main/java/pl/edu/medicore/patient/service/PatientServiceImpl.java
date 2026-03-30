@@ -2,6 +2,7 @@ package pl.edu.medicore.patient.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,8 +12,8 @@ import pl.edu.medicore.address.mapper.AddressMapper;
 import pl.edu.medicore.address.model.Address;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.email.dto.VerificationEmailDto;
+import pl.edu.medicore.email.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.mapper.PatientMapper;
@@ -34,8 +35,8 @@ class PatientServiceImpl implements PatientService {
     private final AddressMapper addressMapper;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenService verificationTokenService;
-    private final EmailService emailService;
     private final UrlBuilder urlBuilder;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Page<PatientResponseDto> findAll(String query, Pageable pageable) {
@@ -69,7 +70,7 @@ class PatientServiceImpl implements PatientService {
         String link = urlBuilder.buildEmailVerificationUrl(token);
         VerificationEmailDto emailDto = new VerificationEmailDto(dto.firstName(), dto.lastName(), link);
         Patient saved = patientRepository.save(patient);
-        emailService.sendEmail(dto.email(), EmailType.EMAIL_VERIFICATION, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(dto.email(), EmailType.EMAIL_VERIFICATION, emailDto));
         return saved.getId();
     }
 
@@ -81,7 +82,7 @@ class PatientServiceImpl implements PatientService {
         patient.setStatus(status);
 
         ConfirmationEmailDto emailDto = patientMapper.toEmailDto(patient);
-        emailService.sendEmail(email, EmailType.REGISTRATION_CONFIRMATION, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(email, EmailType.REGISTRATION_CONFIRMATION, emailDto));
     }
 
     @Override

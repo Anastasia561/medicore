@@ -2,6 +2,7 @@ package pl.edu.medicore.auth.service;
 
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,8 +17,8 @@ import pl.edu.medicore.auth.jwt.service.JwtService;
 import pl.edu.medicore.auth.refreshtoken.service.RefreshTokenService;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.email.dto.VerificationEmailDto;
+import pl.edu.medicore.email.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.InvalidRefreshTokenException;
 import pl.edu.medicore.person.mapper.PersonMapper;
 import pl.edu.medicore.person.model.Person;
@@ -41,7 +42,7 @@ class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final VerificationTokenService verificationTokenService;
     private final PersonMapper personMapper;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher eventPublisher;
     private final UrlBuilder urlBuilder;
 
     @Override
@@ -112,7 +113,7 @@ class AuthServiceImpl implements AuthService {
 
         String link = urlBuilder.buildPasswordResetUrl(token);
         VerificationEmailDto dto = new VerificationEmailDto(person.getFirstName(), person.getLastName(), link);
-        emailService.sendEmail(person.getEmail(), EmailType.PASSWORD_RESET_REQUEST, dto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(person.getEmail(), EmailType.PASSWORD_RESET_REQUEST, dto));
     }
 
     @Override
@@ -121,6 +122,6 @@ class AuthServiceImpl implements AuthService {
         personService.updatePassword(dto);
 
         ConfirmationEmailDto emailDto = personMapper.toEmailDto(personService.getByEmail(dto.email()));
-        emailService.sendEmail(dto.email(), EmailType.PASSWORD_RESET_CONFIRM, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(dto.email(), EmailType.PASSWORD_RESET_CONFIRM, emailDto));
     }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,9 +19,6 @@ import pl.edu.medicore.auth.dto.TokenResponseDto;
 import pl.edu.medicore.auth.jwt.service.JwtService;
 import pl.edu.medicore.auth.refreshtoken.service.RefreshTokenService;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
-import pl.edu.medicore.email.dto.VerificationEmailDto;
-import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.InvalidRefreshTokenException;
 import pl.edu.medicore.person.mapper.PersonMapper;
 import pl.edu.medicore.person.model.Person;
@@ -41,6 +39,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +59,7 @@ class AuthServiceTest {
     @Mock
     private PersonMapper personMapper;
     @Mock
-    private EmailService emailService;
+    private ApplicationEventPublisher eventPublisher;
     @Mock
     private UrlBuilder urlBuilder;
     @InjectMocks
@@ -270,7 +269,6 @@ class AuthServiceTest {
 
         verify(verificationTokenService).createToken(eq(email), eq(TokenType.PASSWORD_RESET), any());
         verify(urlBuilder).buildPasswordResetUrl(token);
-        verify(emailService).sendEmail(eq(email), eq(EmailType.PASSWORD_RESET_REQUEST), any(VerificationEmailDto.class));
     }
 
     @Test
@@ -289,7 +287,7 @@ class AuthServiceTest {
         assertEquals("Reset password request too frequent", exception.getMessage());
 
         verify(verificationTokenService, never()).createToken(any(), any(), any());
-        verify(emailService, never()).sendEmail(any(), any(), any());
+        verifyNoInteractions(eventPublisher);
     }
 
     @Test
@@ -315,8 +313,6 @@ class AuthServiceTest {
         when(urlBuilder.buildPasswordResetUrl(token)).thenReturn(link);
 
         authService.createResetToken(email);
-
-        verify(emailService).sendEmail(eq(email), eq(EmailType.PASSWORD_RESET_REQUEST), any());
     }
 
     @Test
@@ -336,8 +332,6 @@ class AuthServiceTest {
         verify(personService).updatePassword(dto);
         verify(personService).getByEmail(dto.email());
         verify(personMapper).toEmailDto(person);
-
-        verify(emailService).sendEmail(dto.email(), EmailType.PASSWORD_RESET_CONFIRM, emailDto);
     }
 
     @Test
@@ -353,6 +347,6 @@ class AuthServiceTest {
                 () -> authService.resetPassword(dto));
 
         verify(personService, never()).updatePassword(any());
-        verify(emailService, never()).sendEmail(any(), any(), any());
+        verifyNoInteractions(eventPublisher);
     }
 }

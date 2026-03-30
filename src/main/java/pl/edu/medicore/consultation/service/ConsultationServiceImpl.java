@@ -3,6 +3,7 @@ package pl.edu.medicore.consultation.service;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.consultation.dto.ConsultationCreateDto;
@@ -15,6 +16,7 @@ import pl.edu.medicore.consultation.repository.ConsultationRepository;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.ScheduleEmailDto;
+import pl.edu.medicore.email.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.DoctorNotAvailableException;
@@ -33,7 +35,7 @@ class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationMapper consultationMapper;
     private final DoctorService doctorService;
     private final ConsultationProperties consultationProperties;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public List<ConsultationDto> findByDoctorId(Long doctorId) {
@@ -68,7 +70,7 @@ class ConsultationServiceImpl implements ConsultationService {
         Consultation consultation = consultationMapper.toEntity(dto, doctor);
 
         ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation);
-        emailService.sendEmail(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto));
         return consultationRepository.save(consultation).getId();
     }
 
@@ -81,7 +83,7 @@ class ConsultationServiceImpl implements ConsultationService {
         consultationMapper.updateConsultationFromDto(dto, consultation);
 
         ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation);
-        emailService.sendEmail(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto));
         return id;
     }
 
@@ -92,7 +94,7 @@ class ConsultationServiceImpl implements ConsultationService {
             throw new EntityNotFoundException("Consultation not found");
         }
         ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation.get());
-        emailService.sendEmail(consultation.get().getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto);
+        eventPublisher.publishEvent(new SendEmailEvent<>(consultation.get().getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto));
         consultationRepository.deleteById(id);
     }
 
