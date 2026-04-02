@@ -119,7 +119,6 @@ class ConsultationServiceTest {
                 () -> consultationService.findByDoctorIdAndDate(doctorId, LocalDate.of(2026, 3, 21)));
 
         assertEquals("Doctor is not available on weekends", ex.getMessage());
-        verifyNoInteractions(doctorService);
         verifyNoInteractions(consultationRepository);
         verifyNoInteractions(consultationMapper);
     }

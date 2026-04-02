@@ -19,7 +19,6 @@ import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.email.dto.VerificationEmailDto;
 import pl.edu.medicore.email.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
 import pl.edu.medicore.utils.UrlBuilder;
 import pl.edu.medicore.verification.model.TokenType;

@@ -48,13 +48,14 @@ class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     public Consultation findByDoctorIdAndDate(Long doctorId, LocalDate date) {
+        doctorService.checkExistsById(doctorId);
+
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
             throw new DoctorNotAvailableException("Doctor is not available on weekends");
         }
         Workday workday = Workday.valueOf(date.getDayOfWeek().name());
 
-        doctorService.checkExistsById(doctorId);
         return consultationRepository.findByDoctorIdAndWorkday(doctorId, workday)
                 .orElseThrow(() -> new DoctorNotAvailableException("Doctor is not available"));
     }
