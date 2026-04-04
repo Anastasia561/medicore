@@ -1,4 +1,4 @@
-package pl.edu.medicore.test.service.contract;
+package pl.edu.medicore.infrastructure.storage;
 
 import org.springframework.web.multipart.MultipartFile;
 

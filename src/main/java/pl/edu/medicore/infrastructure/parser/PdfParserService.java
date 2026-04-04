@@ -1,4 +1,4 @@
-package pl.edu.medicore.labresult.service.contract;
+package pl.edu.medicore.infrastructure.parser;
 
 import pl.edu.medicore.labresult.model.Parameter;
 

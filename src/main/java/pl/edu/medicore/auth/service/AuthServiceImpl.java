@@ -17,7 +17,7 @@ import pl.edu.medicore.auth.jwt.service.JwtService;
 import pl.edu.medicore.auth.refreshtoken.service.RefreshTokenService;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.email.dto.VerificationEmailDto;
-import pl.edu.medicore.email.event.SendEmailEvent;
+import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.exception.InvalidRefreshTokenException;
 import pl.edu.medicore.person.mapper.PersonMapper;

@@ -1,10 +1,10 @@
-package pl.edu.medicore.email.listener;
+package pl.edu.medicore.infrastructure.messaging.listener;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import pl.edu.medicore.email.event.SendEmailEvent;
+import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.service.EmailService;
 
 @Async

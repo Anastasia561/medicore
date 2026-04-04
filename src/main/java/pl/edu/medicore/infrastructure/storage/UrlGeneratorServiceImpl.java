@@ -1,9 +1,8 @@
-package pl.edu.medicore.test.service.impl;
+package pl.edu.medicore.infrastructure.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.config.properties.S3Properties;
-import pl.edu.medicore.test.service.contract.UrlGeneratorService;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;

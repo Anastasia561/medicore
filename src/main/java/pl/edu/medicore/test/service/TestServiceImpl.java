@@ -1,4 +1,4 @@
-package pl.edu.medicore.test.service.impl;
+package pl.edu.medicore.test.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -7,11 +7,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
-import pl.edu.medicore.test.event.FileUploadEvent;
+import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
 import pl.edu.medicore.test.model.Test;
 import pl.edu.medicore.test.repository.TestRepository;
-import pl.edu.medicore.test.service.contract.StorageService;
-import pl.edu.medicore.test.service.contract.TestService;
+import pl.edu.medicore.infrastructure.storage.StorageService;
 
 @Service
 @RequiredArgsConstructor

@@ -20,7 +20,7 @@ import pl.edu.medicore.consultation.service.ConsultationService;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.AppointmentNotificationEmailDto;
-import pl.edu.medicore.email.event.SendEmailEvent;
+import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.exception.AppointmentAlreadyCancelledException;
 import pl.edu.medicore.patient.model.Patient;

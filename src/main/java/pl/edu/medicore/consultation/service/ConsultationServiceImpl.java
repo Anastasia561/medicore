@@ -16,9 +16,8 @@ import pl.edu.medicore.consultation.repository.ConsultationRepository;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.ScheduleEmailDto;
-import pl.edu.medicore.email.event.SendEmailEvent;
+import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.email.service.EmailService;
 import pl.edu.medicore.exception.DoctorNotAvailableException;
 import pl.edu.medicore.config.properties.ConsultationProperties;
 

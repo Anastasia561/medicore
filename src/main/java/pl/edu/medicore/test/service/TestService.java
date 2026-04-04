@@ -1,4 +1,4 @@
-package pl.edu.medicore.test.service.contract;
+package pl.edu.medicore.test.service;
 
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.test.model.Test;

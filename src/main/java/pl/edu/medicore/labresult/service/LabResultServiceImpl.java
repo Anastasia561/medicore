@@ -1,14 +1,13 @@
-package pl.edu.medicore.labresult.service.impl;
+package pl.edu.medicore.labresult.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.labresult.model.LabResult;
 import pl.edu.medicore.labresult.model.Parameter;
 import pl.edu.medicore.labresult.repository.LabResultRepository;
-import pl.edu.medicore.labresult.service.contract.LabResultService;
-import pl.edu.medicore.labresult.service.contract.PdfParserService;
-import pl.edu.medicore.test.service.contract.StorageService;
-import pl.edu.medicore.test.service.contract.TestService;
+import pl.edu.medicore.infrastructure.parser.PdfParserService;
+import pl.edu.medicore.infrastructure.storage.StorageService;
+import pl.edu.medicore.test.service.TestService;
 
 import java.io.InputStream;
 

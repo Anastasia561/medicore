@@ -1,4 +1,4 @@
-package pl.edu.medicore.test.event;
+package pl.edu.medicore.infrastructure.messaging.event;
 
 public record FileUploadEvent(
         Long testId

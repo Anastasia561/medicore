@@ -12,7 +12,7 @@ import pl.edu.medicore.address.mapper.AddressMapper;
 import pl.edu.medicore.address.model.Address;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.email.dto.VerificationEmailDto;
-import pl.edu.medicore.email.event.SendEmailEvent;
+import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.patient.dto.PatientResponseDto;

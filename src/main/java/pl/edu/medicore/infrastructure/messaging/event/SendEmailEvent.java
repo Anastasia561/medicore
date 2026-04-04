@@ -1,4 +1,4 @@
-package pl.edu.medicore.email.event;
+package pl.edu.medicore.infrastructure.messaging.event;
 
 import pl.edu.medicore.email.model.EmailType;
 
