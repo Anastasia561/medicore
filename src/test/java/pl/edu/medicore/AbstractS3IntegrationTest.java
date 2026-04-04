@@ -9,8 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.localstack.LocalStackContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import pl.edu.medicore.config.PostgreSQLTestContainersConfig;
 import pl.edu.medicore.config.AWSTestConfig;
@@ -21,7 +19,6 @@ import java.io.IOException;
 @SpringBootTest
 @ActiveProfiles({"test", "s3-test"})
 @Import({PostgreSQLTestContainersConfig.class, AWSTestConfig.class})
-@Testcontainers
 public abstract class AbstractS3IntegrationTest {
     @Autowired
     protected S3Client s3Client;
@@ -29,8 +26,7 @@ public abstract class AbstractS3IntegrationTest {
     @Value("${app.aws.s3.bucket}")
     protected String bucketName;
 
-    @Container
-    private static LocalStackContainer localStack =
+    private static final LocalStackContainer localStack =
             new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.0"))
                     .withServices(LocalStackContainer.Service.S3);
 
@@ -45,5 +41,9 @@ public abstract class AbstractS3IntegrationTest {
     @BeforeAll
     protected static void init() throws InterruptedException, IOException {
         localStack.execInContainer("awslocal", "s3", "mb", "s3://test-bucket");
+    }
+
+    static {
+        localStack.start();
     }
 }

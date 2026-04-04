@@ -15,10 +15,12 @@ import java.time.Duration;
 class UrlGeneratorServiceImpl implements UrlGeneratorService {
     private final S3Properties s3Properties;
     private final S3Presigner s3Presigner;
+    private final S3Utils s3Utils;
 
     @Override
     public URL generateViewUrl(Long testId) {
-        String key = buildKey(testId);
+        String key = s3Utils.buildKey(testId);
+        s3Utils.checkObject(key);
 
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(s3Properties.getBucket())
@@ -35,8 +37,8 @@ class UrlGeneratorServiceImpl implements UrlGeneratorService {
 
     @Override
     public URL generateDownloadUrl(Long testId) {
-
-        String key = buildKey(testId);
+        String key = s3Utils.buildKey(testId);
+        s3Utils.checkObject(key);
 
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(s3Properties.getBucket())
@@ -52,11 +54,5 @@ class UrlGeneratorServiceImpl implements UrlGeneratorService {
                 .build();
 
         return s3Presigner.presignGetObject(presignRequest).url();
-    }
-
-    private String buildKey(Long testId) {
-        return s3Properties.getFolderName() + "/" +
-                testId + "/" +
-                s3Properties.getFileName();
     }
 }

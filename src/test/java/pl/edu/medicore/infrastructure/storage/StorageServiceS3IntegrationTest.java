@@ -100,7 +100,7 @@ class StorageServiceS3IntegrationTest extends AbstractS3IntegrationTest {
     }
 
     @Test
-    void getFile_shouldThrowException_whenFileDoesNotExist() {
+    void shouldThrowFileNotFoundException_whenFileDoesNotExist() {
         Long testId = 999L;
 
         FileNotFoundException exception = assertThrows(FileNotFoundException.class, () -> storageService.getFile(testId));

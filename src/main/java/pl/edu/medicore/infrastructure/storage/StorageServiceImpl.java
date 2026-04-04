@@ -4,16 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.medicore.config.properties.S3Properties;
-import pl.edu.medicore.exception.FileNotFoundException;
 import pl.edu.medicore.exception.UploadFileException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,10 +20,11 @@ class StorageServiceImpl implements StorageService {
 
     private final S3Properties s3Properties;
     private final S3Client s3Client;
+    private final S3Utils s3Utils;
 
     @Override
     public void uploadFile(MultipartFile file, Long testId) {
-        String key = buildKey(testId);
+        String key = s3Utils.buildKey(testId);
 
         try (InputStream inputStream = file.getInputStream()) {
 
@@ -49,11 +46,8 @@ class StorageServiceImpl implements StorageService {
 
     @Override
     public void deleteFile(Long testId) {
-        String key = buildKey(testId);
-
-        if (!objectExists(key)) {
-            throw new FileNotFoundException("File not found");
-        }
+        String key = s3Utils.buildKey(testId);
+        s3Utils.checkObject(key);
 
         DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .bucket(s3Properties.getBucket())
@@ -65,39 +59,14 @@ class StorageServiceImpl implements StorageService {
 
     @Override
     public InputStream getFile(Long testId) {
-        String key = buildKey(testId);
+        String key = s3Utils.buildKey(testId);
+        s3Utils.checkObject(key);
+
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(s3Properties.getBucket())
                 .key(key)
                 .build();
 
-        try {
-            return s3Client.getObject(request);
-        } catch (NoSuchKeyException e) {
-            throw new FileNotFoundException("File not found");
-        } catch (S3Exception e) {
-            throw new RuntimeException("Failed to download file from S3");
-        }
-    }
-
-    private boolean objectExists(String key) {
-        try {
-            HeadObjectRequest request = HeadObjectRequest.builder()
-                    .bucket(s3Properties.getBucket())
-                    .key(key)
-                    .build();
-
-            s3Client.headObject(request);
-            return true;
-
-        } catch (S3Exception e) {
-            return false;
-        }
-    }
-
-    private String buildKey(Long testId) {
-        return s3Properties.getFolderName() + "/" +
-                testId + "/" +
-                s3Properties.getFileName();
+        return s3Client.getObject(request);
     }
 }
