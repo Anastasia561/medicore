@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -25,7 +26,7 @@ class StorageServiceImpl implements StorageService {
     private final S3Client s3Client;
 
     @Override
-    public void uploadTest(MultipartFile file, Long testId) {
+    public void uploadFile(MultipartFile file, Long testId) {
         String key = buildKey(testId);
 
         try (InputStream inputStream = file.getInputStream()) {
@@ -47,7 +48,7 @@ class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void deleteTest(Long testId) {
+    public void deleteFile(Long testId) {
         String key = buildKey(testId);
 
         if (!objectExists(key)) {
@@ -62,6 +63,7 @@ class StorageServiceImpl implements StorageService {
         s3Client.deleteObject(request);
     }
 
+    @Override
     public InputStream getFile(Long testId) {
         String key = buildKey(testId);
         GetObjectRequest request = GetObjectRequest.builder()
@@ -69,7 +71,13 @@ class StorageServiceImpl implements StorageService {
                 .key(key)
                 .build();
 
-        return s3Client.getObject(request);
+        try {
+            return s3Client.getObject(request);
+        } catch (NoSuchKeyException e) {
+            throw new FileNotFoundException("File not found");
+        } catch (S3Exception e) {
+            throw new RuntimeException("Failed to download file from S3");
+        }
     }
 
     private boolean objectExists(String key) {

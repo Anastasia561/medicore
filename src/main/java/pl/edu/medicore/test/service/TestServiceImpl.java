@@ -34,12 +34,12 @@ class TestServiceImpl implements TestService {
         Test saved = testRepository.save(test);
 
         try {
-            storageService.uploadTest(dto.file(), saved.getId());
+            storageService.uploadFile(dto.file(), saved.getId());
             publisher.publishEvent(new FileUploadEvent(saved.getId()));
             return saved.getId();
 
         } catch (Exception e) {
-            storageService.deleteTest(saved.getId());
+            storageService.deleteFile(saved.getId());
             throw new RuntimeException("Failed to save test", e);
         }
     }

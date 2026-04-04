@@ -5,9 +5,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 
 public interface StorageService {
-    void uploadTest(MultipartFile file, Long testId);
+    void uploadFile(MultipartFile file, Long testId);
 
-    void deleteTest(Long testId);
+    void deleteFile(Long testId);
 
     InputStream getFile(Long testId);
 }

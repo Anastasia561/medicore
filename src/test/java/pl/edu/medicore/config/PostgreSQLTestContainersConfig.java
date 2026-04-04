@@ -8,7 +8,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 @TestConfiguration
 @RequiredArgsConstructor
-public class TestContainersConfig {
+public class PostgreSQLTestContainersConfig {
     private final PostgreSQLTestContainerProperties props;
 
     @Bean

@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import pl.edu.medicore.auth.dto.AuthRequestDto;
 import pl.edu.medicore.auth.service.AuthService;
-import pl.edu.medicore.config.TestContainersConfig;
+import pl.edu.medicore.config.PostgreSQLTestContainersConfig;
 import pl.edu.medicore.person.model.Role;
 import tools.jackson.databind.ObjectMapper;
 
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Import(TestContainersConfig.class)
+@Import(PostgreSQLTestContainersConfig.class)
 public abstract class AbstractControllerIntegrationTest {
     private static final String ADMIN_EMAIL = "admin@example.com";
     private static final String DOCTOR_EMAIL = "rafael.garcia@example.com";
@@ -42,20 +42,20 @@ public abstract class AbstractControllerIntegrationTest {
     private static final String PASS = "111";
 
     @Autowired
-    private AuthService authService;
-
-    @Autowired
     protected MockMvc mockMvc;
 
     @Autowired
     protected EntityManager em;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
-
     @RegisterExtension
     protected static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
             .withPerMethodLifecycle(true);
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private String token;
 
