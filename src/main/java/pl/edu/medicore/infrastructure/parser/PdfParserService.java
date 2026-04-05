@@ -7,5 +7,5 @@ import java.io.InputStream;
 public interface PdfParserService {
     String extractText(InputStream inputStream);
 
-    double parse(String text, Parameter param);
+    Double parse(String text, Parameter param);
 }

@@ -28,6 +28,10 @@ public class RiskResult {
     @Column(name = "disease", nullable = false)
     private Disease disease;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "risk_group", nullable = false)
+    private RiskGroup riskGroup;
+
     @Column(name = "risk_percent", nullable = false)
     private Double riskPercent;
 

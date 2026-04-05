@@ -154,7 +154,7 @@ class PatientServiceTest {
     void shouldRegisterPatient_whenInputIsValid() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, LocalDate.of(2006, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8, false,LocalDate.of(2006, 7, 2), "123", addressDto);
 
         Address address = new Address();
         Patient patient = new Patient();
@@ -183,7 +183,7 @@ class PatientServiceTest {
     void shouldThrowIllegalArgumentException_whenPasswordsDoNotMatch() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass1", "pass2", Gender.MALE, 67.8, 167.9, LocalDate.of(2006, 7, 2),
+                "pass1", "pass2", Gender.MALE, 67.8, 167.9, false,LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -199,7 +199,7 @@ class PatientServiceTest {
     void shouldNotSendEmail_whenSavingPatientFails() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, LocalDate.of(2006, 7, 2),
+                "pass", "pass", Gender.MALE, 67.8, 167.8, false,LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         Address address = new Address();

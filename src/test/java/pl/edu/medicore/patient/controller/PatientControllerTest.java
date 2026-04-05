@@ -95,21 +95,21 @@ class PatientControllerTest extends AbstractControllerIntegrationTest {
     void shouldReturn400_whenValidationErrorsInRegisterPatient() throws Exception {
         PatientAddressDto addressDto = new PatientAddressDto(null, "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", null, "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, LocalDate.of(2010, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8, true,LocalDate.of(2010, 7, 2), "123", addressDto);
 
 
         performRequest(HttpMethod.POST, "/patients/register", dto)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.message").value("Validation failed"))
                 .andExpect(jsonPath("$.error.validationErrors").isArray())
-                .andExpect(jsonPath("$.error.validationErrors.length()").value(6));
+                .andExpect(jsonPath("$.error.validationErrors.length()").value(7));
     }
 
     @Test
     void shouldReturn400_whenPasswordsDoNotMatchForPatientRegistration() throws Exception {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "StrongPass1235!", "StrongPass123!", Gender.MALE, 67.8, 167.9, LocalDate.of(2003, 7, 2),
+                "StrongPass1235!", "StrongPass123!", Gender.MALE, 67.8, 167.9,false, LocalDate.of(2003, 7, 2),
                 "123456789", addressDto);
 
 
@@ -122,7 +122,7 @@ class PatientControllerTest extends AbstractControllerIntegrationTest {
     void shouldRegisterPatient_whenInputIsValid() throws Exception {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "TestF", "TestL",
-                "StrongPass123!", "StrongPass123!", Gender.MALE, 67.8, 178.9, LocalDate.of(2003, 7, 2),
+                "StrongPass123!", "StrongPass123!", Gender.MALE, 67.8, 178.9, false,LocalDate.of(2003, 7, 2),
                 "123456789", addressDto);
 
 

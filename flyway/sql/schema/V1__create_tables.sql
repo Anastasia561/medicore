@@ -58,6 +58,7 @@ CREATE TABLE patient
     phone_number varchar(20)      NOT NULL,
     weight       DOUBLE PRECISION NOT NULL,
     height       DOUBLE PRECISION NOT NULL,
+    pregnant     BOOLEAN          NOT NULL DEFAULT FALSE,
     address_id   BIGINT           NOT NULL,
     CONSTRAINT patient_person
         FOREIGN KEY (id) REFERENCES person (id),

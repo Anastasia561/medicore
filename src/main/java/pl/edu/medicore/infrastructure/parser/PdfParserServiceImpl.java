@@ -19,7 +19,7 @@ class PdfParserServiceImpl implements PdfParserService{
     );
 
     @Override
-    public double parse(String text, Parameter param) {
+    public Double parse(String text, Parameter param) {
         String[] lines = text.split("\\r?\\n");
 
         boolean inSection = false;
@@ -45,7 +45,7 @@ class PdfParserServiceImpl implements PdfParserService{
             }
         }
 
-        return 0.0;
+        return null;
     }
 
     @Override

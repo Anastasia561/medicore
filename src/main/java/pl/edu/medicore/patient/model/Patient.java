@@ -26,5 +26,7 @@ public class Patient extends Person {
     @Column(nullable = false)
     private double weight;
     @Column(nullable = false)
+    private boolean pregnant;
+    @Column(nullable = false)
     private double height;
 }

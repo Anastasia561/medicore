@@ -1,6 +1,7 @@
 package pl.edu.medicore.patient.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
@@ -50,6 +51,9 @@ public record PatientRegisterDto(
         @DecimalMax(value = "300.0", message = "Height must be less than 300 cm")
         Double height,
 
+        @NotNull(message = "Pregnancy status is required")
+        boolean pregnant,
+
         @MinAge(18)
         @NotNull(message = "Birth date is required")
         @Past(message = "Birth date must be in the past")
@@ -66,4 +70,8 @@ public record PatientRegisterDto(
         @Valid
         PatientAddressDto address
 ) {
+    @AssertTrue(message = "Only female patients can be marked as pregnant")
+    public boolean isPregnancyValid() {
+        return !pregnant || gender == Gender.FEMALE;
+    }
 }

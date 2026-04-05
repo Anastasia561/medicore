@@ -1,7 +1,18 @@
 package pl.edu.medicore.labresult.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import pl.edu.medicore.labresult.model.LabResult;
 
+import java.util.List;
+
 public interface LabResultRepository extends JpaRepository<LabResult, String> {
+    @Query("""
+                SELECT lr
+                FROM LabResult lr
+                JOIN FETCH lr.test t
+                JOIN FETCH t.patient
+                WHERE lr.test.id = :testId
+            """)
+    List<LabResult> getLabResultsByTestId(Long testId);
 }

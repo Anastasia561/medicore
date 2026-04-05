@@ -74,8 +74,8 @@ VALUES ('Adam', 'Test', 'admin@example.com', '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu
 -- PATIENT
 INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
 VALUES (1, '1990-05-15', '+123456789', 1, 70.5, 170.3);
-INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
-VALUES (2, '1985-07-20', '+49123456789', 2, 80.4, 190.0);
+INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height, pregnant)
+VALUES (2, '1985-07-20', '+49123456789', 2, 80.4, 190.0, true);
 INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
 VALUES (3, '1993-03-10', '+48123456789', 3, 56.9, 169.8);
 INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
