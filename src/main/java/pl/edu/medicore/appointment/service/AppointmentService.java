@@ -6,9 +6,11 @@ import pl.edu.medicore.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.appointment.model.Appointment;
+import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -32,4 +34,8 @@ public interface AppointmentService {
     List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id);
 
     long getDistinctPatientsByDoctorId(long doctorId);
+
+    List<Appointment> getAllAppointmentByStatusAndDate(Status status, LocalDate date);
+
+    void sendReminderAboutAppointmentsBetween(LocalDateTime from, LocalDateTime to);
 }

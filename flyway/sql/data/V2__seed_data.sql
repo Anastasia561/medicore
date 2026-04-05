@@ -98,7 +98,7 @@ VALUES (10, 12, '2012-01-10', 'ONCOLOGIST');
 
 -- APPOINTMENT
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2026-01-01', '10:30:00', 'SCHEDULED', 1, 6);
+VALUES ('2026-04-06', '15:00:00', 'SCHEDULED', 1, 6);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)
 VALUES ('2026-03-02', '11:00:00', 'SCHEDULED', 2, 7);
 INSERT INTO appointment (date, time, status, patient_id, doctor_id)

@@ -80,12 +80,13 @@ CREATE TABLE consultation
 -- Table: appointment
 CREATE TABLE appointment
 (
-    id         BIGSERIAL PRIMARY KEY,
-    date       date        NOT NULL,
-    time       time        NOT NULL,
-    patient_id BIGINT      NOT NULL,
-    doctor_id  BIGINT      NOT NULL,
-    status     varchar(30) NOT NULL,
+    id            BIGSERIAL PRIMARY KEY,
+    date          date                  NOT NULL,
+    time          time                  NOT NULL,
+    patient_id    BIGINT                NOT NULL,
+    doctor_id     BIGINT                NOT NULL,
+    status        varchar(30)           NOT NULL,
+    reminder_sent BOOLEAN DEFAULT FALSE NOT NULL,
     CONSTRAINT appointment_patient
         FOREIGN KEY (patient_id) REFERENCES patient (id),
     CONSTRAINT appointment_doctor
@@ -120,9 +121,11 @@ CREATE TABLE prescription
 -- Table: refresh_token
 CREATE TABLE refresh_token
 (
-    id        BIGSERIAL PRIMARY KEY,
-    token     varchar(512) NOT NULL,
-    person_id BIGINT       NOT NULL,
+    id         BIGSERIAL PRIMARY KEY,
+    token      varchar(512) NOT NULL,
+    person_id  BIGINT       NOT NULL,
+    expires_at TIMESTAMP    NOT NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT refresh_token_person
         FOREIGN KEY (person_id) REFERENCES person (id)
 );

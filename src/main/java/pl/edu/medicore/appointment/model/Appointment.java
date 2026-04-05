@@ -27,6 +27,7 @@ public class Appointment {
     private LocalTime time;
     @Enumerated(EnumType.STRING)
     private Status status;
+    private boolean reminderSent;
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private Patient patient;

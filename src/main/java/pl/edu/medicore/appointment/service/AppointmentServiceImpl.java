@@ -31,9 +31,12 @@ import pl.edu.medicore.config.properties.SchedulingProperties;
 import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -145,5 +148,23 @@ class AppointmentServiceImpl implements AppointmentService {
     @Override
     public long getDistinctPatientsByDoctorId(long doctorId) {
         return appointmentRepository.countDistinctPatientsByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<Appointment> getAllAppointmentByStatusAndDate(Status status, LocalDate date) {
+        return appointmentRepository.findAllByStatusAndDate(status, date);
+    }
+
+    @Override
+    @Transactional
+    public void sendReminderAboutAppointmentsBetween(LocalDateTime from, LocalDateTime to) {
+        List<Appointment> appointments = appointmentRepository.getAppointmentsBetween(from, to);
+
+        for (Appointment app : appointments) {
+            app.setReminderSent(true);
+            AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(app);
+            eventPublisher.publishEvent(new SendEmailEvent<>(app.getPatient().getEmail(),
+                    EmailType.UPCOMING_REMINDER, emailDto));
+        }
     }
 }

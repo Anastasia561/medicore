@@ -9,7 +9,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import pl.edu.medicore.person.model.Person;
+
+import java.time.Instant;
 
 @Setter
 @Getter
@@ -23,4 +26,9 @@ public class RefreshToken {
     private Person person;
     @Column(nullable = false)
     private String token;
+    @Column(name = "expires_at", nullable = false)
+    private Instant expiresAt;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
 }

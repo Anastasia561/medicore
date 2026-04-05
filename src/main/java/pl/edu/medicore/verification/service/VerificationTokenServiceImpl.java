@@ -51,4 +51,10 @@ class VerificationTokenServiceImpl implements VerificationTokenService {
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    @Transactional
+    public void deleteAllExpiredBefore(Instant now) {
+        tokenRepository.deleteAllByExpiresAtBefore(now);
+    }
 }

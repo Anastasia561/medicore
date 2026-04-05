@@ -32,4 +32,6 @@ public interface VerificationTokenRepository extends JpaRepository<VerificationT
     List<VerificationToken> findLatestByEmailAndTokenType(
             String email,
             TokenType tokenType);
+
+    void deleteAllByExpiresAtBefore(Instant now);
 }
