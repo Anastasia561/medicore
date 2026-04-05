@@ -35,7 +35,7 @@ public class LabResult {
     @Column(length = 50, nullable = false)
     private String unit;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "test_id", nullable = false)
     private Test test;
 }

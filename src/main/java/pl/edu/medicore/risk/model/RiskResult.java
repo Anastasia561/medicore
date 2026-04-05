@@ -4,13 +4,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import pl.edu.medicore.patient.model.Patient;
+import pl.edu.medicore.test.model.Test;
 
 import java.time.Instant;
 
@@ -34,6 +40,14 @@ public class RiskResult {
 
     @Column(name = "risk_percent", nullable = false)
     private Double riskPercent;
+
+    @OneToOne
+    @JoinColumn(name = "test_id", nullable = false)
+    private Test test;
+
+    @ManyToOne
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
 
     @CreationTimestamp
     @Column(name = "calculated_at", nullable = false)
