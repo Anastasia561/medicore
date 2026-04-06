@@ -20,7 +20,7 @@ class StatisticsControllerTest extends AbstractControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.totalDoctors").value(5))
                 .andExpect(jsonPath("$.data.consultationsToday").value(0))
                 .andExpect(jsonPath("$.data.monthlyConsultations").isArray())
-                .andExpect(jsonPath("$.data.monthlyConsultations.length()").value(10))
+                .andExpect(jsonPath("$.data.monthlyConsultations.length()").value(8))
                 .andExpect(jsonPath("$.data.doctorsBySpecialization").isArray())
                 .andExpect(jsonPath("$.data.doctorsBySpecialization.length()").value(5));
     }

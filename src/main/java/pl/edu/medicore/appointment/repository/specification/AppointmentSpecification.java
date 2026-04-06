@@ -4,6 +4,7 @@ import org.springframework.data.jpa.domain.Specification;
 import pl.edu.medicore.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
+import pl.edu.medicore.doctor.model.Specialization;
 
 import java.time.LocalDate;
 
@@ -44,7 +45,7 @@ public class AppointmentSpecification {
                 cb.equal(root.get("status"), status);
     }
 
-    private static Specification<Appointment> hasSpecialization(String specialization) {
+    private static Specification<Appointment> hasSpecialization(Specialization specialization) {
         return (root, query, cb) ->
                 cb.equal(root.get("doctor").get("specialization"), specialization);
     }

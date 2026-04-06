@@ -132,6 +132,7 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public long getTotalAppointmentsTodayByDoctorId(long id) {
+        doctorService.checkExistsById(id);
         return appointmentRepository.countByDateAndDoctorId(LocalDate.now(), id);
     }
 
@@ -142,11 +143,13 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id) {
+        doctorService.checkExistsById(id);
         return appointmentRepository.getMonthlyStatisticsByDoctorId(id, LocalDate.now().getYear());
     }
 
     @Override
     public long getDistinctPatientsByDoctorId(long doctorId) {
+        doctorService.checkExistsById(doctorId);
         return appointmentRepository.countDistinctPatientsByDoctorId(doctorId);
     }
 
@@ -158,6 +161,9 @@ class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional
     public void sendReminderAboutAppointmentsBetween(LocalDateTime from, LocalDateTime to) {
+        if (to.isBefore(from))
+            throw new IllegalArgumentException("To date must be after from date");
+
         List<Appointment> appointments = appointmentRepository.getAppointmentsBetween(from, to);
 
         for (Appointment app : appointments) {
