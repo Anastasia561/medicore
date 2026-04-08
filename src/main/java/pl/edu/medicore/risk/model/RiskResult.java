@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,7 +37,7 @@ public class RiskResult {
     @Column(name = "risk_group", nullable = false)
     private RiskGroup riskGroup;
 
-    @Column(name = "risk_percent", nullable = false)
+    @Column(name = "risk_percent")
     private Double riskPercent;
 
     @OneToOne

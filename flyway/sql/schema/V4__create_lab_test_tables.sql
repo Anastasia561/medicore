@@ -27,13 +27,13 @@ CREATE TABLE lab_result
 -- Table: risk_result
 CREATE TABLE risk_result
 (
-    id            BIGSERIAL        NOT NULL PRIMARY KEY,
-    disease       VARCHAR(100)     NOT NULL,
-    risk_group    VARCHAR(50)      NOT NULL,
-    risk_percent  DOUBLE PRECISION NOT NULL,
-    calculated_at TIMESTAMP        NOT NULL,
-    patient_id    BIGINT           NOT NULL,
-    test_id       BIGINT           NOT NULL,
+    id            BIGSERIAL    NOT NULL PRIMARY KEY,
+    disease       VARCHAR(100) NOT NULL,
+    risk_group    VARCHAR(50)  NOT NULL,
+    risk_percent  DOUBLE PRECISION,
+    calculated_at TIMESTAMP    NOT NULL,
+    patient_id    BIGINT       NOT NULL,
+    test_id       BIGINT       NOT NULL,
 
     CONSTRAINT risk_result_patient_fk
         FOREIGN KEY (patient_id)

@@ -6,7 +6,7 @@ import pl.edu.medicore.labresult.model.LabResult;
 
 import java.util.List;
 
-public interface LabResultRepository extends JpaRepository<LabResult, String> {
+public interface LabResultRepository extends JpaRepository<LabResult, Long> {
     @Query("""
                 SELECT lr
                 FROM LabResult lr

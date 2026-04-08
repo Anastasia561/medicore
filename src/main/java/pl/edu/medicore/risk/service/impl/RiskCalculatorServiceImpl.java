@@ -1,8 +1,9 @@
-package pl.edu.medicore.risk.service;
+package pl.edu.medicore.risk.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.person.model.Gender;
+import pl.edu.medicore.risk.service.contract.RiskCalculatorService;
 
 @Service
 @RequiredArgsConstructor

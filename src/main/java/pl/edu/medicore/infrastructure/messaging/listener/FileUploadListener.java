@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import pl.edu.medicore.labresult.service.LabResultService;
 import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
 
@@ -14,7 +16,7 @@ public class FileUploadListener {
 
     private final LabResultService labResultService;
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(FileUploadEvent event) {
         labResultService.processLabResults(event.testId());
     }

@@ -1,4 +1,4 @@
-package pl.edu.medicore.risk.service;
+package pl.edu.medicore.risk.service.contract;
 
 import pl.edu.medicore.person.model.Gender;
 

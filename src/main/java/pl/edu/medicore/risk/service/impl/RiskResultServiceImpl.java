@@ -1,5 +1,6 @@
-package pl.edu.medicore.risk.service;
+package pl.edu.medicore.risk.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.labresult.model.LabResult;
@@ -7,10 +8,14 @@ import pl.edu.medicore.labresult.model.Parameter;
 import pl.edu.medicore.labresult.service.LabResultService;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.person.model.Gender;
+import pl.edu.medicore.risk.dto.RiskResultResponseDto;
+import pl.edu.medicore.risk.mapper.RiskResultMapper;
 import pl.edu.medicore.risk.model.Disease;
 import pl.edu.medicore.risk.model.RiskGroup;
 import pl.edu.medicore.risk.model.RiskResult;
 import pl.edu.medicore.risk.repository.RiskResultRepository;
+import pl.edu.medicore.risk.service.contract.RiskCalculatorService;
+import pl.edu.medicore.risk.service.contract.RiskResultService;
 import pl.edu.medicore.test.model.Test;
 
 import java.time.LocalDate;
@@ -23,8 +28,10 @@ public class RiskResultServiceImpl implements RiskResultService {
     private final LabResultService labResultService;
     private final RiskCalculatorService riskCalculatorService;
     private final RiskResultRepository riskResultRepository;
+    private final RiskResultMapper riskResultMapper;
 
     @Override
+    @Transactional
     public void calculateRisk(long testId) {
         List<LabResult> labResults = labResultService.getLabResultsByTestId(testId);
         if (labResults.isEmpty()) {
@@ -43,6 +50,14 @@ public class RiskResultServiceImpl implements RiskResultService {
             riskResult.setDisease(disease);
             riskResultRepository.save(riskResult);
         }
+    }
+
+    @Override
+    public List<RiskResultResponseDto> getLatestByPatientId(long patientId) {
+        return riskResultRepository.getLatestByPatientId(patientId)
+                .stream()
+                .map(riskResultMapper::toDto)
+                .toList();
     }
 
     private Double calculateRisk(List<LabResult> labResults, Disease disease) {
