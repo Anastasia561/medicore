@@ -22,7 +22,7 @@ import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.AppointmentNotificationEmailDto;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
-import pl.edu.medicore.exception.AppointmentAlreadyCancelledException;
+import pl.edu.medicore.exception.AppointmentCancellationConflictException;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Role;
@@ -35,8 +35,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -68,8 +66,8 @@ class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public void cancel(Long id) {
         Appointment appointment = getById(id);
-        if (appointment.getStatus().equals(Status.CANCELLED)) {
-            throw new AppointmentAlreadyCancelledException("Appointment is already cancelled");
+        if (!appointment.getStatus().equals(Status.SCHEDULED)) {
+            throw new AppointmentCancellationConflictException("Appointment can not be cancelled");
         }
         appointment.setStatus(Status.CANCELLED);
 

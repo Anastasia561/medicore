@@ -28,7 +28,7 @@ import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.model.Specialization;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.AppointmentNotificationEmailDto;
-import pl.edu.medicore.exception.AppointmentAlreadyCancelledException;
+import pl.edu.medicore.exception.AppointmentCancellationConflictException;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
@@ -171,8 +171,8 @@ class AppointmentServiceTest {
         appointment.setStatus(Status.CANCELLED);
         when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
 
-        AppointmentAlreadyCancelledException exception = assertThrows(
-                AppointmentAlreadyCancelledException.class,
+        AppointmentCancellationConflictException exception = assertThrows(
+                AppointmentCancellationConflictException.class,
                 () -> appointmentService.cancel(appointmentId)
         );
         assertEquals("Appointment is already cancelled", exception.getMessage());
