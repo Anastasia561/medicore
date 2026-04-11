@@ -67,14 +67,13 @@ public abstract class AbstractIntegrationTest {
     protected static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
             .withPerMethodLifecycle(true);
 
+    protected String token;
+
     @Autowired
     private AuthService authService;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private String token;
-
 
     @BeforeAll
     protected static void init() throws InterruptedException, IOException {

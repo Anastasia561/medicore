@@ -1,11 +1,14 @@
 package pl.edu.medicore.test.controller;
 
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpMethod;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.person.model.Role;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -16,9 +19,14 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -124,5 +132,85 @@ class TestControllerTest extends AbstractIntegrationTest {
         performRequest(HttpMethod.GET, "/tests/download/{id}", null, 1000)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error.message").value("File not found"));
+    }
+
+    @Test
+    void shouldCreateTest_whenInputIsValid() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "test.pdf",
+                "application/pdf",
+                "dummy pdf content".getBytes()
+        );
+
+        ResultActions resultActions = mockMvc.perform(
+                        multipart("/tests")
+                                .file(file)
+                                .param("date", "2026-01-10")
+                                .header("Authorization", "Bearer " + token)
+                )
+                .andExpect(status().isCreated());
+
+        Long id = ((Number) JsonPath.read(
+                resultActions.andReturn().getResponse().getContentAsString(),
+                "$.data"
+        )).longValue();
+
+        pl.edu.medicore.test.model.Test test = em.find(pl.edu.medicore.test.model.Test.class, id);
+
+        assertNotNull(test);
+        assertEquals(LocalDate.of(2026, 1, 10), test.getDate());
+    }
+
+    @Test
+    void shouldReturn401_whenAccessedTestUploadWithInvalidToken() throws Exception {
+        mockMvc.perform(post("/tests")
+                        .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldReturn403_whenAccessedTestUploadAsAdmin() throws Exception {
+        obtainRoleBasedToken(Role.ADMIN);
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "test.pdf",
+                "application/pdf",
+                "dummy pdf content".getBytes()
+        );
+
+        mockMvc.perform(
+                        multipart("/tests")
+                                .file(file)
+                                .param("date", "2026-01-10")
+                                .header("Authorization", "Bearer " + token)
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldReturn400_whenValidationErrorsInTestCreate() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "test.pdf",
+                "application/pdf",
+                "dummy pdf content".getBytes()
+        );
+
+        mockMvc.perform(
+                        multipart("/tests")
+                                .file(file)
+                                .param("date", "2040-01-10")
+                                .header("Authorization", "Bearer " + token)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("Validation failed"))
+                .andExpect(jsonPath("$.error.validationErrors").isArray())
+                .andExpect(jsonPath("$.error.validationErrors.length()").value(1));
     }
 }
