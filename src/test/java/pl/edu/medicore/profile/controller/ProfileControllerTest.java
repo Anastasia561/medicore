@@ -8,6 +8,7 @@ import pl.edu.medicore.AbstractControllerIntegrationTest;
 import pl.edu.medicore.address.dto.PatientAddressDto;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.patient.model.Patient;
+import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.profile.dto.ProfileUpdateDto;
@@ -123,9 +124,10 @@ class ProfileControllerTest extends AbstractControllerIntegrationTest {
     @Test
     void shouldReturn403_whenRequestedProfileUpdateAsDoctor() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("testF", "testL",
-                LocalDate.of(2006, 10, 2), "123456789",
-                new PatientAddressDto("Poland", "Warsaw", "test street", 10));
+        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("test", "testL",
+                Gender.MALE, 50.7, 100.7, false,
+                LocalDate.of(1999, 10, 2), "12345678",
+                new PatientAddressDto("test country", "test city", "test street", 10));
 
         performRequest(HttpMethod.PUT, "/profiles/patient", dto)
                 .andExpect(status().isForbidden());
@@ -145,8 +147,9 @@ class ProfileControllerTest extends AbstractControllerIntegrationTest {
         obtainRoleBasedToken(Role.PATIENT);
 
         PatientProfileUpdateDto dto = new PatientProfileUpdateDto("testF", "testL",
-                LocalDate.of(2006, 10, 2), "123456789",
-                new PatientAddressDto("Poland", "Warsaw", "test street", 10));
+                Gender.MALE, 50.7, 100.7, false,
+                LocalDate.of(1999, 10, 2), "12345678",
+                new PatientAddressDto("test country", "test city", "test street", 10));
 
         ResultActions resultActions = performRequest(HttpMethod.PUT, "/profiles/patient", dto)
                 .andExpect(status().isOk());
@@ -166,9 +169,10 @@ class ProfileControllerTest extends AbstractControllerIntegrationTest {
     void shouldReturn400_whenUpdatePatientProfileWithValidationErrors() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
 
-        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("", "testL",
-                LocalDate.of(2006, 10, 2), null,
-                new PatientAddressDto("Poland", "Warsaw", "test street", -10));
+        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("", null,
+                Gender.MALE, 50.7, 100.7, false,
+                LocalDate.of(1999, 10, 2), "12345678",
+                new PatientAddressDto("test country", "test city", "test street", -10));
 
         performRequest(HttpMethod.PUT, "/profiles/patient", dto)
                 .andExpect(status().isBadRequest())

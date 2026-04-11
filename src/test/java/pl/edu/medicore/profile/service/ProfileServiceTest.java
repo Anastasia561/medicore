@@ -5,11 +5,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import pl.edu.medicore.address.dto.PatientAddressDto;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
+import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.service.PersonService;
@@ -37,6 +39,8 @@ class ProfileServiceTest {
     private DoctorService doctorService;
     @Mock
     private ProfileMapper profileMapper;
+    @Mock
+    private ApplicationEventPublisher publisher;
     @InjectMocks
     private ProfileServiceImpl profileService;
 
@@ -108,15 +112,17 @@ class ProfileServiceTest {
 
         verify(personService).getById(id);
         verify(profileMapper).updatePersonFromDto(dto, person);
-        verifyNoInteractions(doctorService, patientService);
+        verifyNoInteractions(doctorService, patientService, publisher);
     }
 
     @Test
     void shouldUpdatePatientProfile_whenInputIsValid() {
         long id = 1L;
-        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("testF", "lestL",
-                LocalDate.of(2026, 10, 2), "123",
-                new PatientAddressDto("poland", "warsaw", "test street", 10));
+        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("test", "testL",
+                Gender.MALE, 50.7, 100.7, false,
+                LocalDate.of(1999, 10, 2), "1234",
+                new PatientAddressDto("test country", "test city", "test street", 10));
+
         Patient patient = new Patient();
 
         when(patientService.getById(id)).thenReturn(patient);

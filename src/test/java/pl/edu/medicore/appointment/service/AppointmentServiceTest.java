@@ -175,7 +175,7 @@ class AppointmentServiceTest {
                 AppointmentCancellationConflictException.class,
                 () -> appointmentService.cancel(appointmentId)
         );
-        assertEquals("Appointment is already cancelled", exception.getMessage());
+        assertEquals("Appointment can not be cancelled", exception.getMessage());
 
         verifyNoInteractions(eventPublisher);
     }
