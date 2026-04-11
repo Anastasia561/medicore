@@ -4,7 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.ResultActions;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.address.dto.PatientAddressDto;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.patient.model.Patient;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-class ProfileControllerTest extends AbstractControllerIntegrationTest {
+class ProfileControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnProfile_whenRequestedByAdmin() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);

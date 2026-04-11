@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.address.dto.PatientAddressDto;
 import pl.edu.medicore.address.model.Address;
 import pl.edu.medicore.city.model.City;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class PatientControllerTest extends AbstractControllerIntegrationTest {
+class PatientControllerTest extends AbstractIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 

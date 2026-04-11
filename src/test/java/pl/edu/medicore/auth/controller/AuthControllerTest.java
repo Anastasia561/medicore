@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.auth.dto.AuthRequestDto;
 import pl.edu.medicore.auth.dto.PasswordResetDto;
 import pl.edu.medicore.auth.dto.PasswordResetRequestDto;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AuthControllerTest extends AbstractControllerIntegrationTest {
+class AuthControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;

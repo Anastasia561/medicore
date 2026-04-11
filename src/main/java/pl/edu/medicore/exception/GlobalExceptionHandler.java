@@ -22,13 +22,13 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ResponseWrapper<Object>> handleResourceNotFound(EntityNotFoundException ex) {
+    @ExceptionHandler({EntityNotFoundException.class, FileNotFoundException.class})
+    public ResponseEntity<ResponseWrapper<Object>> handleResourceNotFound(RuntimeException ex) {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class,
-            DoctorNotAvailableException.class, UserNotVerifiedException.class, FileNotFoundException.class})
+            DoctorNotAvailableException.class, UserNotVerifiedException.class})
     public ResponseEntity<ResponseWrapper<Object>> handleIllegalArgument(RuntimeException ex) {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }

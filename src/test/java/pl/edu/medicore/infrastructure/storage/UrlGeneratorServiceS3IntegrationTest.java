@@ -3,7 +3,7 @@ package pl.edu.medicore.infrastructure.storage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
-import pl.edu.medicore.AbstractS3IntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.exception.FileNotFoundException;
 
 import java.net.URL;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class UrlGeneratorServiceS3IntegrationTest extends AbstractS3IntegrationTest {
+class UrlGeneratorServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private StorageServiceImpl storageService;

@@ -2,14 +2,14 @@ package pl.edu.medicore.statistics.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.person.model.Role;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-class StatisticsControllerTest extends AbstractControllerIntegrationTest {
+class StatisticsControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnAdminStatistics_wheRecordsExist() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);

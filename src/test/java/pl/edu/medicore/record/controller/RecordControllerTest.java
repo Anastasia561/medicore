@@ -4,7 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.ResultActions;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.model.Record;
@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class RecordControllerTest extends AbstractControllerIntegrationTest {
+class RecordControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturnRecordByAppointmentId_whenRequestedAsPatient() throws Exception {

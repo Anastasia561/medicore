@@ -3,7 +3,7 @@ package pl.edu.medicore.infrastructure.storage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
-import pl.edu.medicore.AbstractS3IntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.exception.FileNotFoundException;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class StorageServiceS3IntegrationTest extends AbstractS3IntegrationTest {
+class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private StorageServiceImpl storageService;

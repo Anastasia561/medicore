@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import java.net.URI;
 
 @TestConfiguration
-@Profile("s3-test")
+@Profile("test")
 public class AWSTestConfig {
 
     @Value("${spring.cloud.aws.credentials.access-key}")

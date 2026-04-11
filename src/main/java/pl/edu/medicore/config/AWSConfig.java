@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
 @RequiredArgsConstructor
-@Profile("!s3-test")
+@Profile("!test")
 public class AWSConfig {
     @Value("${app.aws.s3.region}")
     private String region;

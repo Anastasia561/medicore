@@ -4,7 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.ResultActions;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.prescription.dto.PrescriptionCreateDto;
 import pl.edu.medicore.prescription.model.Prescription;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class PrescriptionControllerTest extends AbstractControllerIntegrationTest {
+class PrescriptionControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenCreatePrescriptionAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);

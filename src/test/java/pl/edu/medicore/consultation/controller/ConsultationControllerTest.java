@@ -5,7 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.ResultActions;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.consultation.dto.ConsultationUpdateDto;
 import pl.edu.medicore.consultation.model.Consultation;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ConsultationControllerTest extends AbstractControllerIntegrationTest {
+class ConsultationControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldGetAllDoctorConsultations_whenConsultationsExist() throws Exception {

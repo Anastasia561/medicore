@@ -5,7 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.ResultActions;
-import pl.edu.medicore.AbstractControllerIntegrationTest;
+import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AppointmentControllerTest extends AbstractControllerIntegrationTest {
+class AppointmentControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldGetAppointmentPageForPatient_whenInputIsValid() throws Exception {
