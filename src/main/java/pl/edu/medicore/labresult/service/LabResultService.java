@@ -8,4 +8,6 @@ public interface LabResultService {
     void processLabResults(Long testId);
 
     List<LabResult> getLabResultsByTestId(Long testId);
+
+    List<LabResult> getLabResultsByPatientId(Long patientId);
 }

@@ -8,9 +8,12 @@ import org.springframework.stereotype.Service;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
+import pl.edu.medicore.test.mapper.TestMapper;
 import pl.edu.medicore.test.model.Test;
 import pl.edu.medicore.test.repository.TestRepository;
 import pl.edu.medicore.infrastructure.storage.StorageService;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ class TestServiceImpl implements TestService {
     private final PatientService patientService;
     private final TestRepository testRepository;
     private final StorageService storageService;
+    private final TestMapper testMapper;
     private final ApplicationEventPublisher publisher;
 
     @Override
@@ -27,15 +31,21 @@ class TestServiceImpl implements TestService {
             throw new IllegalArgumentException("File is empty");
         }
 
-        Test test = new Test();
-        test.setDate(dto.date());
-        test.setPatient(patientService.getById(patientId));
+        Optional<Test> latestTestOpt = testRepository.findTopByPatientIdOrderByDateDesc(patientId);
 
+        boolean isNewest = latestTestOpt
+                .map(latest -> dto.date().isAfter(latest.getDate()))
+                .orElse(true);
+
+        Test test = testMapper.toEntity(dto, patientService.getById(patientId));
         Test saved = testRepository.save(test);
 
         try {
             storageService.uploadFile(dto.file(), saved.getId());
-            publisher.publishEvent(new FileUploadEvent(saved.getId()));
+
+            if (isNewest) {
+                publisher.publishEvent(new FileUploadEvent(saved.getId()));
+            }
             return saved.getId();
 
         } catch (Exception e) {

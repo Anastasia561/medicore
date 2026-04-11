@@ -5,7 +5,9 @@ import pl.edu.medicore.risk.dto.RiskResultResponseDto;
 import java.util.List;
 
 public interface RiskResultService {
-    void calculateRisk(long testId);
+    void calculateRiskForTest(long testId);
+
+    void calculateRiskForPatient(long patientId);
 
     List<RiskResultResponseDto> getLatestByPatientId(long patientId);
 }

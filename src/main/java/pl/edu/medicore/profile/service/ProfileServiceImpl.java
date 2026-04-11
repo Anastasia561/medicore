@@ -1,9 +1,11 @@
 package pl.edu.medicore.profile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.doctor.service.DoctorService;
+import pl.edu.medicore.infrastructure.messaging.event.PatientUpdateEvent;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Person;
@@ -21,6 +23,7 @@ class ProfileServiceImpl implements ProfileService {
     private final PatientService patientService;
     private final DoctorService doctorService;
     private final ProfileMapper profileMapper;
+    private final ApplicationEventPublisher publisher;
 
     @Override
     public ProfileResponseDto getProfileById(long id) {
@@ -45,6 +48,7 @@ class ProfileServiceImpl implements ProfileService {
     public long updatePatientProfile(PatientProfileUpdateDto dto, long id) {
         Patient patient = patientService.getById(id);
         profileMapper.updatePatientFromDto(dto, patient);
+        publisher.publishEvent(new PatientUpdateEvent(id));
         return id;
     }
 }

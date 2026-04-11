@@ -32,11 +32,31 @@ public class RiskResultServiceImpl implements RiskResultService {
 
     @Override
     @Transactional
-    public void calculateRisk(long testId) {
+    public void calculateRiskForTest(long testId) {
         List<LabResult> labResults = labResultService.getLabResultsByTestId(testId);
         if (labResults.isEmpty()) {
             throw new IllegalStateException("No lab results found for test");
         }
+        save(labResults);
+    }
+
+    @Override
+    public void calculateRiskForPatient(long patientId) {
+        List<LabResult> labResults = labResultService.getLabResultsByPatientId(patientId);
+        if (!labResults.isEmpty()) {
+            save(labResults);
+        }
+    }
+
+    @Override
+    public List<RiskResultResponseDto> getLatestByPatientId(long patientId) {
+        return riskResultRepository.getLatestByPatientId(patientId)
+                .stream()
+                .map(riskResultMapper::toDto)
+                .toList();
+    }
+
+    private void save(List<LabResult> labResults) {
         Patient patient = labResults.getFirst().getTest().getPatient();
         Test test = labResults.getFirst().getTest();
 
@@ -50,14 +70,6 @@ public class RiskResultServiceImpl implements RiskResultService {
             riskResult.setDisease(disease);
             riskResultRepository.save(riskResult);
         }
-    }
-
-    @Override
-    public List<RiskResultResponseDto> getLatestByPatientId(long patientId) {
-        return riskResultRepository.getLatestByPatientId(patientId)
-                .stream()
-                .map(riskResultMapper::toDto)
-                .toList();
     }
 
     private Double calculateRisk(List<LabResult> labResults, Disease disease) {

@@ -47,4 +47,9 @@ class LabResultServiceImpl implements LabResultService {
     public List<LabResult> getLabResultsByTestId(Long testId) {
         return labResultRepository.getLabResultsByTestId(testId);
     }
+
+    @Override
+    public List<LabResult> getLabResultsByPatientId(Long patientId) {
+        return labResultRepository.getLatestLabResultsByPatientId(patientId);
+    }
 }
