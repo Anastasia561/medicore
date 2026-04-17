@@ -24,7 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RiskResultServiceImpl implements RiskResultService {
+class RiskResultServiceImpl implements RiskResultService {
     private final LabResultService labResultService;
     private final RiskCalculatorService riskCalculatorService;
     private final RiskResultRepository riskResultRepository;

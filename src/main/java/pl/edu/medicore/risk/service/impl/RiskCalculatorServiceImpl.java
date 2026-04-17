@@ -7,7 +7,7 @@ import pl.edu.medicore.risk.service.contract.RiskCalculatorService;
 
 @Service
 @RequiredArgsConstructor
-public class RiskCalculatorServiceImpl implements RiskCalculatorService {
+class RiskCalculatorServiceImpl implements RiskCalculatorService {
 
     @Override
     public Double calculateAnemiaRiskPercentage(Double hgb, Double hct, Double rbc, Gender gender, Boolean pregnant) {
