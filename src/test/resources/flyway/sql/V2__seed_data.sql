@@ -180,20 +180,20 @@ INSERT INTO consultation (day, start_work_time, end_work_time, doctor_id)
 VALUES ('FRIDAY', '10:00:00', '16:00:00', 10);
 
 -- TEST
-INSERT INTO test (id, performed_date, patient_id)
-VALUES (1, '2025-01-11', 1);
+INSERT INTO test (performed_date, patient_id)
+VALUES ('2025-01-11', 1);
 
 -- LAB RESULT
-INSERT INTO lab_result (id, parameter, value, unit, test_id)
-VALUES (1, 'RBC', 4.96, '10^12/L', 1),
-       (2, 'HGB', 149, 'g/L', 1),
-       (3, 'HCT', 45.8, '%', 1),
-       (4, 'CREATININE', NULL, 'mg/dL', 1),
-       (5, 'GLUCOSE', NULL, 'mg/dL', 1);
+INSERT INTO lab_result (parameter, value, unit, test_id)
+VALUES ('RBC', 4.96, '10^12/L', 1),
+       ('HGB', 149, 'g/L', 1),
+       ('HCT', 45.8, '%', 1),
+       ('CREATININE', NULL, 'mg/dL', 1),
+       ('GLUCOSE', NULL, 'mg/dL', 1);
 
 -- RISK RESULT
 
-INSERT INTO risk_result (id, disease, risk_group, risk_percent, calculated_at, patient_id, test_id)
-VALUES (1, 'ANEMIA', 'NONE', 0, '2026-04-19 09:49:36.693880', 1, 1),
-       (2, 'DIABETES', 'UNKNOWN', NULL, '2026-04-19 09:49:36.697967', 1, 1),
-       (3, 'CKD', 'UNKNOWN', NULL, '2026-04-19 09:49:36.700109', 1, 1);
+INSERT INTO risk_result (disease, risk_group, risk_percent, calculated_at, patient_id, test_id)
+VALUES ('ANEMIA', 'NONE', 0, '2026-04-19 09:49:36.693880', 1, 1),
+       ('DIABETES', 'UNKNOWN', NULL, '2026-04-19 09:49:36.697967', 1, 1),
+       ('CKD', 'UNKNOWN', NULL, '2026-04-19 09:49:36.700109', 1, 1);

@@ -10,6 +10,7 @@ import pl.edu.medicore.labresult.model.Parameter;
 import pl.edu.medicore.labresult.repository.LabResultRepository;
 import pl.edu.medicore.infrastructure.parser.PdfParserService;
 import pl.edu.medicore.infrastructure.storage.StorageService;
+import pl.edu.medicore.test.model.Test;
 import pl.edu.medicore.test.service.TestService;
 
 import java.io.InputStream;
@@ -29,6 +30,7 @@ class LabResultServiceImpl implements LabResultService {
     public void processLabResults(Long testId) {
         InputStream file = storageService.getFile(testId);
         String text = pdfParserService.extractText(file);
+        Test test = testService.getById(testId);
 
         for (Parameter param : Parameter.values()) {
             LabResult labResult = new LabResult();
@@ -36,7 +38,7 @@ class LabResultServiceImpl implements LabResultService {
             labResult.setParameter(param);
             Double value = pdfParserService.parse(text, param);
             labResult.setValue(value);
-            labResult.setTest(testService.getById(testId));
+            labResult.setTest(test);
 
             labResultRepository.save(labResult);
         }

@@ -18,6 +18,7 @@ import pl.edu.medicore.risk.repository.RiskResultRepository;
 import pl.edu.medicore.risk.service.contract.RiskCalculatorService;
 import pl.edu.medicore.risk.service.contract.RiskResultService;
 import pl.edu.medicore.test.model.Test;
+import pl.edu.medicore.test.service.TestService;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -31,10 +32,13 @@ class RiskResultServiceImpl implements RiskResultService {
     private final RiskResultRepository riskResultRepository;
     private final RiskResultMapper riskResultMapper;
     private final PatientService patientService;
+    private final TestService testService;
 
     @Override
     @Transactional
     public void calculateRiskForTest(long testId) {
+        testService.getById(testId);
+
         List<LabResult> labResults = labResultService.getLabResultsByTestId(testId);
         if (labResults.isEmpty()) {
             throw new IllegalStateException("No lab results found for test");
@@ -44,6 +48,8 @@ class RiskResultServiceImpl implements RiskResultService {
 
     @Override
     public void calculateRiskForPatient(long patientId) {
+        patientService.getById(patientId);
+
         List<LabResult> labResults = labResultService.getLabResultsByPatientId(patientId);
         if (!labResults.isEmpty()) {
             save(labResults);

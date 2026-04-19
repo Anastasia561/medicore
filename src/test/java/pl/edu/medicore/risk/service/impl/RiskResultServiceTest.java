@@ -18,6 +18,7 @@ import pl.edu.medicore.risk.model.RiskGroup;
 import pl.edu.medicore.risk.model.RiskResult;
 import pl.edu.medicore.risk.repository.RiskResultRepository;
 import pl.edu.medicore.risk.service.contract.RiskCalculatorService;
+import pl.edu.medicore.test.service.TestService;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -41,6 +42,8 @@ class RiskResultServiceTest {
     private RiskCalculatorService riskCalculatorService;
     @Mock
     private PatientService patientService;
+    @Mock
+    private TestService testService;
     @Mock
     private RiskResultRepository riskResultRepository;
     @Mock
