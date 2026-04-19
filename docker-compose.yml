@@ -1,7 +1,7 @@
 services:
   app:
     container_name: medicore_api
-    build: .
+    build: ./medicore-api
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
@@ -21,6 +21,17 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  frontend:
+    container_name: medicore_frontend
+    build: ./medicore-front
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./medicore-front:/app
+      - /app/node_modules
+    depends_on:
+      - app
 
   postgres:
     image: postgres:15-alpine
@@ -44,7 +55,7 @@ services:
     image: flyway/flyway:10-alpine
     command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -connectRetries=60 migrate
     volumes:
-      - ./flyway/sql:/flyway/sql
+      - ./medicore-api/flyway/sql:/flyway/sql
     depends_on:
       postgres:
         condition: service_healthy
