@@ -7,6 +7,7 @@ import pl.edu.medicore.labresult.model.LabResult;
 import pl.edu.medicore.labresult.model.Parameter;
 import pl.edu.medicore.labresult.service.LabResultService;
 import pl.edu.medicore.patient.model.Patient;
+import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.risk.dto.RiskResultResponseDto;
 import pl.edu.medicore.risk.mapper.RiskResultMapper;
@@ -29,6 +30,7 @@ class RiskResultServiceImpl implements RiskResultService {
     private final RiskCalculatorService riskCalculatorService;
     private final RiskResultRepository riskResultRepository;
     private final RiskResultMapper riskResultMapper;
+    private final PatientService patientService;
 
     @Override
     @Transactional
@@ -50,6 +52,7 @@ class RiskResultServiceImpl implements RiskResultService {
 
     @Override
     public List<RiskResultResponseDto> getLatestByPatientId(long patientId) {
+        patientService.getById(patientId);
         return riskResultRepository.getLatestByPatientId(patientId)
                 .stream()
                 .map(riskResultMapper::toDto)

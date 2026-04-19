@@ -9,6 +9,7 @@ import pl.edu.medicore.labresult.model.LabResult;
 import pl.edu.medicore.labresult.model.Parameter;
 import pl.edu.medicore.labresult.service.LabResultService;
 import pl.edu.medicore.patient.model.Patient;
+import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.risk.dto.RiskResultResponseDto;
 import pl.edu.medicore.risk.mapper.RiskResultMapper;
@@ -38,6 +39,8 @@ class RiskResultServiceTest {
     private LabResultService labResultService;
     @Mock
     private RiskCalculatorService riskCalculatorService;
+    @Mock
+    private PatientService patientService;
     @Mock
     private RiskResultRepository riskResultRepository;
     @Mock
@@ -121,6 +124,7 @@ class RiskResultServiceTest {
                 20.5, LocalDate.of(2023, 1, 1),
                 LocalDate.of(2025, 1, 1));
 
+        when(patientService.getById(patientId)).thenReturn(new Patient());
         when(riskResultRepository.getLatestByPatientId(patientId)).thenReturn(List.of(entity1, entity2));
 
         when(riskResultMapper.toDto(entity1)).thenReturn(dto1);
@@ -141,6 +145,7 @@ class RiskResultServiceTest {
     void shouldReturnEmptyList_whenNoRiskResultsFoundForPatient() {
         long patientId = 1L;
 
+        when(patientService.getById(patientId)).thenReturn(new Patient());
         when(riskResultRepository.getLatestByPatientId(patientId)).thenReturn(Collections.emptyList());
 
         List<RiskResultResponseDto> result = riskService.getLatestByPatientId(patientId);
