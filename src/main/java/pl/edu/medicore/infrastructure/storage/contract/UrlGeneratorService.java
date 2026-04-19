@@ -1,4 +1,4 @@
-package pl.edu.medicore.infrastructure.storage;
+package pl.edu.medicore.infrastructure.storage.contract;
 
 import java.net.URL;
 

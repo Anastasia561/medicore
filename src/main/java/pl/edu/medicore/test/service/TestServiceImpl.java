@@ -11,7 +11,7 @@ import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
 import pl.edu.medicore.test.mapper.TestMapper;
 import pl.edu.medicore.test.model.Test;
 import pl.edu.medicore.test.repository.TestRepository;
-import pl.edu.medicore.infrastructure.storage.StorageService;
+import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 
 import java.util.Optional;
 

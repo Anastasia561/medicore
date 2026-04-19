@@ -23,7 +23,7 @@ import pl.edu.medicore.exception.InvalidRefreshTokenException;
 import pl.edu.medicore.person.mapper.PersonMapper;
 import pl.edu.medicore.person.model.Person;
 import pl.edu.medicore.person.service.PersonService;
-import pl.edu.medicore.utils.UrlBuilder;
+import pl.edu.medicore.infrastructure.storage.UrlBuilder;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.model.VerificationToken;
 import pl.edu.medicore.verification.service.VerificationTokenService;

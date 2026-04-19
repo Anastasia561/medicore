@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import pl.edu.medicore.infrastructure.messaging.event.LabResultsExtractedEvent;
 import pl.edu.medicore.infrastructure.parser.PdfParserService;
-import pl.edu.medicore.infrastructure.storage.StorageService;
+import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 import pl.edu.medicore.labresult.model.LabResult;
 import pl.edu.medicore.labresult.model.Parameter;
 import pl.edu.medicore.labresult.repository.LabResultRepository;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class LabResultServiceTest {
+class LabResultServiceTest {
     @Mock
     private PdfParserService pdfParserService;
     @Mock

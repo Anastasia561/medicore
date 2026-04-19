@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PdfParserServiceTest {
+class PdfParserServiceTest {
     private final PdfParserService pdfParserService = new PdfParserServiceImpl();
 
     @Test

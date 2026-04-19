@@ -1,4 +1,4 @@
-package pl.edu.medicore.infrastructure.storage;
+package pl.edu.medicore.infrastructure.storage.impl;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

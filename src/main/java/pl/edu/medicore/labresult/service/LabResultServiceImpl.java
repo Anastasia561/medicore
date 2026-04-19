@@ -9,7 +9,7 @@ import pl.edu.medicore.labresult.model.LabResult;
 import pl.edu.medicore.labresult.model.Parameter;
 import pl.edu.medicore.labresult.repository.LabResultRepository;
 import pl.edu.medicore.infrastructure.parser.PdfParserService;
-import pl.edu.medicore.infrastructure.storage.StorageService;
+import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 import pl.edu.medicore.test.model.Test;
 import pl.edu.medicore.test.service.TestService;
 

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RiskCalculatorServiceTest {
+class RiskCalculatorServiceTest {
     private final RiskCalculatorService riskCalculatorService = new RiskCalculatorServiceImpl();
 
     @Test

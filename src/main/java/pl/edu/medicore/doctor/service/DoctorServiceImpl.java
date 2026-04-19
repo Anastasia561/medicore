@@ -20,7 +20,7 @@ import pl.edu.medicore.email.dto.VerificationEmailDto;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
-import pl.edu.medicore.utils.UrlBuilder;
+import pl.edu.medicore.infrastructure.storage.UrlBuilder;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.service.VerificationTokenService;
 

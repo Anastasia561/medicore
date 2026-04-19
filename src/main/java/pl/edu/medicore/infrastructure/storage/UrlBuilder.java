@@ -1,4 +1,4 @@
-package pl.edu.medicore.utils;
+package pl.edu.medicore.infrastructure.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

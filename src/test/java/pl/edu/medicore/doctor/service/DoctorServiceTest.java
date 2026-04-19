@@ -23,7 +23,7 @@ import pl.edu.medicore.doctor.repository.DoctorRepository;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.person.model.Gender;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
-import pl.edu.medicore.utils.UrlBuilder;
+import pl.edu.medicore.infrastructure.storage.UrlBuilder;
 import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.service.VerificationTokenService;
 

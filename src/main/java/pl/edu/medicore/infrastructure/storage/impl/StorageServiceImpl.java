@@ -1,10 +1,12 @@
-package pl.edu.medicore.infrastructure.storage;
+package pl.edu.medicore.infrastructure.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.medicore.config.properties.S3Properties;
 import pl.edu.medicore.exception.UploadFileException;
+import pl.edu.medicore.infrastructure.storage.S3Utils;
+import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;

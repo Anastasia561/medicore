@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.test.service.TestService;
-import pl.edu.medicore.infrastructure.storage.UrlGeneratorService;
+import pl.edu.medicore.infrastructure.storage.contract.UrlGeneratorService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
 import java.net.URL;

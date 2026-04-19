@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
-import pl.edu.medicore.infrastructure.storage.StorageService;
+import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.patient.service.PatientService;
 import pl.edu.medicore.test.dto.TestUploadRequestDto;
