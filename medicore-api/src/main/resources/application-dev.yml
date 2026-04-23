@@ -21,3 +21,7 @@ app:
 openapi:
   resource-server-url: ${RESOURCE_SERVER_URL}
   server-description: Development server
+
+cors:
+  allowed-origins:
+    - http://localhost:5173
