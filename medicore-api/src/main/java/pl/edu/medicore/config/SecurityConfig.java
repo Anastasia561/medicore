@@ -73,7 +73,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/refresh",
+                        .requestMatchers("/auth/login", "/auth/refresh", "/auth/logout",
                                 "/patients/register", "/patients/verify-email",
                                 "/doctors/register",
                                 "/auth/reset-password/request", "/auth/reset-password",

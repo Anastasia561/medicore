@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,7 +63,6 @@ public class AuthController {
     }
 
     @Operation(summary = "Logout endpoint")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
