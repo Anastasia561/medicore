@@ -1,38 +1,32 @@
 -- COUNTRY
 INSERT INTO country (public_id, name)
 VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'USA');
+
 INSERT INTO country (name)
-VALUES ('Germany');
-INSERT INTO country (name)
-VALUES ('Poland');
-INSERT INTO country (name)
-VALUES ('Japan');
-INSERT INTO country (name)
-VALUES ('Brazil');
+VALUES ('Germany'),
+       ('Poland'),
+       ('Japan'),
+       ('Brazil');
 
 -- CITY
 INSERT INTO city (public_id, name, country_id)
 VALUES ('11111111-1111-1111-1111-111111111111', 'New York', 1);
+
 INSERT INTO city (name, country_id)
-VALUES ('Berlin', 2);
-INSERT INTO city (name, country_id)
-VALUES ('Warsaw', 3);
-INSERT INTO city (name, country_id)
-VALUES ('Tokyo', 4);
-INSERT INTO city (name, country_id)
-VALUES ('Sao Paulo', 5);
+VALUES ('Berlin', 2),
+       ('Warsaw', 3),
+       ('Tokyo', 4),
+       ('Sao Paulo', 5);
 
 -- ADDRESS
 INSERT INTO address (public_id, street, number, city_id)
 VALUES ('22222222-2222-2222-2222-222222222222', '5th Avenue', 101, 1);
+
 INSERT INTO address (street, number, city_id)
-VALUES ('Unter den Linden', 45, 2);
-INSERT INTO address (street, number, city_id)
-VALUES ('Nowy Świat', 15, 3);
-INSERT INTO address (street, number, city_id)
-VALUES ('Shibuya Street', 23, 4);
-INSERT INTO address (street, number, city_id)
-VALUES ('Paulista Ave', 321, 5);
+VALUES ('Unter den Linden', 45, 2),
+       ('Nowy Świat', 15, 3),
+       ('Shibuya Street', 23, 4),
+       ('Paulista Ave', 321, 5);
 
 
 -- PERSON
@@ -72,28 +66,20 @@ VALUES ('00000000-0000-0000-0000-000000000001', 'John', 'Doe', 'john.doe@example
 -- pass 111
 
 -- PATIENT
-INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
-VALUES (1, '1990-05-15', '+123456789', 1, 70.5, 170.3);
 INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height, pregnant)
-VALUES (2, '1985-07-20', '+49123456789', 2, 80.4, 190.0, true);
-INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
-VALUES (3, '1993-03-10', '+48123456789', 3, 56.9, 169.8);
-INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
-VALUES (4, '1978-11-05', '+81123456789', 4, 70.3, 184);
-INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height)
-VALUES (5, '1980-09-25', '+55123456789', 5, 69.4, 179.4);
+VALUES (1, '1990-05-15', '+123456789', 1, 70.5, 170.3, false),
+       (2, '1985-07-20', '+49123456789', 2, 80.4, 190.0, true),
+       (3, '1993-03-10', '+48123456789', 3, 56.9, 169.8, false),
+       (4, '1978-11-05', '+81123456789', 4, 70.3, 184, false),
+       (5, '1980-09-25', '+55123456789', 5, 69.4, 179.4, false);
 
 -- DOCTOR
 INSERT INTO doctor (id, experience, employment_date, specialization)
-VALUES (6, 10, '2015-06-01', 'CARDIOLOGIST');
-INSERT INTO doctor (id, experience, employment_date, specialization)
-VALUES (7, 5, '2018-09-15', 'DERMATOLOGIST');
-INSERT INTO doctor (id, experience, employment_date, specialization)
-VALUES (8, 15, '2010-03-20', 'NEUROLOGIST');
-INSERT INTO doctor (id, experience, employment_date, specialization)
-VALUES (9, 7, '2017-11-05', 'PEDIATRICIAN');
-INSERT INTO doctor (id, experience, employment_date, specialization)
-VALUES (10, 12, '2012-01-10', 'ONCOLOGIST');
+VALUES (6, 10, '2015-06-01', 'CARDIOLOGIST'),
+       (7, 5, '2018-09-15', 'DERMATOLOGIST'),
+       (8, 15, '2010-03-20', 'NEUROLOGIST'),
+       (9, 7, '2017-11-05', 'PEDIATRICIAN'),
+       (10, 12, '2012-01-10', 'ONCOLOGIST');
 
 
 -- APPOINTMENT
