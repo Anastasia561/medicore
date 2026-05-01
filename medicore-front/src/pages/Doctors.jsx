@@ -25,7 +25,7 @@ const Doctors = () => {
                 if (e.name === 'CanceledError' || e.code === 'ERR_CANCELED') return;
 
                 if (e.response?.status === 401 || e.response?.status === 403) {
-                    navigate('/login', {state: {from: location}, replace: true});
+                    navigate('/', {state: {from: location}, replace: true});
                 } else {
                     console.error("Unexpected error:", e);
                 }
