@@ -1,14 +1,16 @@
 -- Table: country
 CREATE TABLE country
 (
-    id   BIGSERIAL PRIMARY KEY,
-    name varchar(30) NOT NULL
+    id        BIGSERIAL PRIMARY KEY,
+    public_id UUID        NOT NULL DEFAULT gen_random_uuid(),
+    name      varchar(30) NOT NULL
 );
 
 -- Table: city
 CREATE TABLE city
 (
     id         BIGSERIAL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     name       varchar(30) NOT NULL,
     country_id BIGINT      NOT NULL,
     CONSTRAINT city_country
@@ -19,6 +21,7 @@ CREATE TABLE city
 CREATE TABLE address
 (
     id      BIGSERIAL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     street  varchar(40) NOT NULL,
     number  integer     NOT NULL,
     city_id BIGINT      NOT NULL,
@@ -30,6 +33,7 @@ CREATE TABLE address
 CREATE TABLE person
 (
     id         BIGSERIAL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     password   varchar(255) NOT NULL,
     first_name varchar(20)  NOT NULL,
     last_name  varchar(20)  NOT NULL,
@@ -70,6 +74,7 @@ CREATE TABLE patient
 CREATE TABLE consultation
 (
     id              BIGSERIAL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     day             varchar(20) NOT NULL,
     start_work_time time        NOT NULL,
     end_work_time   time        NOT NULL,
@@ -82,6 +87,7 @@ CREATE TABLE consultation
 CREATE TABLE appointment
 (
     id            BIGSERIAL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     date          date                  NOT NULL,
     time          time                  NOT NULL,
     patient_id    BIGINT                NOT NULL,
@@ -98,6 +104,7 @@ CREATE TABLE appointment
 CREATE TABLE record
 (
     id             BIGSERIAL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     diagnosis      varchar(100) NOT NULL,
     summary        varchar(255) NOT NULL,
     appointment_id BIGINT       NOT NULL,
@@ -109,6 +116,7 @@ CREATE TABLE record
 CREATE TABLE prescription
 (
     id         BIGSERIAL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     medicine   varchar(60) NOT NULL,
     dosage     varchar(20) NOT NULL,
     start_date date        NOT NULL,
@@ -146,6 +154,7 @@ CREATE TABLE verification_token
 CREATE TABLE test
 (
     id             BIGSERIAL NOT NULL PRIMARY KEY,
+    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     performed_date DATE      NOT NULL,
     patient_id     BIGINT    NOT NULL,
 
