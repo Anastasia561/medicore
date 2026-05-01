@@ -1,15 +1,11 @@
-import {useState, useEffect} from 'react';
-import axios from '../api/axios.js';
+import {useState} from 'react';
 import useAuth from '../hooks/useAuth';
 import {useNavigate, useLocation} from 'react-router-dom';
-import {jwtDecode} from "jwt-decode";
 import logo from '../../public/logo.png';
-
-const LOGIN_URL = '/auth/login';
+import {useLogin} from "../hooks/useLogin.jsx";
 
 const Login = () => {
     const {setAuth} = useAuth();
-
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/home";
@@ -18,41 +14,17 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        setError('');
-    }, [username, password]);
+    const loginMutation = useLogin({
+        setAuth, navigate, from, setError, username,
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await axios.post(LOGIN_URL,
-                JSON.stringify({email: username, password}), {
-                    headers: {'Content-Type': 'application/json'},
-                    withCredentials: true
-                });
-            console.log(JSON.stringify(response?.data));
-            const accessToken = response?.data?.accessToken;
-            const decoded = jwtDecode(accessToken);
-
-            setAuth({username, accessToken, role: decoded.role});
-
-            setUsername('');
-            setPassword('');
-            navigate(from, {replace: true});
-        } catch (err) {
-            if (!err?.response) {
-                setError('No response');
-            } else if (err.response.status === 400) {
-                setError('Validation failed');
-            } else if (err.response.status === 401) {
-                setError('Invalid email or password');
-            } else if (err.response.status === 403) {
-                navigate("/unauthorized");
-            } else {
-                setError('Login failed');
-            }
-        }
+        loginMutation.mutate({
+            email: username,
+            password,
+        });
     }
 
     return (
@@ -72,6 +44,11 @@ const Login = () => {
             <div className="row justify-content-center">
                 <div className="col-md-5">
                     <div className="card shadow-lg p-4">
+                        {error && (
+                            <div className="alert alert-danger py-2 text-center" role="alert">
+                                {error}
+                            </div>
+                        )}
 
                         <h4 className="mb-4">Log in</h4>
 
@@ -112,7 +89,6 @@ const Login = () => {
                             </div>
 
                         </form>
-
                     </div>
                 </div>
             </div>

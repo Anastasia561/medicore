@@ -9,11 +9,13 @@ const useLogout = () => {
             await axios.post("/auth/logout", {}, {
                 withCredentials: true
             });
-            setAuth({});
+
         } catch (err) {
-            console.error(err)
+            console.error(err);
+        } finally {
+            setAuth(null);
         }
     };
-}
+};
 
 export default useLogout;

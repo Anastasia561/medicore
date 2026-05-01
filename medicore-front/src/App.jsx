@@ -9,33 +9,38 @@ import RequireAuth from "./components/RequireAuth.jsx";
 import Doctors from "./pages/Doctors.jsx";
 import PersistLogin from "./components/PersistLogin.jsx";
 import ProtectedLayout from "./components/layout/ProtectedLayout.jsx";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
 function App() {
 
+    const client = new QueryClient();
+
     return (
-        <Routes>
-            <Route path="/" element={<Layout/>}>
-                <Route index element={<Login/>}/>
-                <Route path="unauthorized" element={<Unauthorized/>}/>
-            </Route>
-
-            <Route path="/" element={<PersistLogin/>}>
-                <Route element={<ProtectedLayout/>}>
-
-                    <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT"]}/>}>
-                        <Route path="home" element={<Home/>}/>
-                    </Route>
-
-                    <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_DOCTOR"]}/>}>
-                        <Route path="admin" element={<Admin/>}/>
-                        <Route path="doctors" element={<Doctors/>}/>
-                    </Route>
-
+        <QueryClientProvider client={client}>
+            <Routes>
+                <Route path="/" element={<Layout/>}>
+                    <Route index element={<Login/>}/>
+                    <Route path="unauthorized" element={<Unauthorized/>}/>
                 </Route>
-            </Route>
 
-            <Route path="*" element={<Missing/>}/>
-        </Routes>
+                <Route path="/" element={<PersistLogin/>}>
+                    <Route element={<ProtectedLayout/>}>
+
+                        <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT"]}/>}>
+                            <Route path="home" element={<Home/>}/>
+                        </Route>
+
+                        <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_DOCTOR"]}/>}>
+                            <Route path="admin" element={<Admin/>}/>
+                            <Route path="doctors" element={<Doctors/>}/>
+                        </Route>
+
+                    </Route>
+                </Route>
+
+                <Route path="*" element={<Missing/>}/>
+            </Routes>
+        </QueryClientProvider>
     )
 }
 

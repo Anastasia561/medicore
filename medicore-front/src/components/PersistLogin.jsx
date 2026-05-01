@@ -9,31 +9,30 @@ const PersistLogin = () => {
     const {auth} = useAuth();
 
     useEffect(() => {
-        const verifyRefreshToken = async () => {
+        let isMounted = true;
+
+        const verify = async () => {
             try {
                 await refresh();
             } catch (err) {
                 console.error(err);
             } finally {
-                setIsLoading(false);
+                if (isMounted) setIsLoading(false);
             }
+        };
+
+        if (!auth?.accessToken) {
+            verify();
+        } else {
+            setIsLoading(false);
         }
 
-        !auth?.accessToken ? verifyRefreshToken() : setIsLoading(false);
-    }, [])
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
-    useEffect(() => {
-    }, [isLoading]);
-
-
-    return (
-        <>
-            {isLoading
-                ? <p>Loading...</p>
-                : <Outlet/>
-            }
-        </>
-    )
-}
+    return isLoading ? <p>Loading...</p> : <Outlet/>;
+};
 
 export default PersistLogin;
