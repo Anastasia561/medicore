@@ -26,6 +26,7 @@ import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.service.VerificationTokenService;
 
 import java.time.Duration;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,10 +48,17 @@ class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient getById(Long id) {
+    public Patient getByPublicId(UUID id) {
+        return patientRepository.findByPublicId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
+    }
+
+    @Override
+    public Patient getById(long id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
     }
+
 
     @Override
     @Transactional

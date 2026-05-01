@@ -15,6 +15,8 @@ import pl.edu.medicore.prescription.dto.PrescriptionCreateDto;
 import pl.edu.medicore.prescription.service.PrescriptionService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/prescriptions")
 @Tag(name = "Prescriptions", description = "Endpoints for managing medical prescriptions")
@@ -26,7 +28,7 @@ public class PrescriptionController {
     @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseWrapper<Long> create(@Valid @RequestBody PrescriptionCreateDto dto) {
+    public ResponseWrapper<UUID> create(@Valid @RequestBody PrescriptionCreateDto dto) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, prescriptionService.create(dto));
     }
 }

@@ -22,6 +22,7 @@ import pl.edu.medicore.consultation.service.ConsultationService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/consultations")
@@ -33,7 +34,7 @@ public class ConsultationController {
     @Operation(summary = "Get all doctor consultations")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @GetMapping("/doctor/{doctorId}")
-    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@PathVariable Long doctorId) {
+    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@PathVariable UUID doctorId) {
         return ResponseWrapper.ok(consultationService.findByDoctorId(doctorId));
     }
 
@@ -41,14 +42,14 @@ public class ConsultationController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseWrapper<Long> create(@RequestBody @Valid ConsultationCreateDto dto) {
+    public ResponseWrapper<UUID> create(@RequestBody @Valid ConsultationCreateDto dto) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, consultationService.create(dto));
     }
 
     @Operation(summary = "Update doctor schedule")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{consultationId}")
-    public ResponseWrapper<Long> update(@RequestBody @Valid ConsultationUpdateDto dto, @PathVariable Long consultationId) {
+    public ResponseWrapper<UUID> update(@RequestBody @Valid ConsultationUpdateDto dto, @PathVariable UUID consultationId) {
         return ResponseWrapper.ok(consultationService.update(consultationId, dto));
     }
 
@@ -56,7 +57,7 @@ public class ConsultationController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{consultationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long consultationId) {
+    public void delete(@PathVariable UUID consultationId) {
         consultationService.delete(consultationId);
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import pl.edu.medicore.labresult.model.LabResult;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface LabResultRepository extends JpaRepository<LabResult, Long> {
     @Query("""
@@ -19,10 +20,10 @@ public interface LabResultRepository extends JpaRepository<LabResult, Long> {
                 FROM LabResult lr
                 WHERE lr.test.id = (
                     SELECT t.id FROM Test t
-                    WHERE t.patient.id = :patientId
+                    WHERE t.patient.publicId = :patientId
                     ORDER BY t.date DESC
                     LIMIT 1
                 )
             """)
-    List<LabResult> getLatestLabResultsByPatientId(Long patientId);
+    List<LabResult> getLatestLabResultsByPatientId(UUID patientId);
 }

@@ -18,6 +18,8 @@ import pl.edu.medicore.profile.dto.ProfileUpdateDto;
 import pl.edu.medicore.profile.service.ProfileService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/profiles")
 @Tag(name = "Profiles", description = "Endpoints for managing user profiles")
@@ -29,14 +31,13 @@ public class ProfileController {
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @GetMapping
     public ResponseWrapper<ProfileResponseDto> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        long id = userDetails.getId();
-        return ResponseWrapper.ok(profileService.getProfileById(id));
+        return ResponseWrapper.ok(profileService.getProfileById(userDetails.getId(), userDetails.getRole()));
     }
 
     @Operation(summary = "Update profile info for admin or doctor")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @PutMapping
-    public ResponseWrapper<Long> updateProfile(@Valid @RequestBody ProfileUpdateDto dto,
+    public ResponseWrapper<UUID> updateProfile(@Valid @RequestBody ProfileUpdateDto dto,
                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseWrapper.ok(profileService.updateProfile(dto, userDetails.getId()));
     }
@@ -44,7 +45,7 @@ public class ProfileController {
     @Operation(summary = "Update patient profile info")
     @PreAuthorize("hasRole('PATIENT')")
     @PutMapping("/patient")
-    public ResponseWrapper<Long> updatePatientProfile(@Valid @RequestBody PatientProfileUpdateDto dto,
+    public ResponseWrapper<UUID> updatePatientProfile(@Valid @RequestBody PatientProfileUpdateDto dto,
                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseWrapper.ok(profileService.updatePatientProfile(dto, userDetails.getId()));
     }

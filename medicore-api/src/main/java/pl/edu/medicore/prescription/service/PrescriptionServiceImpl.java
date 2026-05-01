@@ -9,6 +9,8 @@ import pl.edu.medicore.prescription.model.Prescription;
 import pl.edu.medicore.prescription.repository.PrescriptionRepository;
 import pl.edu.medicore.record.service.RecordService;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 class PrescriptionServiceImpl implements PrescriptionService {
@@ -18,11 +20,11 @@ class PrescriptionServiceImpl implements PrescriptionService {
 
     @Override
     @Transactional
-    public long create(PrescriptionCreateDto dto) {
+    public UUID create(PrescriptionCreateDto dto) {
         if (dto.endDate() != null && dto.startDate().isAfter(dto.endDate())) {
             throw new IllegalArgumentException("End date must be after start date");
         }
-        Prescription prescription = prescriptionMapper.toEntity(dto, recordService.getById(dto.recordId()));
-        return prescriptionRepository.save(prescription).getId();
+        Prescription prescription = prescriptionMapper.toEntity(dto, recordService.getByPublicId(dto.recordId()));
+        return prescriptionRepository.save(prescription).getPublicId();
     }
 }

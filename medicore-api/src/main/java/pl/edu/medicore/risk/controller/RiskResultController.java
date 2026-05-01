@@ -14,6 +14,7 @@ import pl.edu.medicore.risk.service.contract.RiskResultService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/risks")
@@ -25,7 +26,7 @@ public class RiskResultController {
     @Operation(summary = "Find latest estimated risks for selected diseases by patient id")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/{patientId}")
-    public ResponseWrapper<List<RiskResultResponseDto>> getLatestRiskByPatientId(@PathVariable Long patientId) {
+    public ResponseWrapper<List<RiskResultResponseDto>> getLatestRiskByPatientId(@PathVariable UUID patientId) {
         List<RiskResultResponseDto> risks = riskResultService.getLatestByPatientId(patientId);
         if (risks.isEmpty()) return ResponseWrapper.withStatus(HttpStatus.NO_CONTENT, risks);
         return ResponseWrapper.ok(riskResultService.getLatestByPatientId(patientId));

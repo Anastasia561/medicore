@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable) {
-        Role role = personService.getRoleById(filter.userId());
+        Role role = personService.getRoleByPublicId(filter.userId());
 
         if (filter.endDate().isBefore(filter.startDate()))
             throw new IllegalArgumentException("End date must be after start date");
@@ -64,8 +65,8 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public void cancel(Long id) {
-        Appointment appointment = getById(id);
+    public void cancel(UUID id) {
+        Appointment appointment = getByPublicId(id);
         if (!appointment.getStatus().equals(Status.SCHEDULED)) {
             throw new AppointmentCancellationConflictException("Appointment can not be cancelled");
         }
@@ -80,13 +81,13 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public long create(Long patientId, AppointmentCreateDto dto) {
+    public UUID create(long patientId, AppointmentCreateDto dto) {
         List<LocalTime> availableTimes = getAvailableTimes(dto.doctorId(), dto.date());
         if (availableTimes.isEmpty() || !availableTimes.contains(dto.time())) {
             throw new IllegalStateException("Selected time slot is not available");
         }
 
-        Doctor doctor = doctorService.getById(dto.doctorId());
+        Doctor doctor = doctorService.getByPublicId(dto.doctorId());
         Patient patient = patientService.getById(patientId);
 
         Appointment entity = appointmentMapper.toEntity(dto, doctor, patient);
@@ -94,11 +95,11 @@ class AppointmentServiceImpl implements AppointmentService {
         eventPublisher.publishEvent(new SendEmailEvent<>(entity.getPatient().getEmail(),
                 EmailType.APPOINTMENT_SCHEDULED, emailDto));
 
-        return appointmentRepository.save(entity).getId();
+        return appointmentRepository.save(entity).getPublicId();
     }
 
     @Override
-    public List<LocalTime> getAvailableTimes(Long doctorId, LocalDate date) {
+    public List<LocalTime> getAvailableTimes(UUID doctorId, LocalDate date) {
         Consultation consultation = consultationService.findByDoctorIdAndDate(doctorId, date);
         LocalTime startTime = consultation.getStartTime();
         LocalTime endTime = consultation.getEndTime();
@@ -118,8 +119,8 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment getById(Long id) {
-        return appointmentRepository.findById(id).orElseThrow(
+    public Appointment getByPublicId(UUID id) {
+        return appointmentRepository.findByPublicId(id).orElseThrow(
                 () -> new EntityNotFoundException("Appointment not found"));
     }
 
@@ -129,9 +130,9 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public long getTotalAppointmentsTodayByDoctorId(long id) {
+    public long getTotalAppointmentsTodayByDoctorId(UUID id) {
         doctorService.checkExistsById(id);
-        return appointmentRepository.countByDateAndDoctorId(LocalDate.now(), id);
+        return appointmentRepository.countByDateAndDoctorPublicId(LocalDate.now(), id);
     }
 
     @Override
@@ -140,13 +141,13 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id) {
+    public List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(UUID id) {
         doctorService.checkExistsById(id);
         return appointmentRepository.getMonthlyStatisticsByDoctorId(id, LocalDate.now().getYear());
     }
 
     @Override
-    public long getDistinctPatientsByDoctorId(long doctorId) {
+    public long getDistinctPatientsByDoctorId(UUID doctorId) {
         doctorService.checkExistsById(doctorId);
         return appointmentRepository.countDistinctPatientsByDoctorId(doctorId);
     }

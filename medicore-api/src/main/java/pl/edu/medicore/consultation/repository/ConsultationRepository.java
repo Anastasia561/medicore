@@ -7,23 +7,28 @@ import pl.edu.medicore.consultation.model.Workday;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ConsultationRepository extends JpaRepository<Consultation, Long> {
-    List<Consultation> findByDoctorId(Long doctorId);
+    List<Consultation> findByDoctorPublicId(UUID doctorId);
+
+    Optional<Consultation> findByPublicId(UUID publicId);
 
     @Query("""
                 SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END
                 FROM Consultation c
-                WHERE c.doctor.id = :doctorId
+                WHERE c.doctor.publicId = :doctorId
                 AND c.workday = :workday
             """)
-    boolean existsByDoctorIdAndWorkday(Long doctorId, Workday workday);
+    boolean existsByDoctorIdAndWorkday(UUID doctorId, Workday workday);
 
     @Query("""
                 SELECT c
                 FROM Consultation c
-                WHERE c.doctor.id = :doctorId
+                WHERE c.doctor.publicId = :doctorId
                 AND c.workday = :workday
             """)
-    Optional<Consultation> findByDoctorIdAndWorkday(Long doctorId, Workday workday);
+    Optional<Consultation> findByDoctorIdAndWorkday(UUID doctorId, Workday workday);
+
+    void deleteByPublicId(UUID publicId);
 }

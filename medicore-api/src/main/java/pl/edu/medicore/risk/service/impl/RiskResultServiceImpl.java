@@ -23,6 +23,7 @@ import pl.edu.medicore.test.service.TestService;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,8 +48,8 @@ class RiskResultServiceImpl implements RiskResultService {
     }
 
     @Override
-    public void calculateRiskForPatient(long patientId) {
-        patientService.getById(patientId);
+    public void calculateRiskForPatient(UUID patientId) {
+        patientService.getByPublicId(patientId);
 
         List<LabResult> labResults = labResultService.getLabResultsByPatientId(patientId);
         if (!labResults.isEmpty()) {
@@ -57,9 +58,9 @@ class RiskResultServiceImpl implements RiskResultService {
     }
 
     @Override
-    public List<RiskResultResponseDto> getLatestByPatientId(long patientId) {
-        patientService.getById(patientId);
-        return riskResultRepository.getLatestByPatientId(patientId)
+    public List<RiskResultResponseDto> getLatestByPatientId(UUID patientId) {
+        patientService.getByPublicId(patientId);
+        return riskResultRepository.getLatestByPatientPublicId(patientId)
                 .stream()
                 .map(riskResultMapper::toDto)
                 .toList();

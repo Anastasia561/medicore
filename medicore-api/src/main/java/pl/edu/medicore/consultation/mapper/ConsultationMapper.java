@@ -16,6 +16,8 @@ public interface ConsultationMapper {
     @Mapping(source = "workday", target = "day")
     ConsultationDto toDto(Consultation consultation);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "publicId", ignore = true)
     @Mapping(source = "dto.day", target = "workday")
     @Mapping(source = "doctor", target = "doctor")
     Consultation toEntity(ConsultationCreateDto dto, Doctor doctor);

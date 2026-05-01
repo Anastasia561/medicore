@@ -14,6 +14,7 @@ import pl.edu.medicore.test.repository.TestRepository;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ class TestServiceImpl implements TestService {
 
     @Override
     @Transactional
-    public long save(TestUploadRequestDto dto, Long patientId) {
+    public UUID save(TestUploadRequestDto dto, Long patientId) {
         if (dto.file().isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
@@ -41,15 +42,15 @@ class TestServiceImpl implements TestService {
         Test saved = testRepository.save(test);
 
         try {
-            storageService.uploadFile(dto.file(), saved.getId());
+            storageService.uploadFile(dto.file(), saved.getPublicId());
 
             if (isNewest) {
                 publisher.publishEvent(new FileUploadEvent(saved.getId()));
             }
-            return saved.getId();
+            return saved.getPublicId();
 
         } catch (Exception e) {
-            storageService.deleteFile(saved.getId());
+            storageService.deleteFile(saved.getPublicId());
             throw new RuntimeException("Failed to save test", e);
         }
     }

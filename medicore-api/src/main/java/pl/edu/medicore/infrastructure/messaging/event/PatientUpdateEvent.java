@@ -1,4 +1,6 @@
 package pl.edu.medicore.infrastructure.messaging.event;
 
-public record PatientUpdateEvent(Long patientId) {
+import java.util.UUID;
+
+public record PatientUpdateEvent(UUID patientId) {
 }

@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ class UrlGeneratorServiceImpl implements UrlGeneratorService {
     private final S3Utils s3Utils;
 
     @Override
-    public URL generateViewUrl(Long testId) {
+    public URL generateViewUrl(UUID testId) {
         String key = s3Utils.buildKey(testId);
         s3Utils.checkObject(key);
 
@@ -38,7 +39,7 @@ class UrlGeneratorServiceImpl implements UrlGeneratorService {
     }
 
     @Override
-    public URL generateDownloadUrl(Long testId) {
+    public URL generateDownloadUrl(UUID testId) {
         String key = s3Utils.buildKey(testId);
         s3Utils.checkObject(key);
 

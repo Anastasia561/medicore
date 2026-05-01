@@ -6,10 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record PrescriptionCreateDto(
         @NotNull(message = "Record id is required")
-        Long recordId,
+        UUID recordId,
 
         @NotNull(message = "Medicine name is required")
         @Size(min = 1, max = 60, message = "Medicine name must be 1-60 characters")

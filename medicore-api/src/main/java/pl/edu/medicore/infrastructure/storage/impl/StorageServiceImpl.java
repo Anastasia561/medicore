@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ class StorageServiceImpl implements StorageService {
     private final S3Utils s3Utils;
 
     @Override
-    public void uploadFile(MultipartFile file, Long testId) {
+    public void uploadFile(MultipartFile file, UUID testId) {
         String key = s3Utils.buildKey(testId);
 
         try (InputStream inputStream = file.getInputStream()) {
@@ -47,7 +48,7 @@ class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void deleteFile(Long testId) {
+    public void deleteFile(UUID testId) {
         String key = s3Utils.buildKey(testId);
         s3Utils.checkObject(key);
 
@@ -60,7 +61,7 @@ class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public InputStream getFile(Long testId) {
+    public InputStream getFile(UUID testId) {
         String key = s3Utils.buildKey(testId);
         s3Utils.checkObject(key);
 

@@ -24,6 +24,7 @@ public interface AppointmentMapper {
     AppointmentForPatientDto toPatientDto(Appointment appointment);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "status", constant = "SCHEDULED")
     @Mapping(source = "doctor", target = "doctor")
     @Mapping(source = "patient", target = "patient")

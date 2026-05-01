@@ -4,10 +4,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.util.UUID;
+
 public record RecordCreateDto(
         @NotNull(message = "Appointment ID is required")
-        @Positive(message = "Appointment id must be a positive value")
-        Long appointmentId,
+        UUID appointmentId,
 
         @NotNull(message = "Diagnosis is required")
         @Size(min = 3, max = 100, message = "Diagnosis must be between 3 and 100 characters")

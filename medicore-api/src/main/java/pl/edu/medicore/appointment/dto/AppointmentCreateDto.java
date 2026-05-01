@@ -2,15 +2,14 @@ package pl.edu.medicore.appointment.dto;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public record AppointmentCreateDto(
         @NotNull(message = "Doctor ID must not be null")
-        @Positive(message = "Doctor id must be positive")
-        Long doctorId,
+        UUID doctorId,
 
         @NotNull(message = "Date must not be null")
         @FutureOrPresent(message = "Appointment date must be today or in the future")

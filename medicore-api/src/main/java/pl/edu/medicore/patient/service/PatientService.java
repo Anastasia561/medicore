@@ -7,10 +7,14 @@ import pl.edu.medicore.patient.dto.PatientResponseDto;
 import pl.edu.medicore.patient.model.Patient;
 import pl.edu.medicore.person.model.Status;
 
+import java.util.UUID;
+
 public interface PatientService {
     Page<PatientResponseDto> findAll(String search, Pageable pageable);
 
-    Patient getById(Long id);
+    Patient getByPublicId(UUID id);
+
+    Patient getById(long id);
 
     long register(PatientRegisterDto dto);
 

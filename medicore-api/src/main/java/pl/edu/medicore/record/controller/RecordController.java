@@ -24,6 +24,8 @@ import pl.edu.medicore.record.dto.RecordPreviewDto;
 import pl.edu.medicore.record.service.RecordService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/records")
 @Tag(name = "Records", description = "Endpoints for managing medical records")
@@ -34,7 +36,7 @@ public class RecordController {
     @Operation(summary = "Find medical record by appointment id")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/appointment/{appointmentId}")
-    public ResponseWrapper<RecordDto> getByAppointmentId(@PathVariable Long appointmentId) {
+    public ResponseWrapper<RecordDto> getByAppointmentId(@PathVariable UUID appointmentId) {
         return ResponseWrapper.ok(recordService.getByAppointmentId(appointmentId));
     }
 
@@ -45,14 +47,14 @@ public class RecordController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid RecordFilterDto filter,
             Pageable pageable) {
-        return ResponseWrapper.ok(recordService.getAllById(userDetails, filter, pageable));
+        return ResponseWrapper.ok(recordService.getAllById(userDetails.getId(), userDetails.getRole(), filter, pageable));
     }
 
     @Operation(summary = "Create medical record after consultation")
     @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseWrapper<Long> create(@Valid @RequestBody RecordCreateDto dto) {
+    public ResponseWrapper<UUID> create(@Valid @RequestBody RecordCreateDto dto) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, recordService.create(dto));
     }
 }

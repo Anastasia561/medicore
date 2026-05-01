@@ -16,6 +16,8 @@ import pl.edu.medicore.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.profile.dto.ProfileUpdateDto;
 import pl.edu.medicore.profile.mapper.ProfileMapper;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 class ProfileServiceImpl implements ProfileService {
@@ -26,8 +28,7 @@ class ProfileServiceImpl implements ProfileService {
     private final ApplicationEventPublisher publisher;
 
     @Override
-    public ProfileResponseDto getProfileById(long id) {
-        Role role = personService.getRoleById(id);
+    public ProfileResponseDto getProfileById(long id, Role role) {
         return switch (role) {
             case PATIENT -> profileMapper.toPatientDto(patientService.getById(id));
             case DOCTOR -> profileMapper.toDoctorDto(doctorService.getById(id));
@@ -37,18 +38,18 @@ class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public long updateProfile(ProfileUpdateDto dto, long id) {
+    public UUID updateProfile(ProfileUpdateDto dto, long id) {
         Person person = personService.getById(id);
         profileMapper.updatePersonFromDto(dto, person);
-        return id;
+        return person.getPublicId();
     }
 
     @Override
     @Transactional
-    public long updatePatientProfile(PatientProfileUpdateDto dto, long id) {
+    public UUID updatePatientProfile(PatientProfileUpdateDto dto, long id) {
         Patient patient = patientService.getById(id);
         profileMapper.updatePatientFromDto(dto, patient);
-        publisher.publishEvent(new PatientUpdateEvent(id));
-        return id;
+        publisher.publishEvent(new PatientUpdateEvent(patient.getPublicId()));
+        return patient.getPublicId();
     }
 }

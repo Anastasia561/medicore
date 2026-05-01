@@ -5,9 +5,7 @@ import org.mapstruct.Mapping;
 import pl.edu.medicore.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.doctor.model.Doctor;
-import pl.edu.medicore.doctor.model.Specialization;
 import pl.edu.medicore.email.dto.ConfirmationEmailDto;
-import pl.edu.medicore.email.dto.VerificationEmailDto;
 
 @Mapper(componentModel = "spring")
 public interface DoctorMapper {
@@ -15,6 +13,7 @@ public interface DoctorMapper {
     DoctorResponseDto toDoctorResponseDto(Doctor doctor);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "role", constant = "DOCTOR")
     @Mapping(target = "status", constant = "ACTIVE")
     @Mapping(target = "employmentDate", expression = "java(java.time.LocalDate.now())")

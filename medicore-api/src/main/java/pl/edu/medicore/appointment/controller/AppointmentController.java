@@ -24,6 +24,8 @@ import pl.edu.medicore.appointment.service.AppointmentService;
 import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/appointments")
 @Tag(name = "Appointments", description = "Endpoints for managing appointments")
@@ -43,7 +45,7 @@ public class AppointmentController {
     @Operation(summary = "Cancel appointment")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @PutMapping("/cancel/{id}")
-    public void cancel(@PathVariable Long id) {
+    public void cancel(@PathVariable UUID id) {
         appointmentService.cancel(id);
     }
 
@@ -51,12 +53,12 @@ public class AppointmentController {
     @PreAuthorize("hasRole('PATIENT')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseWrapper<Long> create(
+    public ResponseWrapper<UUID> create(
             @Valid @RequestBody AppointmentCreateDto dto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Long patientId = userDetails.getId();
-        Long appointmentId = appointmentService.create(patientId, dto);
+        UUID appointmentId = appointmentService.create(patientId, dto);
         return ResponseWrapper.withStatus(HttpStatus.CREATED, appointmentId);
     }
 }

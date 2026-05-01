@@ -27,6 +27,7 @@ import pl.edu.medicore.wrapper.ResponseWrapper;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/doctors")
@@ -39,7 +40,7 @@ public class DoctorController {
     @Operation(summary = "Get free slots for selected doctor")
     @PreAuthorize("hasRole('PATIENT')")
     @GetMapping("/{doctorId}/times")
-    public ResponseWrapper<List<LocalTime>> getAvailableTimes(@PathVariable Long doctorId,
+    public ResponseWrapper<List<LocalTime>> getAvailableTimes(@PathVariable UUID doctorId,
                                                               @RequestParam LocalDate date) {
         return ResponseWrapper.ok(appointmentService.getAvailableTimes(doctorId, date));
     }

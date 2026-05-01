@@ -11,20 +11,24 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
     @Query("""
             SELECT a.time
             FROM Appointment a
-            WHERE a.doctor.id = :doctorId
+            WHERE a.doctor.publicId = :doctorId
             AND a.date = :date
             AND a.status = 'SCHEDULED'
             """)
-    List<LocalTime> getScheduledTimesForDoctorAndDate(Long doctorId, LocalDate date);
+    List<LocalTime> getScheduledTimesForDoctorAndDate(UUID doctorId, LocalDate date);
 
     long countByDate(LocalDate date);
 
-    long countByDateAndDoctorId(LocalDate date, Long doctorId);
+    Optional<Appointment> findByPublicId(UUID uuid);
+
+    long countByDateAndDoctorPublicId(LocalDate date, UUID doctorId);
 
     @Query("""
             SELECT new pl.edu.medicore.statistics.dto.ConsultationStatisticsDto(
@@ -46,18 +50,18 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                  COUNT(a)
             )
             FROM Appointment a
-            WHERE YEAR(a.date) = :year AND a.doctor.id= :id
+            WHERE YEAR(a.date) = :year AND a.doctor.publicId= :id
             GROUP BY MONTH(a.date), a.status
             ORDER BY MONTH(a.date)
             """)
-    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id, int year);
+    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(UUID id, int year);
 
     @Query("""
             SELECT COUNT(DISTINCT a.patient.id)
             FROM Appointment a
-            WHERE a.doctor.id = :doctorId
+            WHERE a.doctor.publicId = :doctorId
             """)
-    long countDistinctPatientsByDoctorId(long doctorId);
+    long countDistinctPatientsByDoctorId(UUID doctorId);
 
     @Query("""
             SELECT a FROM Appointment a WHERE a.status = :status AND a.date = :date

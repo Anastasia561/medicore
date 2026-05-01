@@ -6,10 +6,12 @@ import pl.edu.medicore.appointment.model.Status;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 public abstract class AppointmentInfoDto {
+    private UUID publicId;
     private LocalDate date;
     private LocalTime time;
     private Status status;

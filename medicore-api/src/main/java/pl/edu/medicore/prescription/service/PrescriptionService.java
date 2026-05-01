@@ -2,6 +2,8 @@ package pl.edu.medicore.prescription.service;
 
 import pl.edu.medicore.prescription.dto.PrescriptionCreateDto;
 
+import java.util.UUID;
+
 public interface PrescriptionService {
-    long create(PrescriptionCreateDto dto);
+    UUID create(PrescriptionCreateDto dto);
 }

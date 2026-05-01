@@ -7,6 +7,7 @@ import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.doctor.model.Specialization;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class AppointmentSpecification {
 
@@ -27,11 +28,11 @@ public class AppointmentSpecification {
         return spec;
     }
 
-    private static Specification<Appointment> hasUser(Long userId) {
+    private static Specification<Appointment> hasUser(UUID userId) {
         return (root, query, cb) ->
                 cb.or(
-                        cb.equal(root.get("doctor").get("id"), userId),
-                        cb.equal(root.get("patient").get("id"), userId)
+                        cb.equal(root.get("doctor").get("publicId"), userId),
+                        cb.equal(root.get("patient").get("publicId"), userId)
                 );
     }
 

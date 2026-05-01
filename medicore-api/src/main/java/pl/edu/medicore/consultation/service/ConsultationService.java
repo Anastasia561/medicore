@@ -7,15 +7,16 @@ import pl.edu.medicore.consultation.model.Consultation;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public interface ConsultationService {
-    List<ConsultationDto> findByDoctorId(Long doctorId);
+    List<ConsultationDto> findByDoctorId(UUID doctorId);
 
-    long create(ConsultationCreateDto dto);
+    UUID create(ConsultationCreateDto dto);
 
-    long update(Long id, ConsultationUpdateDto dto);
+    UUID update(UUID id, ConsultationUpdateDto dto);
 
-    void delete(Long id);
+    void delete(UUID id);
 
-    Consultation findByDoctorIdAndDate(Long doctorId, LocalDate date);
+    Consultation findByDoctorIdAndDate(UUID doctorId, LocalDate date);
 }

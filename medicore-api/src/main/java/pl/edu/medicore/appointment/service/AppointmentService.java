@@ -13,27 +13,28 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface AppointmentService {
     Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable);
 
-    void cancel(Long id);
+    void cancel(UUID id);
 
-    long create(Long patientId, AppointmentCreateDto dto);
+    UUID create(long patientId, AppointmentCreateDto dto);
 
-    Appointment getById(Long id);
+    Appointment getByPublicId(UUID id);
 
-    List<LocalTime> getAvailableTimes(Long doctorId, LocalDate date);
+    List<LocalTime> getAvailableTimes(UUID doctorId, LocalDate date);
 
     long getTotalAppointmentsToday();
 
-    long getTotalAppointmentsTodayByDoctorId(long id);
+    long getTotalAppointmentsTodayByDoctorId(UUID id);
 
     List<ConsultationStatisticsDto> getMonthlyStatistics();
 
-    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id);
+    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(UUID id);
 
-    long getDistinctPatientsByDoctorId(long doctorId);
+    long getDistinctPatientsByDoctorId(UUID doctorId);
 
     List<Appointment> getAllAppointmentByStatusAndDate(Status status, LocalDate date);
 

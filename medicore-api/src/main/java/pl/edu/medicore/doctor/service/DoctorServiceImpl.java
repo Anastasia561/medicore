@@ -26,6 +26,7 @@ import pl.edu.medicore.verification.service.VerificationTokenService;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,15 +38,21 @@ class DoctorServiceImpl implements DoctorService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public void checkExistsById(Long doctorId) {
-        if (!doctorRepository.existsById(doctorId)) {
+    public void checkExistsById(UUID doctorId) {
+        if (!doctorRepository.existsByPublicId(doctorId)) {
             throw new EntityNotFoundException("Doctor not found");
         }
     }
 
     @Override
-    public Doctor getById(Long id) {
-        return doctorRepository.findById(id).orElseThrow(
+    public Doctor getByPublicId(UUID id) {
+        return doctorRepository.findByPublicId(id).orElseThrow(
+                () -> new EntityNotFoundException("Doctor not found"));
+    }
+
+    @Override
+    public Doctor getById(long doctorId) {
+        return doctorRepository.findById(doctorId).orElseThrow(
                 () -> new EntityNotFoundException("Doctor not found"));
     }
 

@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,16 +38,16 @@ class ConsultationServiceImpl implements ConsultationService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public List<ConsultationDto> findByDoctorId(Long doctorId) {
+    public List<ConsultationDto> findByDoctorId(UUID doctorId) {
         doctorService.checkExistsById(doctorId);
 
-        return consultationRepository.findByDoctorId(doctorId)
+        return consultationRepository.findByDoctorPublicId(doctorId)
                 .stream().map(consultationMapper::toDto)
                 .toList();
     }
 
     @Override
-    public Consultation findByDoctorIdAndDate(Long doctorId, LocalDate date) {
+    public Consultation findByDoctorIdAndDate(UUID doctorId, LocalDate date) {
         doctorService.checkExistsById(doctorId);
 
         DayOfWeek dayOfWeek = date.getDayOfWeek();
@@ -61,23 +62,23 @@ class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     @Transactional
-    public long create(ConsultationCreateDto dto) {
+    public UUID create(ConsultationCreateDto dto) {
         checkExistsByDay(dto.doctorId(), dto.day());
         validateTime(dto.startTime(), dto.endTime());
 
-        Doctor doctor = doctorService.getById(dto.doctorId());
+        Doctor doctor = doctorService.getByPublicId(dto.doctorId());
 
         Consultation consultation = consultationMapper.toEntity(dto, doctor);
 
         ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation);
         eventPublisher.publishEvent(new SendEmailEvent<>(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto));
-        return consultationRepository.save(consultation).getId();
+        return consultationRepository.save(consultation).getPublicId();
     }
 
     @Override
     @Transactional
-    public long update(Long id, ConsultationUpdateDto dto) {
-        Consultation consultation = consultationRepository.findById(id)
+    public UUID update(UUID id, ConsultationUpdateDto dto) {
+        Consultation consultation = consultationRepository.findByPublicId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Consultation not found"));
         validateTime(dto.startTime(), dto.endTime());
         consultationMapper.updateConsultationFromDto(dto, consultation);
@@ -88,17 +89,17 @@ class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
-    public void delete(Long id) {
-        Optional<Consultation> consultation = consultationRepository.findById(id);
+    public void delete(UUID id) {
+        Optional<Consultation> consultation = consultationRepository.findByPublicId(id);
         if (consultation.isEmpty()) {
             throw new EntityNotFoundException("Consultation not found");
         }
         ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation.get());
         eventPublisher.publishEvent(new SendEmailEvent<>(consultation.get().getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto));
-        consultationRepository.deleteById(id);
+        consultationRepository.deleteByPublicId(id);
     }
 
-    private void checkExistsByDay(Long doctorId, Workday workday) {
+    private void checkExistsByDay(UUID doctorId, Workday workday) {
         if (consultationRepository.existsByDoctorIdAndWorkday(doctorId, workday)) {
             throw new EntityExistsException("Doctor has consultation schedule for selected day");
         }

@@ -7,6 +7,8 @@ import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long>, JpaSpecificationExecutor<Doctor> {
     @Query("""
@@ -18,4 +20,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>, JpaSpecif
             GROUP BY d.specialization
             """)
     List<DoctorStatisticsDto> countDoctorsBySpecialization();
+
+    boolean existsByPublicId(UUID publicId);
+
+    Optional<Doctor> findByPublicId(UUID publicId);
 }

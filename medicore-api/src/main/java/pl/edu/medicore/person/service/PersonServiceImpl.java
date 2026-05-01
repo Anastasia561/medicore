@@ -12,6 +12,8 @@ import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.person.model.Status;
 import pl.edu.medicore.person.repository.PersonRepository;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 class PersonServiceImpl implements PersonService {
@@ -19,8 +21,8 @@ class PersonServiceImpl implements PersonService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Role getRoleById(Long id) {
-        return personRepository.getRole(id).orElseThrow(
+    public Role getRoleByPublicId(UUID id) {
+        return personRepository.getRoleByPublicId(id).orElseThrow(
                 () -> new EntityNotFoundException("Person not found"));
     }
 
@@ -34,7 +36,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person getById(Long id) {
+    public Person getById(long id) {
         return personRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Person not found"));
     }

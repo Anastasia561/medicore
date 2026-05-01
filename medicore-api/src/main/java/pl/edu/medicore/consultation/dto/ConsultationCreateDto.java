@@ -1,15 +1,14 @@
 package pl.edu.medicore.consultation.dto;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import pl.edu.medicore.consultation.model.Workday;
 
 import java.time.LocalTime;
+import java.util.UUID;
 
 public record ConsultationCreateDto(
         @NotNull(message = "Doctor id is required")
-        @Positive(message = "Doctor id must be greater than 0")
-        Long doctorId,
+        UUID doctorId,
         @NotNull(message = "Day is required")
         Workday day,
         @NotNull(message = "Start time is required")

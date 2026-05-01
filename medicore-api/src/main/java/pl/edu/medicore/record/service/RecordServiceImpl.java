@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.appointment.service.AppointmentService;
-import pl.edu.medicore.auth.core.CustomUserDetails;
 import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.dto.RecordDto;
@@ -20,6 +19,8 @@ import pl.edu.medicore.record.repository.RecordRepository;
 import pl.edu.medicore.record.model.Record;
 import pl.edu.medicore.record.repository.specification.RecordSpecification;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 class RecordServiceImpl implements RecordService {
@@ -28,21 +29,20 @@ class RecordServiceImpl implements RecordService {
     private final AppointmentService appointmentService;
 
     @Override
-    public RecordDto getByAppointmentId(Long id) {
-        return recordRepository.findByAppointmentId(id)
+    public RecordDto getByAppointmentId(UUID id) {
+        return recordRepository.findByAppointmentPublicId(id)
                 .map(recordMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Record not found"));
     }
 
     @Override
-    public Page<RecordPreviewDto> getAllById(CustomUserDetails userDetails, RecordFilterDto filter, Pageable pageable) {
-        Role role = userDetails.getRole();
+    public Page<RecordPreviewDto> getAllById(long id, Role role, RecordFilterDto filter, Pageable pageable) {
         if (filter.startDate() != null && filter.endDate() != null
                 && filter.startDate().isAfter(filter.endDate()))
             throw new IllegalArgumentException("Start date should be before end date");
 
         Page<Record> all = recordRepository.findAll(RecordSpecification
-                .withFilter(userDetails.getId(), role, filter), pageable);
+                .withFilter(id, role, filter), pageable);
 
         return role == Role.DOCTOR ? all.map(recordMapper::toDoctorPreviewDto)
                 : all.map(recordMapper::toPatientPreviewDto);
@@ -50,19 +50,19 @@ class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public long create(RecordCreateDto dto) {
-        Appointment appointment = appointmentService.getById(dto.appointmentId());
+    public UUID create(RecordCreateDto dto) {
+        Appointment appointment = appointmentService.getByPublicId(dto.appointmentId());
         if (appointment.getStatus() == Status.COMPLETED) {
             throw new IllegalStateException("Appointment is already completed");
         }
         appointment.setStatus(Status.COMPLETED);
         Record record = recordMapper.toEntity(dto, appointment);
-        return recordRepository.save(record).getId();
+        return recordRepository.save(record).getPublicId();
     }
 
     @Override
-    public Record getById(Long id) {
-        return recordRepository.findById(id)
+    public Record getByPublicId(UUID id) {
+        return recordRepository.findByPublicId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Record not found"));
     }
 }

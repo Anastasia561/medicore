@@ -10,11 +10,13 @@ import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface DoctorService {
-    void checkExistsById(Long doctorId);
+    void checkExistsById(UUID doctorId);
 
-    Doctor getById(Long doctorId);
+    Doctor getByPublicId(UUID doctorId);
+    Doctor getById(long doctorId);
 
     Page<DoctorResponseDto> getAll(DoctorFilterDto filter, Pageable pageable);
 

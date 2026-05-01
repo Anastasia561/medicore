@@ -13,6 +13,8 @@ import pl.edu.medicore.statistics.dto.DoctorStatisticsResponseDto;
 import pl.edu.medicore.statistics.service.StatisticsService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/statistics")
 @Tag(name = "Statistics", description = "Endpoints for managing statistics")
@@ -30,7 +32,7 @@ public class StatisticsController {
     @Operation(summary = "Get patient, appointments statistics for doctor")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping("/doctor/{id}")
-    public ResponseWrapper<DoctorStatisticsResponseDto> getDoctorStatistics(@PathVariable Long id) {
+    public ResponseWrapper<DoctorStatisticsResponseDto> getDoctorStatistics(@PathVariable UUID id) {
         return ResponseWrapper.ok(statisticsService.getDoctorStatistics(id));
     }
 }

@@ -22,6 +22,7 @@ import pl.edu.medicore.infrastructure.storage.contract.UrlGeneratorService;
 import pl.edu.medicore.wrapper.ResponseWrapper;
 
 import java.net.URL;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/tests")
@@ -34,14 +35,14 @@ public class TestController {
     @Operation(summary = "Get presigned url to view blood test file")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/view/{id}")
-    public ResponseWrapper<URL> getViewUrl(@PathVariable long id) {
+    public ResponseWrapper<URL> getViewUrl(@PathVariable UUID id) {
         return ResponseWrapper.ok(urlGeneratorService.generateViewUrl(id));
     }
 
     @Operation(summary = "Get presigned url to download blood test file")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/download/{id}")
-    public ResponseWrapper<URL> getDownloadUrl(@PathVariable long id) {
+    public ResponseWrapper<URL> getDownloadUrl(@PathVariable UUID id) {
         return ResponseWrapper.ok(urlGeneratorService.generateDownloadUrl(id));
     }
 
@@ -49,7 +50,7 @@ public class TestController {
     @PreAuthorize("hasRole('PATIENT')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseWrapper<Long> upload(@ModelAttribute @Valid TestUploadRequestDto dto,
+    public ResponseWrapper<UUID> upload(@ModelAttribute @Valid TestUploadRequestDto dto,
                                         @AuthenticationPrincipal CustomUserDetails user) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, testService.save(dto, user.getId()));
     }

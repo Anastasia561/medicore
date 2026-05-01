@@ -15,6 +15,7 @@ import pl.edu.medicore.test.service.TestService;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +29,9 @@ class LabResultServiceImpl implements LabResultService {
     @Override
     @Transactional
     public void processLabResults(Long testId) {
-        InputStream file = storageService.getFile(testId);
-        String text = pdfParserService.extractText(file);
         Test test = testService.getById(testId);
+        InputStream file = storageService.getFile(test.getPublicId());
+        String text = pdfParserService.extractText(file);
 
         for (Parameter param : Parameter.values()) {
             LabResult labResult = new LabResult();
@@ -51,7 +52,7 @@ class LabResultServiceImpl implements LabResultService {
     }
 
     @Override
-    public List<LabResult> getLabResultsByPatientId(Long patientId) {
+    public List<LabResult> getLabResultsByPatientId(UUID patientId) {
         return labResultRepository.getLatestLabResultsByPatientId(patientId);
     }
 }
