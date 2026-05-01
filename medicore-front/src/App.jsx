@@ -26,7 +26,7 @@ function App() {
                 <Route path="/" element={<PersistLogin/>}>
                     <Route element={<ProtectedLayout/>}>
 
-                        <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT"]}/>}>
+                        <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR"]}/>}>
                             <Route path="home" element={<Home/>}/>
                         </Route>
 

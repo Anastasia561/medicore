@@ -10,13 +10,14 @@ const NavBar = () => {
     const {auth} = useAuth();
 
     const navLinks = [
-        {to: "/admin", label: "Statistics", roles: ["ROLE_ADMIN"]},
-        {to: "/patients", label: "Patients", roles: ["ROLE_ADMIN", "ROLE_DOCTOR"]},
+        {to: "/home", label: "Home", roles: ["ROLE_ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR"]},
+        {to: "/hh", label: "Statistics", roles: ["ROLE_ADMIN"]},
+        {to: "/hh", label: "Patients", roles: ["ROLE_ADMIN", "ROLE_DOCTOR"]},
         {to: "/doctors", label: "Doctors", roles: ["ROLE_ADMIN"]},
-        {to: "/doctors", label: "Appointments", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
-        {to: "/doctors", label: "Lab results", roles: ["ROLE_PATIENT"]},
-        {to: "/doctors", label: "Risks", roles: ["ROLE_PATIENT"]},
-        {to: "/doctors", label: "Schedule", roles: ["ROLE_DOCTOR"]},
+        {to: "/hh", label: "Appointments", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
+        {to: "/hh", label: "Lab results", roles: ["ROLE_PATIENT"]},
+        {to: "/hh", label: "Risks", roles: ["ROLE_PATIENT"]},
+        {to: "/hh", label: "Schedule", roles: ["ROLE_DOCTOR"]}
     ];
 
     const handleLogout = async () => {
