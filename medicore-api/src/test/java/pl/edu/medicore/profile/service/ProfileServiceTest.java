@@ -46,36 +46,37 @@ class ProfileServiceTest {
 
     @Test
     void shouldReturnPatientProfile_whenRoleIsPatient() {
+        long id = 1L;
+
         Patient patient = new Patient();
         PatientProfileResponseDto dto = new PatientProfileResponseDto();
 
-        when(personService.getRoleById(1L)).thenReturn(Role.PATIENT);
-        when(patientService.getById(1L)).thenReturn(patient);
+        when(patientService.getById(id)).thenReturn(patient);
         when(profileMapper.toPatientDto(patient)).thenReturn(dto);
 
-        ProfileResponseDto result = profileService.getProfileById(1L);
+        ProfileResponseDto result = profileService.getProfileById(id, Role.PATIENT);
 
         assertEquals(dto, result);
 
-        verify(patientService).getById(1L);
+        verify(patientService).getById(id);
         verify(profileMapper).toPatientDto(patient);
         verifyNoInteractions(doctorService);
     }
 
     @Test
-    void shouldReturnDoctorProfile_whenRoleIsPatient() {
+    void shouldReturnDoctorProfile_whenRoleIsDoctor() {
+        long doctorId = 1L;
         Doctor doctor = new Doctor();
         DoctorProfileResponseDto dto = new DoctorProfileResponseDto();
 
-        when(personService.getRoleById(1L)).thenReturn(Role.DOCTOR);
-        when(doctorService.getById(1L)).thenReturn(doctor);
+        when(doctorService.getById(doctorId)).thenReturn(doctor);
         when(profileMapper.toDoctorDto(doctor)).thenReturn(dto);
 
-        ProfileResponseDto result = profileService.getProfileById(1L);
+        ProfileResponseDto result = profileService.getProfileById(1L, Role.DOCTOR);
 
         assertEquals(dto, result);
 
-        verify(doctorService).getById(1L);
+        verify(doctorService).getById(doctorId);
         verify(profileMapper).toDoctorDto(doctor);
         verifyNoInteractions(patientService);
     }
@@ -85,11 +86,10 @@ class ProfileServiceTest {
         Person person = new Person();
         ProfileResponseDto dto = new ProfileResponseDto();
 
-        when(personService.getRoleById(1L)).thenReturn(Role.ADMIN);
         when(personService.getById(1L)).thenReturn(person);
         when(profileMapper.toDto(person)).thenReturn(dto);
 
-        ProfileResponseDto result = profileService.getProfileById(1L);
+        ProfileResponseDto result = profileService.getProfileById(1L, Role.ADMIN);
 
         assertEquals(dto, result);
 
@@ -100,17 +100,15 @@ class ProfileServiceTest {
 
     @Test
     void shouldUpdateProfile_whenInputIsValid() {
-        long id = 1L;
+        long patientId = 1L;
         ProfileUpdateDto dto = new ProfileUpdateDto("testF", "testL");
         Person person = new Person();
 
-        when(personService.getById(id)).thenReturn(person);
+        when(personService.getById(patientId)).thenReturn(person);
 
-        long result = profileService.updateProfile(dto, id);
+        profileService.updateProfile(dto, patientId);
 
-        assertEquals(id, result);
-
-        verify(personService).getById(id);
+        verify(personService).getById(patientId);
         verify(profileMapper).updatePersonFromDto(dto, person);
         verifyNoInteractions(doctorService, patientService, publisher);
     }
@@ -127,9 +125,7 @@ class ProfileServiceTest {
 
         when(patientService.getById(id)).thenReturn(patient);
 
-        long result = profileService.updatePatientProfile(dto, id);
-
-        assertEquals(id, result);
+        profileService.updatePatientProfile(dto, id);
 
         verify(patientService).getById(id);
         verify(profileMapper).updatePatientFromDto(dto, patient);

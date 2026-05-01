@@ -26,6 +26,7 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,12 +53,12 @@ class ConsultationServiceTest {
 
     @Test
     void shouldReturnConsultationsByDoctorId_whenInputIsValid() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         Consultation consultation = new Consultation();
-        ConsultationDto dto = new ConsultationDto(Workday.FRIDAY, LocalTime.of(10, 30),
+        ConsultationDto dto = new ConsultationDto(UUID.randomUUID(), Workday.FRIDAY, LocalTime.of(10, 30),
                 LocalTime.of(11, 0));
 
-        when(consultationRepository.findByDoctorId(doctorId)).thenReturn(List.of(consultation));
+        when(consultationRepository.findByDoctorPublicId(doctorId)).thenReturn(List.of(consultation));
         when(consultationMapper.toDto(consultation)).thenReturn(dto);
 
         List<ConsultationDto> result = consultationService.findByDoctorId(doctorId);
@@ -66,27 +67,27 @@ class ConsultationServiceTest {
         assertEquals(dto, result.getFirst());
 
         verify(doctorService).checkExistsById(doctorId);
-        verify(consultationRepository).findByDoctorId(doctorId);
+        verify(consultationRepository).findByDoctorPublicId(doctorId);
         verify(consultationMapper).toDto(consultation);
     }
 
     @Test
     void shouldReturnEmptyList_whenNoConsultations() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
 
-        when(consultationRepository.findByDoctorId(doctorId)).thenReturn(Collections.emptyList());
+        when(consultationRepository.findByDoctorPublicId(doctorId)).thenReturn(Collections.emptyList());
         List<ConsultationDto> result = consultationService.findByDoctorId(doctorId);
 
         assertTrue(result.isEmpty());
 
         verify(doctorService).checkExistsById(doctorId);
-        verify(consultationRepository).findByDoctorId(doctorId);
+        verify(consultationRepository).findByDoctorPublicId(doctorId);
         verifyNoInteractions(consultationMapper);
     }
 
     @Test
     void shouldThrowException_whenDoctorDoesNotExist() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
 
         doThrow(new RuntimeException("Doctor not found")).when(doctorService).checkExistsById(doctorId);
         assertThrows(RuntimeException.class, () -> consultationService.findByDoctorId(doctorId));
@@ -98,7 +99,7 @@ class ConsultationServiceTest {
 
     @Test
     void shouldReturnConsultationsByDoctorIdAndDate_whenInputIsValid() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         Consultation consultation = new Consultation();
 
         when(consultationRepository.findByDoctorIdAndWorkday(doctorId, Workday.FRIDAY)).thenReturn(Optional.of(consultation));
@@ -113,7 +114,7 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowDoctorNotAvailableException_whenWorkdayIsWeekend() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
 
         DoctorNotAvailableException ex = assertThrows(DoctorNotAvailableException.class,
                 () -> consultationService.findByDoctorIdAndDate(doctorId, LocalDate.of(2026, 3, 21)));
@@ -125,7 +126,7 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowDoctorNotAvailableException_whenDoctorIsNotAvailable() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
 
         when(consultationRepository.findByDoctorIdAndWorkday(doctorId, Workday.FRIDAY)).thenReturn(Optional.empty());
 
@@ -140,7 +141,7 @@ class ConsultationServiceTest {
 
     @Test
     void shouldCreateConsultation_whenInputIsValid() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
 
         ConsultationCreateDto dto = new ConsultationCreateDto(
                 doctorId,
@@ -160,18 +161,16 @@ class ConsultationServiceTest {
 
         ScheduleEmailDto emailDto = new ScheduleEmailDto(Workday.FRIDAY, "John", "Doe");
 
-        when(doctorService.getById(doctorId)).thenReturn(doctor);
+        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
         when(consultationMapper.toEntity(dto, doctor)).thenReturn(consultation);
         when(consultationMapper.toEmailDto(consultation)).thenReturn(emailDto);
         when(consultationRepository.save(consultation)).thenReturn(consultation);
         when(consultationProperties.getEnd()).thenReturn(LocalTime.of(18, 0));
         when(consultationProperties.getStart()).thenReturn(LocalTime.of(8, 0));
 
-        long result = consultationService.create(dto);
+        consultationService.create(dto);
 
-        assertEquals(100L, result);
-
-        verify(doctorService).getById(doctorId);
+        verify(doctorService).getByPublicId(doctorId);
         verify(consultationMapper).toEntity(dto, doctor);
         verify(consultationMapper).toEmailDto(consultation);
         verify(consultationRepository).save(consultation);
@@ -179,34 +178,40 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowEntityExistsExceptionException_whenDayAlreadyExists() {
-        ConsultationCreateDto dto = new ConsultationCreateDto(1L, Workday.FRIDAY,
+        UUID doctorId = UUID.randomUUID();
+
+        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
                 LocalTime.of(10, 0), LocalTime.of(11, 0));
-        when(consultationRepository.existsByDoctorIdAndWorkday(1L, Workday.FRIDAY)).thenReturn(true);
+        when(consultationRepository.existsByDoctorIdAndWorkday(doctorId, Workday.FRIDAY)).thenReturn(true);
 
         EntityExistsException ex = assertThrows(EntityExistsException.class,
                 () -> consultationService.create(dto));
 
         assertEquals("Doctor has consultation schedule for selected day", ex.getMessage());
-        verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
+        verify(consultationRepository).existsByDoctorIdAndWorkday(doctorId, Workday.FRIDAY);
         verifyNoInteractions(doctorService, consultationMapper, eventPublisher);
     }
 
     @Test
     void shouldThrowIllegalArgumentException_whenEndTimeBeforeStartTimeForCreate() {
-        ConsultationCreateDto dto = new ConsultationCreateDto(1L, Workday.FRIDAY,
+        UUID doctorId = UUID.randomUUID();
+
+        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
                 LocalTime.of(12, 0), LocalTime.of(11, 0));
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> consultationService.create(dto));
 
         assertEquals("End time must be after start time", ex.getMessage());
-        verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
+        verify(consultationRepository).existsByDoctorIdAndWorkday(doctorId, Workday.FRIDAY);
         verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
     void shouldThrowIllegalArgumentException_whenEndTimeNotInValidRangeForCreate() {
-        ConsultationCreateDto dto = new ConsultationCreateDto(1L, Workday.FRIDAY,
+        UUID doctorId = UUID.randomUUID();
+
+        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
                 LocalTime.of(12, 0), LocalTime.of(21, 0));
 
         when(consultationProperties.getEnd()).thenReturn(LocalTime.of(18, 0));
@@ -214,13 +219,15 @@ class ConsultationServiceTest {
                 () -> consultationService.create(dto));
 
         assertEquals("End time must be in valid range", ex.getMessage());
-        verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
+        verify(consultationRepository).existsByDoctorIdAndWorkday(doctorId, Workday.FRIDAY);
         verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
     void shouldThrowIllegalArgumentException_whenStartTimeNotInValidRangeForCreate() {
-        ConsultationCreateDto dto = new ConsultationCreateDto(1L, Workday.FRIDAY,
+        UUID doctorId = UUID.randomUUID();
+
+        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
                 LocalTime.of(6, 0), LocalTime.of(11, 0));
 
         when(consultationProperties.getEnd()).thenReturn(LocalTime.of(18, 0));
@@ -229,28 +236,30 @@ class ConsultationServiceTest {
                 () -> consultationService.create(dto));
 
         assertEquals("Start time must be in valid range", ex.getMessage());
-        verify(consultationRepository).existsByDoctorIdAndWorkday(1L, Workday.FRIDAY);
+        verify(consultationRepository).existsByDoctorIdAndWorkday(doctorId, Workday.FRIDAY);
         verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenConsultationDoesNotExistForUpdate() {
+        UUID consultationId = UUID.randomUUID();
+
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0),
                 LocalTime.of(11, 0));
 
-        when(consultationRepository.findById(1L)).thenReturn(Optional.empty());
+        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> consultationService.update(1L, dto));
+                () -> consultationService.update(consultationId, dto));
 
         assertEquals("Consultation not found", ex.getMessage());
-        verify(consultationRepository).findById(1L);
+        verify(consultationRepository).findByPublicId(consultationId);
         verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
     void shouldUpdateConsultationSuccessfully() {
-        Long consultationId = 1L;
+        UUID consultationId = UUID.randomUUID();
 
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0), LocalTime.of(11, 0));
 
@@ -260,42 +269,43 @@ class ConsultationServiceTest {
         doctor.setLastName("Doe");
 
         Consultation consultation = new Consultation();
-        consultation.setId(consultationId);
         consultation.setDoctor(doctor);
 
         ScheduleEmailDto emailDto = new ScheduleEmailDto(Workday.FRIDAY, doctor.getFirstName(), doctor.getLastName());
 
-        when(consultationRepository.findById(consultationId)).thenReturn(Optional.of(consultation));
+        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.of(consultation));
         when(consultationMapper.toEmailDto(consultation)).thenReturn(emailDto);
         when(consultationProperties.getEnd()).thenReturn(LocalTime.of(18, 0));
         when(consultationProperties.getStart()).thenReturn(LocalTime.of(8, 0));
 
-        long result = consultationService.update(consultationId, dto);
+        UUID result = consultationService.update(consultationId, dto);
 
         assertEquals(consultationId, result);
-        verify(consultationRepository).findById(consultationId);
+        verify(consultationRepository).findByPublicId(consultationId);
         verify(consultationMapper).updateConsultationFromDto(dto, consultation);
         verify(consultationMapper).toEmailDto(consultation);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenConsultationDoesNotExistForDelete() {
-        ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0),
+        UUID consultationId = UUID.randomUUID();
+
+        new ConsultationUpdateDto(LocalTime.of(10, 0),
                 LocalTime.of(11, 0));
 
-        when(consultationRepository.findById(1L)).thenReturn(Optional.empty());
+        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> consultationService.delete(1L));
+                () -> consultationService.delete(consultationId));
 
         assertEquals("Consultation not found", ex.getMessage());
-        verify(consultationRepository).findById(1L);
+        verify(consultationRepository).findByPublicId(consultationId);
         verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
     void shouldDeleteConsultationSuccessfully() {
-        Long consultationId = 1L;
+        UUID consultationId = UUID.randomUUID();
 
         Doctor doctor = new Doctor();
         doctor.setEmail("doctor@test.com");
@@ -303,18 +313,17 @@ class ConsultationServiceTest {
         doctor.setLastName("Doe");
 
         Consultation consultation = new Consultation();
-        consultation.setId(consultationId);
         consultation.setDoctor(doctor);
 
         ScheduleEmailDto emailDto = new ScheduleEmailDto(Workday.FRIDAY, doctor.getFirstName(), doctor.getLastName());
 
-        when(consultationRepository.findById(consultationId)).thenReturn(Optional.of(consultation));
+        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.of(consultation));
         when(consultationMapper.toEmailDto(consultation)).thenReturn(emailDto);
 
         consultationService.delete(consultationId);
 
-        verify(consultationRepository).findById(consultationId);
+        verify(consultationRepository).findByPublicId(consultationId);
         verify(consultationMapper).toEmailDto(consultation);
-        verify(consultationRepository).deleteById(consultationId);
+        verify(consultationRepository).deleteByPublicId(consultationId);
     }
 }

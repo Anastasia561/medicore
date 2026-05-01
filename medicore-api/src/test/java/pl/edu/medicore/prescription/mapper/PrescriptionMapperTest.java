@@ -8,6 +8,7 @@ import pl.edu.medicore.prescription.model.Prescription;
 import pl.edu.medicore.record.model.Record;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -22,7 +23,7 @@ class PrescriptionMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(1L, "Test medicine",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(UUID.randomUUID(), "Test medicine",
                 "10g", LocalDate.of(2026, 10, 10),
                 LocalDate.of(2026, 12, 2), "daily");
 

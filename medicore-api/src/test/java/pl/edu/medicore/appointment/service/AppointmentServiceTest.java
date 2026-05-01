@@ -42,6 +42,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -81,12 +82,12 @@ class AppointmentServiceTest {
 
     @Test
     void shouldGetAppointmentsInRangeForPatient_whenInputIsValid() {
-        Long userId = 1L;
+        UUID userId = UUID.randomUUID();
         AppointmentFilterDto filter = new AppointmentFilterDto(userId, LocalDate.now(), LocalDate.now().plusDays(1),
                 Status.SCHEDULED, Specialization.CARDIOLOGIST);
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(personService.getRoleById(userId)).thenReturn(Role.DOCTOR);
+        when(personService.getRoleByPublicId(userId)).thenReturn(Role.DOCTOR);
 
         Appointment appointment = new Appointment();
         Page<Appointment> appointmentsPage = new PageImpl<>(List.of(appointment));
@@ -105,12 +106,12 @@ class AppointmentServiceTest {
 
     @Test
     void shouldGetAppointmentsInRangeForDoctor_whenInputIsValid() {
-        Long userId = 1L;
+        UUID userId = UUID.randomUUID();
         AppointmentFilterDto filter = new AppointmentFilterDto(userId, LocalDate.now(), LocalDate.now().plusDays(1),
                 Status.SCHEDULED, Specialization.CARDIOLOGIST);
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(personService.getRoleById(userId)).thenReturn(Role.PATIENT);
+        when(personService.getRoleByPublicId(userId)).thenReturn(Role.PATIENT);
 
         Appointment appointment = new Appointment();
         Page<Appointment> appointmentsPage = new PageImpl<>(List.of(appointment));
@@ -129,7 +130,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenInvalidDateRange() {
-        Long userId = 1L;
+        UUID userId = UUID.randomUUID();
         AppointmentFilterDto filter = new AppointmentFilterDto(userId, LocalDate.now(), LocalDate.now().minusDays(1),
                 Status.SCHEDULED, Specialization.CARDIOLOGIST);
 
@@ -141,7 +142,8 @@ class AppointmentServiceTest {
 
     @Test
     void shouldCancelAppointment_whenNotAlreadyCancelled() {
-        Long appointmentId = 1L;
+        UUID appPublicId = UUID.randomUUID();
+
         Appointment appointment = new Appointment();
         appointment.setStatus(Status.SCHEDULED);
         Patient patient = new Patient();
@@ -155,10 +157,10 @@ class AppointmentServiceTest {
                 "PL", "DF", "DL", Specialization.CARDIOLOGIST,
                 "2026-10-10", "10:30");
 
-        when(appointmentRepository.findById(appointmentId)).thenReturn(java.util.Optional.of(appointment));
+        when(appointmentRepository.findByPublicId(appPublicId)).thenReturn(java.util.Optional.of(appointment));
         when(appointmentMapper.toEmailDto(appointment)).thenReturn(emailDto);
 
-        appointmentService.cancel(appointmentId);
+        appointmentService.cancel(appPublicId);
 
         assertEquals(Status.CANCELLED, appointment.getStatus());
         verify(eventPublisher, times(2)).publishEvent(any(SendEmailEvent.class));
@@ -166,10 +168,11 @@ class AppointmentServiceTest {
 
     @Test
     void shouldThrowAppointmentAlreadyCancelledException_whenAlreadyCancelled() {
-        Long appointmentId = 2L;
+        UUID appointmentId = UUID.randomUUID();
+
         Appointment appointment = new Appointment();
         appointment.setStatus(Status.CANCELLED);
-        when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
+        when(appointmentRepository.findByPublicId(appointmentId)).thenReturn(Optional.of(appointment));
 
         AppointmentCancellationConflictException exception = assertThrows(
                 AppointmentCancellationConflictException.class,
@@ -182,44 +185,49 @@ class AppointmentServiceTest {
 
     @Test
     void shouldCreateAppointment_whenInputIsValid() {
-        Long patientId = 1L;
-        Long doctorId = 2L;
+        UUID doctorId = UUID.randomUUID();
+        long patientId = 1L;
+
         LocalDate date = LocalDate.now().plusDays(1);
         LocalTime time = LocalTime.of(10, 0);
 
         AppointmentCreateDto dto = new AppointmentCreateDto(doctorId, date, time);
 
         AppointmentService spyService = spy(appointmentService);
-        doReturn(List.of(time)).when(spyService).getAvailableTimes(doctorId, date);
+
+        doReturn(List.of(time))
+                .when(spyService)
+                .getAvailableTimes(doctorId, date);
 
         Doctor doctor = new Doctor();
         Patient patient = new Patient();
+
         Appointment entity = new Appointment();
-        entity.setPatient(patient);
-        entity.setDoctor(doctor);
         entity.setId(100L);
+        entity.setDoctor(doctor);
+        entity.setPatient(patient);
 
-        AppointmentNotificationEmailDto emailDto = new AppointmentNotificationEmailDto("PF",
-                "PL", "DF", "DL", Specialization.CARDIOLOGIST,
-                "2026-10-10", "10:30");
+        AppointmentNotificationEmailDto emailDto =
+                new AppointmentNotificationEmailDto("PF", "PL", "DF", "DL",
+                        Specialization.CARDIOLOGIST, "2026-10-10", "10:30");
 
-        when(doctorService.getById(doctorId)).thenReturn(doctor);
+        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
         when(patientService.getById(patientId)).thenReturn(patient);
         when(appointmentMapper.toEntity(dto, doctor, patient)).thenReturn(entity);
         when(appointmentMapper.toEmailDto(entity)).thenReturn(emailDto);
         when(appointmentRepository.save(entity)).thenReturn(entity);
 
-        long resultId = spyService.create(patientId, dto);
+        spyService.create(patientId, dto);
 
-        assertEquals(100L, resultId);
         verify(eventPublisher, times(1)).publishEvent(any(SendEmailEvent.class));
         verify(appointmentRepository, times(1)).save(entity);
     }
 
     @Test
     void shouldThrowIllegalStateException_whenNoAvailableTimes() {
-        Long patientId = 1L;
-        Long doctorId = 2L;
+        long patientId = 1L;
+        UUID doctorId = UUID.randomUUID();
+
         LocalDate date = LocalDate.now().plusDays(1);
         LocalTime requestedTime = LocalTime.of(10, 0);
 
@@ -238,7 +246,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldReturnAvailableTimes_whenScheduledAppointmentsExists() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         LocalDate date = LocalDate.now();
 
         Consultation consultation = new Consultation();
@@ -259,7 +267,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldReturnAvailableTimes_whenNoScheduledAppointments() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         LocalDate date = LocalDate.now();
 
         Consultation consultation = new Consultation();
@@ -281,7 +289,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldReturnEmptyList_whenAllSlotsAreBooked() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         LocalDate date = LocalDate.now();
 
         Consultation consultation = new Consultation();
@@ -301,19 +309,20 @@ class AppointmentServiceTest {
 
     @Test
     void shouldReturnAppointmentById_whenAppointmentExists() {
+        UUID appId = UUID.randomUUID();
         Appointment appointment = new Appointment();
-        when(appointmentRepository.findById(1L)).thenReturn(Optional.of(appointment));
+        when(appointmentRepository.findByPublicId(appId)).thenReturn(Optional.of(appointment));
 
-        assertEquals(appointment, appointmentService.getById(1L));
+        assertEquals(appointment, appointmentService.getByPublicId(appId));
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenAppointmentDoesNotExist() {
-        Long id = 100L;
-        when(appointmentRepository.findById(id)).thenReturn(Optional.empty());
+        UUID appId = UUID.randomUUID();
+        when(appointmentRepository.findByPublicId(appId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> appointmentService.getById(id));
+                () -> appointmentService.getByPublicId(appId));
 
         assertEquals("Appointment not found", ex.getMessage());
     }
@@ -327,14 +336,15 @@ class AppointmentServiceTest {
 
     @Test
     void shouldGetTotalAppointmentsTodayByDoctorId_whenAppointmentsExist() {
-        when(appointmentRepository.countByDateAndDoctorId(LocalDate.now(), 1L)).thenReturn(1L);
+        UUID doctorId = UUID.randomUUID();
+        when(appointmentRepository.countByDateAndDoctorPublicId(LocalDate.now(), doctorId)).thenReturn(1L);
 
-        assertEquals(1L, appointmentService.getTotalAppointmentsTodayByDoctorId(1L));
+        assertEquals(1L, appointmentService.getTotalAppointmentsTodayByDoctorId(doctorId));
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistForTotalTodayAppointments() {
-        long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         doThrow(new EntityNotFoundException("Doctor not found"))
                 .when(doctorService).checkExistsById(doctorId);
 
@@ -358,7 +368,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldReturnMonthlyStatisticsByDoctorId_whenAppointmentsExist() {
-        long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         List<ConsultationStatisticsDto> stats = List.of(
                 new ConsultationStatisticsDto(1, Status.SCHEDULED, 10),
                 new ConsultationStatisticsDto(2, Status.COMPLETED, 4)
@@ -378,7 +388,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldThrowEntityNotFoundException_whenDoctorDoesNotExist() {
-        long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         doThrow(new EntityNotFoundException("Doctor not found"))
                 .when(doctorService).checkExistsById(doctorId);
 
@@ -395,7 +405,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldCountDistinctPatientsByDoctorId_whenAppointmentsExist() {
-        long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         when(appointmentRepository.countDistinctPatientsByDoctorId(doctorId)).thenReturn(5L);
 
         long result = appointmentService.getDistinctPatientsByDoctorId(doctorId);
@@ -407,7 +417,7 @@ class AppointmentServiceTest {
 
     @Test
     void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistForDistinctPatientCount() {
-        long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         doThrow(new EntityNotFoundException("Doctor not found"))
                 .when(doctorService).checkExistsById(doctorId);
 

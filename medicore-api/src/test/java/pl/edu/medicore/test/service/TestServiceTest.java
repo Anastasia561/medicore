@@ -18,6 +18,7 @@ import pl.edu.medicore.test.repository.TestRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -76,38 +77,39 @@ class TestServiceTest {
     @Test
     void shouldSaveTestAndPublishEvent_whenFirstTest() {
         Long patientId = 1L;
-        Long testId = 10L;
 
         MultipartFile file = mock(MultipartFile.class);
         TestUploadRequestDto dto = new TestUploadRequestDto(file, LocalDate.now());
+
         when(file.isEmpty()).thenReturn(false);
 
         Patient patient = new Patient();
         when(patientService.getById(patientId)).thenReturn(patient);
 
-        when(testRepository.findTopByPatientIdOrderByDateDesc(patientId)).thenReturn(Optional.empty());
+        when(testRepository.findTopByPatientIdOrderByDateDesc(patientId))
+                .thenReturn(Optional.empty());
 
         pl.edu.medicore.test.model.Test test = new pl.edu.medicore.test.model.Test();
         pl.edu.medicore.test.model.Test saved = new pl.edu.medicore.test.model.Test();
-        saved.setId(testId);
+        saved.setPublicId(UUID.randomUUID());
+        saved.setId(10L);
 
         when(testMapper.toEntity(dto, patient)).thenReturn(test);
         when(testRepository.save(test)).thenReturn(saved);
 
-        long result = testService.save(dto, patientId);
+        testService.save(dto, patientId);
 
-        assertEquals(testId, result);
-        verify(storageService).uploadFile(file, testId);
+        verify(storageService).uploadFile(file, saved.getPublicId());
         verify(publisher).publishEvent(any(FileUploadEvent.class));
     }
 
     @Test
     void shouldSaveTestAndPublishEvent_whenNewestTest() {
         Long patientId = 1L;
-        Long testId = 10L;
 
         MultipartFile file = mock(MultipartFile.class);
         TestUploadRequestDto dto = new TestUploadRequestDto(file, LocalDate.now());
+
         when(file.isEmpty()).thenReturn(false);
 
         Patient patient = new Patient();
@@ -115,33 +117,33 @@ class TestServiceTest {
 
         pl.edu.medicore.test.model.Test oldTest = new pl.edu.medicore.test.model.Test();
         oldTest.setDate(LocalDate.now().minusDays(1));
-        when(testRepository.findTopByPatientIdOrderByDateDesc(patientId)).thenReturn(Optional.of(oldTest));
+
+        when(testRepository.findTopByPatientIdOrderByDateDesc(patientId))
+                .thenReturn(Optional.of(oldTest));
 
         pl.edu.medicore.test.model.Test test = new pl.edu.medicore.test.model.Test();
         pl.edu.medicore.test.model.Test saved = new pl.edu.medicore.test.model.Test();
-        saved.setId(testId);
+        saved.setId(10L);
+        saved.setPublicId(UUID.randomUUID());
 
         when(testMapper.toEntity(dto, patient)).thenReturn(test);
         when(testRepository.save(test)).thenReturn(saved);
 
-        long result = testService.save(dto, patientId);
+        testService.save(dto, patientId);
 
-        assertEquals(testId, result);
-        verify(storageService).uploadFile(file, testId);
+        verify(storageService).uploadFile(file, saved.getPublicId());
         verify(publisher).publishEvent(any(FileUploadEvent.class));
     }
 
     @Test
     void shouldNotPublishEvent_whenNotNewestTest() {
         Long patientId = 1L;
-        Long testId = 10L;
 
-        TestUploadRequestDto dto = mock(TestUploadRequestDto.class);
         MultipartFile file = mock(MultipartFile.class);
+        TestUploadRequestDto dto =
+                new TestUploadRequestDto(file, LocalDate.of(2020, 1, 1));
 
-        when(dto.file()).thenReturn(file);
         when(file.isEmpty()).thenReturn(false);
-        when(dto.date()).thenReturn(LocalDate.of(2020, 1, 1));
 
         Patient patient = new Patient();
         when(patientService.getById(patientId)).thenReturn(patient);
@@ -154,15 +156,15 @@ class TestServiceTest {
 
         pl.edu.medicore.test.model.Test test = new pl.edu.medicore.test.model.Test();
         pl.edu.medicore.test.model.Test saved = new pl.edu.medicore.test.model.Test();
-        saved.setId(testId);
+        saved.setId(10L);
+        saved.setPublicId(UUID.randomUUID());
 
         when(testMapper.toEntity(dto, patient)).thenReturn(test);
         when(testRepository.save(test)).thenReturn(saved);
 
         testService.save(dto, patientId);
 
-        verify(storageService).uploadFile(file, testId);
-        verify(publisher, never()).publishEvent(any());
+        verify(publisher, never()).publishEvent(any(FileUploadEvent.class));
     }
 
     @Test

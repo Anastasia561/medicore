@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -75,7 +76,7 @@ class AppointmentMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        AppointmentCreateDto dto = new AppointmentCreateDto(1L,
+        AppointmentCreateDto dto = new AppointmentCreateDto(UUID.randomUUID(),
                 LocalDate.of(2026, 10, 12), LocalTime.of(20, 10));
 
         Doctor doctor = new Doctor();

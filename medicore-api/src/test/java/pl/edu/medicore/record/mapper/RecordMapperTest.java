@@ -15,6 +15,7 @@ import pl.edu.medicore.record.model.Record;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -90,7 +91,7 @@ class RecordMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        RecordCreateDto dto = new RecordCreateDto(1L, "Test diagnosis",
+        RecordCreateDto dto = new RecordCreateDto(UUID.randomUUID(), "Test diagnosis",
                 "Test summary");
         Appointment appointment = new Appointment();
 

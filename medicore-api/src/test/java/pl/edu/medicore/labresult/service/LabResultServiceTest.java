@@ -17,6 +17,7 @@ import pl.edu.medicore.test.service.TestService;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,12 +42,14 @@ class LabResultServiceTest {
 
     @Test
     void shouldProcessLabResults_whenInputIsValid() {
-        Long testId = 1L;
+        UUID testPublicId = UUID.randomUUID();
+        long testId = 1L;
 
         InputStream mockStream = new ByteArrayInputStream("pdf".getBytes());
         pl.edu.medicore.test.model.Test test = new pl.edu.medicore.test.model.Test();
+        test.setPublicId(testPublicId);
 
-        when(storageService.getFile(testId)).thenReturn(mockStream);
+        when(storageService.getFile(testPublicId)).thenReturn(mockStream);
         when(pdfParserService.extractText(mockStream)).thenReturn("parsed text");
         when(testService.getById(testId)).thenReturn(test);
 
@@ -57,7 +60,7 @@ class LabResultServiceTest {
 
         labResultService.processLabResults(testId);
 
-        verify(storageService).getFile(testId);
+        verify(storageService).getFile(testPublicId);
         verify(pdfParserService).extractText(mockStream);
         verify(labResultRepository, times(Parameter.values().length)).save(any(LabResult.class));
         verify(publisher).publishEvent(any(LabResultsExtractedEvent.class));
@@ -78,7 +81,7 @@ class LabResultServiceTest {
 
     @Test
     void shouldReturnLabResultsByPatientId_whenInputU() {
-        Long patientId = 1L;
+        UUID patientId = UUID.randomUUID();
         List<LabResult> expected = List.of(new LabResult());
 
         when(labResultRepository.getLatestLabResultsByPatientId(patientId)).thenReturn(expected);

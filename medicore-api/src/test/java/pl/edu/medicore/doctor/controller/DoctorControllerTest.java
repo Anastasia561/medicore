@@ -19,6 +19,7 @@ import pl.edu.medicore.verification.model.TokenType;
 import pl.edu.medicore.verification.model.VerificationToken;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,8 +34,9 @@ class DoctorControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldGetAllAvailableTimesForDoctor_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
 
-        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-04", null, 6)
+        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-04", null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(4))
@@ -46,7 +48,8 @@ class DoctorControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedDoctorAvailableTimesWithInvalidToken() throws Exception {
-        mockMvc.perform(get("/doctors/{id}/times?date=2026-03-04", 6)
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
+        mockMvc.perform(get("/doctors/{id}/times?date=2026-03-04", id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
     }
@@ -54,16 +57,18 @@ class DoctorControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenGetDoctorAvailableTimesAsDoctor() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
 
-        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-04", null, 6)
+        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-04", null, id)
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void shouldReturn404_whenDoctorDoesNotExistsForAvailableTimes() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
-        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-04", null, 1)
+        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-04", null, id)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error.message").value("Doctor not found"));
     }
@@ -71,8 +76,9 @@ class DoctorControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenDoctorIsNotAvailableOnWeekends() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
 
-        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-01", null, 6)
+        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-01", null, id)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.message").value("Doctor is not available on weekends"));
     }
@@ -80,8 +86,9 @@ class DoctorControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenDoctorIsNotAvailable() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
-        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-03", null, 7)
+        performRequest(HttpMethod.GET, "/doctors/{id}/times?date=2026-03-03", null, id)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.message").value("Doctor is not available"));
     }

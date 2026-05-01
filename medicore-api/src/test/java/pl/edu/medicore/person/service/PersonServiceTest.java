@@ -15,6 +15,7 @@ import pl.edu.medicore.person.model.Status;
 import pl.edu.medicore.person.repository.PersonRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,17 +34,19 @@ class PersonServiceTest {
 
     @Test
     void shouldGetRoleByPersonId_whenInputIsValid() {
-        when(personRepository.getRole(1L)).thenReturn(Optional.of(Role.ADMIN));
+        UUID personId = UUID.randomUUID();
+        when(personRepository.getRoleByPublicId(personId)).thenReturn(Optional.of(Role.ADMIN));
 
-        assertEquals(Role.ADMIN, personService.getRoleById(1L));
-        verify(personRepository).getRole(1L);
+        assertEquals(Role.ADMIN, personService.getRoleByPublicId(personId));
+        verify(personRepository).getRoleByPublicId(personId);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenRoleNotFoundById() {
-        when(personRepository.getRole(1L)).thenReturn(Optional.empty());
+        UUID personId = UUID.randomUUID();
+        when(personRepository.getRoleByPublicId(personId)).thenReturn(Optional.empty());
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> personService.getRoleById(1L));
+                () -> personService.getRoleByPublicId(personId));
 
         assertEquals("Person not found", ex.getMessage());
     }
@@ -75,24 +78,6 @@ class PersonServiceTest {
                 () -> personService.getByEmail("test"));
 
         assertEquals("User not verified", ex.getMessage());
-    }
-
-    @Test
-    void shouldGetPersonById_whenInputIsValid() {
-        Person person = new Person();
-        when(personRepository.findById(2L)).thenReturn(Optional.of(person));
-
-        assertEquals(person, personService.getById(2L));
-        verify(personRepository).findById(2L);
-    }
-
-    @Test
-    void shouldThrowEntityNotFoundException_whenPersonDoesNotExistById() {
-        when(personRepository.findById(2L)).thenReturn(Optional.empty());
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> personService.getById(2L));
-
-        assertEquals("Person not found", ex.getMessage());
     }
 
     @Test

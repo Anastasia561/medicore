@@ -5,6 +5,8 @@ import org.springframework.http.HttpMethod;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.person.model.Role;
 
+import java.util.UUID;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,8 +15,9 @@ class RiskResultControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnRisksByPatientId_whenRequestedAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
-        performRequest(HttpMethod.GET, "/risks/{patientId}", null, 1)
+        performRequest(HttpMethod.GET, "/risks/{patientId}", null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(3))
 
@@ -40,7 +43,8 @@ class RiskResultControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedRiskResultWithInvalidToken() throws Exception {
-        mockMvc.perform(get("/risks/{patientId}", null, 1)
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        mockMvc.perform(get("/risks/{patientId}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
     }
@@ -48,16 +52,18 @@ class RiskResultControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedRecordAsAdmin() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
-        performRequest(HttpMethod.GET, "/risks/{patientId}", null, 1)
+        performRequest(HttpMethod.GET, "/risks/{patientId}", null, id)
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void shouldReturn404_whenPatientNotFound() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000101");
 
-        performRequest(HttpMethod.GET, "/risks/{patientId}", null, 1000)
+        performRequest(HttpMethod.GET, "/risks/{patientId}", null, id)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error.message").value("Patient not found"));
     }

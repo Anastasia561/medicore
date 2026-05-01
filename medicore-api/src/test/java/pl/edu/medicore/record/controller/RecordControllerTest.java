@@ -9,6 +9,8 @@ import pl.edu.medicore.person.model.Role;
 import pl.edu.medicore.record.dto.RecordCreateDto;
 import pl.edu.medicore.record.model.Record;
 
+import java.util.UUID;
+
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,8 +22,9 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnRecordByAppointmentId_whenRequestedAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000012");
 
-        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, 12)
+        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.doctor.firstName").value("Kevin"))
                 .andExpect(jsonPath("$.data.doctor.lastName").value("Lee"))
@@ -38,7 +41,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedRecordWithInvalidToken() throws Exception {
-        mockMvc.perform(get("/records/appointment/{appointmentId}", null, 6)
+        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000006");
+        mockMvc.perform(get("/records/appointment/{appointmentId}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
     }
@@ -46,16 +50,18 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedRecordAsAdmin() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
+        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000006");
 
-        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, 6)
+        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void shouldReturn404_whenRecordNotFound() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000106");
 
-        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, 1000)
+        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error.message").value("Record not found"));
     }
@@ -63,7 +69,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenCreateRecordAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        RecordCreateDto dto = new RecordCreateDto(1L, "test diagnosis", "test summary");
+        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000001");
+        RecordCreateDto dto = new RecordCreateDto(id, "test diagnosis", "test summary");
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isForbidden());
@@ -71,7 +78,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenCreateConsultationWithInvalidToken() throws Exception {
-        RecordCreateDto dto = new RecordCreateDto(1L, "test diagnosis", "test summary");
+        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000001");
+        RecordCreateDto dto = new RecordCreateDto(id, "test diagnosis", "test summary");
 
         mockMvc.perform(post("/records", dto)
                         .header("Authorization", "Bearer invalid-token"))
@@ -81,7 +89,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenValidationErrorsInCreateDto() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        RecordCreateDto dto = new RecordCreateDto(-1L, "", null);
+        RecordCreateDto dto = new RecordCreateDto(null, "", null);
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isBadRequest())
@@ -93,7 +101,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenAppointmentAlreadyCompleted() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        RecordCreateDto dto = new RecordCreateDto(3L, "test diagnosis", "test summary");
+        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000003");
+        RecordCreateDto dto = new RecordCreateDto(id, "test diagnosis", "test summary");
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isBadRequest())
@@ -103,18 +112,24 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldCreateRecord_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
+        UUID appId = UUID.fromString("10000000-0000-0000-0000-000000000001");
 
-        RecordCreateDto dto = new RecordCreateDto(1L, "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(appId, "test diagnosis", "test summary");
 
         ResultActions resultActions = performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isCreated());
 
-        Long id = ((Number) JsonPath.read(
+        String publicId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
-        )).longValue();
+        );
 
-        Record record = em.find(Record.class, id);
+        UUID id = UUID.fromString(publicId);
+
+        Record record = em.createQuery(
+                "SELECT a FROM Record a WHERE a.publicId = :publicId",
+                Record.class).setParameter("publicId", id).getSingleResult();
+
         assertEquals("test diagnosis", record.getDiagnosis());
         assertEquals("test summary", record.getSummary());
     }
@@ -181,7 +196,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].patient.firstName").value("Anna"))
                 .andExpect(jsonPath("$.data.content[0].patient.lastName").value("Smith"))
                 .andExpect(jsonPath("$.data.content[0].patient.email").value("anna.smith@example.com"))
-                .andExpect(jsonPath("$.data.content[1].date").value("2026-02-06"))
+                .andExpect(jsonPath("$.data.content[1].date").value("2026-04-06"))
                 .andExpect(jsonPath("$.data.content[1].patient.firstName").value("Taro"))
                 .andExpect(jsonPath("$.data.content[1].patient.lastName").value("Yamada"))
                 .andExpect(jsonPath("$.data.content[1].patient.email").value("taro.yamada@example.com"));

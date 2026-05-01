@@ -30,6 +30,7 @@ import pl.edu.medicore.verification.service.VerificationTokenService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.Assert.assertThrows;
@@ -62,7 +63,7 @@ class PatientServiceTest {
     @Test
     void shouldReturnAllPatients_whenQueryIsNull() {
         Patient patient = new Patient();
-        PatientResponseDto dto = new PatientResponseDto("John", "Doe", "test@gmail.com",
+        PatientResponseDto dto = new PatientResponseDto(UUID.randomUUID(),"John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
                 new PatientAddressDto("Poland", "Warsaw", "Street", 10));
 
@@ -82,7 +83,7 @@ class PatientServiceTest {
     @Test
     void shouldReturnAllPatients_whenQueryIsBlank() {
         Patient patient = new Patient();
-        PatientResponseDto dto = new PatientResponseDto("John", "Doe", "test@gmail.com",
+        PatientResponseDto dto = new PatientResponseDto(UUID.randomUUID(),"John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
                 new PatientAddressDto("Poland", "Warsaw", "Street", 10));
 
@@ -103,7 +104,7 @@ class PatientServiceTest {
     void shouldSearchPatients_whenQueryIsProvided() {
         String query = "john";
         Patient patient = new Patient();
-        PatientResponseDto dto = new PatientResponseDto("John", "Doe", "test@gmail.com",
+        PatientResponseDto dto = new PatientResponseDto(UUID.randomUUID(),"John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
                 new PatientAddressDto("Poland", "Warsaw", "Street", 10));
 
@@ -123,31 +124,31 @@ class PatientServiceTest {
 
     @Test
     void shouldReturnPatient_whenPatientExists() {
-        Long id = 1L;
+        UUID id =  UUID.randomUUID();
         Patient patient = new Patient();
 
-        when(patientRepository.findById(id)).thenReturn(Optional.of(patient));
+        when(patientRepository.findByPublicId(id)).thenReturn(Optional.of(patient));
 
-        Patient result = patientService.getById(id);
+        Patient result = patientService.getByPublicId(id);
 
         assertNotNull(result);
         assertEquals(patient, result);
-        verify(patientRepository).findById(id);
+        verify(patientRepository).findByPublicId(id);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenPatientNotFound() {
-        Long id = 1L;
+        UUID id = UUID.randomUUID();
 
-        when(patientRepository.findById(id)).thenReturn(Optional.empty());
+        when(patientRepository.findByPublicId(id)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(
                 EntityNotFoundException.class,
-                () -> patientService.getById(id)
+                () -> patientService.getByPublicId(id)
         );
 
         assertEquals("Patient not found", ex.getMessage());
-        verify(patientRepository).findById(id);
+        verify(patientRepository).findByPublicId(id);
     }
 
     @Test

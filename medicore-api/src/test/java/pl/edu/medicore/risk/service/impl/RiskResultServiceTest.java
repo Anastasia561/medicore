@@ -23,6 +23,7 @@ import pl.edu.medicore.test.service.TestService;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -115,7 +116,7 @@ class RiskResultServiceTest {
 
     @Test
     void shouldReturnLatestRisksByPatientId_whenResultsExist() {
-        long patientId = 1L;
+        UUID patientId = UUID.randomUUID();
 
         RiskResult entity1 = new RiskResult();
         RiskResult entity2 = new RiskResult();
@@ -127,8 +128,8 @@ class RiskResultServiceTest {
                 20.5, LocalDate.of(2023, 1, 1),
                 LocalDate.of(2025, 1, 1));
 
-        when(patientService.getById(patientId)).thenReturn(new Patient());
-        when(riskResultRepository.getLatestByPatientId(patientId)).thenReturn(List.of(entity1, entity2));
+        when(patientService.getByPublicId(patientId)).thenReturn(new Patient());
+        when(riskResultRepository.getLatestByPatientPublicId(patientId)).thenReturn(List.of(entity1, entity2));
 
         when(riskResultMapper.toDto(entity1)).thenReturn(dto1);
         when(riskResultMapper.toDto(entity2)).thenReturn(dto2);
@@ -139,17 +140,17 @@ class RiskResultServiceTest {
         assertEquals(dto1, result.get(0));
         assertEquals(dto2, result.get(1));
 
-        verify(riskResultRepository).getLatestByPatientId(patientId);
+        verify(riskResultRepository).getLatestByPatientPublicId(patientId);
         verify(riskResultMapper).toDto(entity1);
         verify(riskResultMapper).toDto(entity2);
     }
 
     @Test
     void shouldReturnEmptyList_whenNoRiskResultsFoundForPatient() {
-        long patientId = 1L;
+        UUID patientId = UUID.randomUUID();
 
-        when(patientService.getById(patientId)).thenReturn(new Patient());
-        when(riskResultRepository.getLatestByPatientId(patientId)).thenReturn(Collections.emptyList());
+        when(patientService.getByPublicId(patientId)).thenReturn(new Patient());
+        when(riskResultRepository.getLatestByPatientPublicId(patientId)).thenReturn(Collections.emptyList());
 
         List<RiskResultResponseDto> result = riskService.getLatestByPatientId(patientId);
 
@@ -159,7 +160,7 @@ class RiskResultServiceTest {
 
     @Test
     void shouldCalculate3RiskForPatient_whenLabResultsExist() {
-        long patientId = 1L;
+        UUID patientId = UUID.randomUUID();
         Patient patient = new Patient();
         patient.setGender(Gender.MALE);
         patient.setPregnant(false);
@@ -208,7 +209,7 @@ class RiskResultServiceTest {
 
     @Test
     void shouldNotSaveRiskResults_whenLabResultsNotFoundForPatient() {
-        long patientId = 1L;
+        UUID patientId = UUID.randomUUID();
         when(labResultService.getLabResultsByPatientId(patientId)).thenReturn(Collections.emptyList());
         riskService.calculateRiskForPatient(patientId);
 

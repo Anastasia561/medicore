@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -26,7 +27,7 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldUploadFile_whenInputIsValid() {
-        Long testId = 1L;
+        UUID testId = UUID.randomUUID();
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -37,7 +38,7 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
         storageService.uploadFile(file, testId);
 
-        String expectedKey = "test/%d/report".formatted(testId);
+        String expectedKey = "test/%s/report".formatted(testId);
 
         ResponseBytes<GetObjectResponse> downloadedFile = s3Client.getObjectAsBytes(
                 GetObjectRequest.builder()
@@ -52,8 +53,9 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldDeleteFile_whenFileExists() {
-        Long testId = 100L;
-        String key = "test/%d/report".formatted(testId);
+        UUID testId = UUID.randomUUID();
+
+        String key = "test/%s/report".formatted(testId);
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
@@ -70,7 +72,7 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExistForDelete() {
-        Long testId = 999L;
+        UUID testId = UUID.randomUUID();
 
         FileNotFoundException ex = assertThrows(FileNotFoundException.class,
                 () -> storageService.deleteFile(testId));
@@ -79,7 +81,7 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturnInputStream_whenFileExists() throws IOException {
-        Long testId = 101L;
+        UUID testId = UUID.randomUUID();
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
@@ -101,7 +103,7 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExist() {
-        Long testId = 999L;
+        UUID testId = UUID.randomUUID();
 
         FileNotFoundException exception = assertThrows(FileNotFoundException.class, () -> storageService.getFile(testId));
 

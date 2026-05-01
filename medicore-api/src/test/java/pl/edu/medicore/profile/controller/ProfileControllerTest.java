@@ -14,6 +14,7 @@ import pl.edu.medicore.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.profile.dto.ProfileUpdateDto;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -98,12 +99,17 @@ class ProfileControllerTest extends AbstractIntegrationTest {
         ResultActions resultActions = performRequest(HttpMethod.PUT, "/profiles", dto)
                 .andExpect(status().isOk());
 
-        Long id = ((Number) JsonPath.read(
+        String publicId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
-        )).longValue();
+        );
 
-        Doctor doctor = em.find(Doctor.class, id);
+        UUID id = UUID.fromString(publicId);
+
+        Doctor doctor = em.createQuery(
+                "SELECT a FROM Doctor a WHERE a.publicId = :publicId",
+                Doctor.class).setParameter("publicId", id).getSingleResult();
+
         assertEquals("TestF", doctor.getFirstName());
         assertEquals("TestL", doctor.getLastName());
     }
@@ -154,12 +160,17 @@ class ProfileControllerTest extends AbstractIntegrationTest {
         ResultActions resultActions = performRequest(HttpMethod.PUT, "/profiles/patient", dto)
                 .andExpect(status().isOk());
 
-        Long id = ((Number) JsonPath.read(
+        String publicId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
-        )).longValue();
+        );
 
-        Patient patient = em.find(Patient.class, id);
+        UUID id = UUID.fromString(publicId);
+
+        Patient patient = em.createQuery(
+                "SELECT a FROM Patient a WHERE a.publicId = :publicId",
+                Patient.class).setParameter("publicId", id).getSingleResult();
+
         assertEquals("testF", patient.getFirstName());
         assertEquals("testL", patient.getLastName());
         assertEquals("test street", patient.getAddress().getStreet());

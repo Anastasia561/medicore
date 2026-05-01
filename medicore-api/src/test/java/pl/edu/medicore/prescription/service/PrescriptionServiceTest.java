@@ -13,6 +13,7 @@ import pl.edu.medicore.record.model.Record;
 import pl.edu.medicore.record.service.RecordService;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,28 +34,26 @@ class PrescriptionServiceTest {
 
     @Test
     void shouldCreatePrescription_whenInputIsValid() {
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(1L, "Test medicine",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(UUID.randomUUID(), "Test medicine",
                 "10g", LocalDate.of(2026, 10, 2), null, "daily");
 
         Record record = new Record();
         Prescription prescription = new Prescription();
         prescription.setId(10L);
-        when(recordService.getById(dto.recordId())).thenReturn(record);
+        when(recordService.getByPublicId(dto.recordId())).thenReturn(record);
         when(prescriptionMapper.toEntity(dto, record)).thenReturn(prescription);
         when(prescriptionRepository.save(prescription)).thenReturn(prescription);
 
-        long result = prescriptionService.create(dto);
+         prescriptionService.create(dto);
 
-        assertEquals(10L, result);
-
-        verify(recordService).getById(dto.recordId());
+        verify(recordService).getByPublicId(dto.recordId());
         verify(prescriptionMapper).toEntity(dto, record);
         verify(prescriptionRepository).save(prescription);
     }
 
     @Test
     void shouldThrowIllegalArgumentException_whenStartDateAfterEndDateForCreate() {
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(1L, "Test medicine",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(UUID.randomUUID(), "Test medicine",
                 "10g", LocalDate.of(2026, 10, 2),
                 LocalDate.of(2026, 10, 1), "daily");
 

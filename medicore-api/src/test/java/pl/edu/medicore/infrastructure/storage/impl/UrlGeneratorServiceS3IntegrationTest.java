@@ -7,6 +7,7 @@ import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.exception.FileNotFoundException;
 
 import java.net.URL;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,8 +24,8 @@ class UrlGeneratorServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldGenerateViewUrl_whenFileExists() {
-        Long testId = 300L;
-        String key = "test/%d/report".formatted(testId);
+        UUID testId = UUID.randomUUID();
+        String key = "test/%s/report".formatted(testId);
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
@@ -45,7 +46,7 @@ class UrlGeneratorServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExistForViewUrl() {
-        Long testId = 999L;
+        UUID testId = UUID.randomUUID();
 
         FileNotFoundException exception = assertThrows(FileNotFoundException.class,
                 () -> urlGeneratorService.generateViewUrl(testId));
@@ -55,8 +56,8 @@ class UrlGeneratorServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldGenerateDownloadUrl_whenFileExists() {
-        Long testId = 300L;
-        String key = "test/%d/report".formatted(testId);
+        UUID testId = UUID.randomUUID();
+        String key = "test/%s/report".formatted(testId);
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
@@ -77,7 +78,7 @@ class UrlGeneratorServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExistForDownloadUrl() {
-        Long testId = 999L;
+        UUID testId = UUID.randomUUID();
 
         FileNotFoundException exception = assertThrows(FileNotFoundException.class,
                 () -> urlGeneratorService.generateDownloadUrl(testId));

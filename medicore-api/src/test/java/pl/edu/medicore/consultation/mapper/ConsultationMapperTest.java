@@ -12,6 +12,7 @@ import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.email.dto.ScheduleEmailDto;
 
 import java.time.LocalTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -54,7 +55,7 @@ class ConsultationMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        ConsultationCreateDto dto = new ConsultationCreateDto(1L, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(UUID.randomUUID(), Workday.FRIDAY,
                 LocalTime.of(8, 30), LocalTime.of(17, 30));
 
         Doctor doctor = new Doctor();

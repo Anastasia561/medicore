@@ -13,6 +13,7 @@ import pl.edu.medicore.person.model.Role;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,40 +28,44 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldGetAppointmentPageForPatient_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
-        performRequest(HttpMethod.GET, "/appointments?userId=1&startDate=2026-01-10&endDate=2026-03-10", null)
+        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content.length()").value(3))
-                .andExpect(jsonPath("$.data.content[0].date").value("2026-03-05"))
+                .andExpect(jsonPath("$.data.content.length()").value(2))
+                .andExpect(jsonPath("$.data.content[0].date").value("2026-02-01"))
                 .andExpect(jsonPath("$.data.content[0].firstName").value("John"))
                 .andExpect(jsonPath("$.data.content[0].lastName").value("Doe"))
                 .andExpect(jsonPath("$.data.content[0].phoneNumber").value("+123456789"))
-                .andExpect(jsonPath("$.data.content[0].status").value("CANCELLED"))
-                .andExpect(jsonPath("$.data.content[0].time").value("11:00:00"));
+                .andExpect(jsonPath("$.data.content[0].status").value("COMPLETED"))
+                .andExpect(jsonPath("$.data.content[0].time").value("09:30:00"));
     }
 
     @Test
     void shouldGetAppointmentPageForDoctor_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
 
-        performRequest(HttpMethod.GET, "/appointments?userId=6&startDate=2026-01-10&endDate=2026-03-10", null)
+        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content.length()").value(4))
-                .andExpect(jsonPath("$.data.content[0].date").value("2026-03-05"))
+                .andExpect(jsonPath("$.data.content.length()").value(2))
+                .andExpect(jsonPath("$.data.content[0].date").value("2026-02-06"))
                 .andExpect(jsonPath("$.data.content[0].firstName").value("Rafael"))
                 .andExpect(jsonPath("$.data.content[0].lastName").value("Garcia"))
                 .andExpect(jsonPath("$.data.content[0].specialization").value("CARDIOLOGIST"))
-                .andExpect(jsonPath("$.data.content[0].status").value("CANCELLED"))
-                .andExpect(jsonPath("$.data.content[0].time").value("11:00:00"));
+                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED"))
+                .andExpect(jsonPath("$.data.content[0].time").value("12:00:00"));
     }
 
     @Test
     void shouldGetAppointmentPageForPatientWithStatusFiltering_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
-        performRequest(HttpMethod.GET, "/appointments?userId=1&startDate=2026-01-10&endDate=2026-03-10&status=SCHEDULED", null)
+        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10&status=SCHEDULED",
+                null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content").isArray())
                 .andExpect(jsonPath("$.data.content.length()").value(1))
@@ -93,15 +98,18 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenGetAppointmentsWithInvalidDateRange() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
-        performRequest(HttpMethod.GET, "/appointments?userId=1&startDate=2026-03-10&endDate=2026-01-10", null, 7)
+        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-03-10&endDate=2026-01-10", null,
+                id)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.message").value("End date must be after start date"));
     }
 
     @Test
     void shouldReturn401_whenCancelAppointmentWithInvalidToken() throws Exception {
-        mockMvc.perform(put("/appointments/cancel/{id}", 1)
+        UUID uuid = UUID.randomUUID();
+        mockMvc.perform(put("/appointments/cancel/{id}", uuid)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
     }
@@ -109,8 +117,9 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn409_whenCancelCompletedAppointment() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID uuid = UUID.fromString("10000000-0000-0000-0000-000000000003");
 
-        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, 3)
+        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, uuid)
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error.message").value("Appointment can not be cancelled"));
     }
@@ -118,17 +127,19 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn409_whenCancelCancelledAppointment() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID uuid = UUID.fromString("10000000-0000-0000-0000-000000000004");
 
-        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, 4)
+        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, uuid)
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error.message").value("Appointment can not be cancelled"));
     }
 
     @Test
-    void shouldReturn404_whenCancelCancelledAppointment() throws Exception {
+    void shouldReturn404_whenAppointmentNotFound() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID uuid = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
-        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, 40)
+        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, uuid)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error.message").value("Appointment not found"));
     }
@@ -136,8 +147,9 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldCancelAppointment_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID uuid = UUID.fromString("10000000-0000-0000-0000-000000000001");
 
-        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, 1)
+        performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, uuid)
                 .andExpect(status().isOk());
 
         greenMail.waitForIncomingEmail(2);
@@ -152,7 +164,9 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenCreatingAppointmentAsDoctor() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        AppointmentCreateDto dto = new AppointmentCreateDto(6L,
+        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000006");
+
+        AppointmentCreateDto dto = new AppointmentCreateDto(doctorId,
                 LocalDate.of(2026, 10, 10), LocalTime.of(10, 30));
 
         performRequest(HttpMethod.POST, "/appointments", dto)
@@ -161,7 +175,9 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedAppointmentCreationWithInvalidToken() throws Exception {
-        AppointmentCreateDto dto = new AppointmentCreateDto(6L,
+        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000006");
+
+        AppointmentCreateDto dto = new AppointmentCreateDto(doctorId,
                 LocalDate.of(2026, 10, 10), LocalTime.of(10, 30));
 
         mockMvc.perform(post("/appointments", dto)
@@ -172,7 +188,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenValidationErrorsInAppointmentCreation() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        AppointmentCreateDto dto = new AppointmentCreateDto(-6L,
+        AppointmentCreateDto dto = new AppointmentCreateDto(null,
                 LocalDate.of(2024, 10, 10), null);
 
         performRequest(HttpMethod.POST, "/appointments", dto)
@@ -185,8 +201,9 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenTimeSlotIsInvalid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000006");
 
-        AppointmentCreateDto dto = new AppointmentCreateDto(6L,
+        AppointmentCreateDto dto = new AppointmentCreateDto(doctorId,
                 LocalDate.of(2026, 11, 4), LocalTime.of(10, 30));
 
         performRequest(HttpMethod.POST, "/appointments", dto)
@@ -195,21 +212,27 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldSuccessfullyRegisterDoctor_whenInputIsValid() throws Exception {
+    void shouldSuccessfullyCreateAppointment_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
+        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000006");
 
-        AppointmentCreateDto dto = new AppointmentCreateDto(6L,
+        AppointmentCreateDto dto = new AppointmentCreateDto(doctorId,
                 LocalDate.of(2028, 4, 6), LocalTime.of(10, 30));
 
         ResultActions resultActions = performRequest(HttpMethod.POST, "/appointments", dto)
                 .andExpect(status().isCreated());
 
-        Long id = ((Number) JsonPath.read(
+        String publicId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
-        )).longValue();
+        );
 
-        Appointment appointment = em.find(Appointment.class, id);
+        UUID id = UUID.fromString(publicId);
+
+        Appointment appointment = em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.publicId = :publicId",
+                Appointment.class).setParameter("publicId", id).getSingleResult();
+
         assertEquals("John", appointment.getPatient().getFirstName());
         assertEquals("Garcia", appointment.getDoctor().getLastName());
         assertEquals(Status.SCHEDULED, appointment.getStatus());

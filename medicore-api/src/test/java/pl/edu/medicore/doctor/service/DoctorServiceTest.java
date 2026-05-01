@@ -31,6 +31,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,18 +61,18 @@ class DoctorServiceTest {
 
     @Test
     void shouldNotThrowEntityNotFoundException_whenDoctorExistsWithCheckById() {
-        Long doctorId = 1L;
-        when(doctorRepository.existsById(doctorId)).thenReturn(true);
+        UUID doctorId = UUID.randomUUID();
+        when(doctorRepository.existsByPublicId(doctorId)).thenReturn(true);
 
         assertDoesNotThrow(() -> doctorService.checkExistsById(doctorId));
 
-        verify(doctorRepository).existsById(doctorId);
+        verify(doctorRepository).existsByPublicId(doctorId);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistWithCheckById() {
-        Long doctorId = 1L;
-        when(doctorRepository.existsById(doctorId)).thenReturn(false);
+        UUID doctorId = UUID.randomUUID();
+        when(doctorRepository.existsByPublicId(doctorId)).thenReturn(false);
 
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
@@ -79,35 +80,35 @@ class DoctorServiceTest {
         );
 
         assertEquals("Doctor not found", exception.getMessage());
-        verify(doctorRepository).existsById(doctorId);
+        verify(doctorRepository).existsByPublicId(doctorId);
     }
 
     @Test
     void shouldReturnDoctorById_whenDoctorExists() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
         Doctor doctor = new Doctor();
 
-        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
+        when(doctorRepository.findByPublicId(doctorId)).thenReturn(Optional.of(doctor));
 
-        Doctor result = doctorService.getById(doctorId);
+        Doctor result = doctorService.getByPublicId(doctorId);
 
         assertEquals(doctor, result);
-        verify(doctorRepository).findById(doctorId);
+        verify(doctorRepository).findByPublicId(doctorId);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistById() {
-        Long doctorId = 1L;
+        UUID doctorId = UUID.randomUUID();
 
-        when(doctorRepository.findById(doctorId)).thenReturn(Optional.empty());
+        when(doctorRepository.findByPublicId(doctorId)).thenReturn(Optional.empty());
 
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> doctorService.getById(doctorId)
+                () -> doctorService.getByPublicId(doctorId)
         );
 
         assertEquals("Doctor not found", exception.getMessage());
-        verify(doctorRepository).findById(doctorId);
+        verify(doctorRepository).findByPublicId(doctorId);
     }
 
     @Test
@@ -115,7 +116,7 @@ class DoctorServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Doctor doctor = new Doctor();
-        DoctorResponseDto responseDto = new DoctorResponseDto("John", "Doe", "test@mail.com",
+        DoctorResponseDto responseDto = new DoctorResponseDto(UUID.randomUUID(),"John", "Doe", "test@mail.com",
                 Specialization.DERMATOLOGIST, 10, LocalDate.of(2023, 10, 10));
 
         Page<Doctor> doctorPage = new PageImpl<>(List.of(doctor));
@@ -139,7 +140,7 @@ class DoctorServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Doctor doctor = new Doctor();
-        DoctorResponseDto responseDto = new DoctorResponseDto("John", "Doe", "test@mail.com",
+        DoctorResponseDto responseDto = new DoctorResponseDto(UUID.randomUUID(),"John", "Doe", "test@mail.com",
                 Specialization.DERMATOLOGIST, 10, LocalDate.of(2023, 10, 10));
 
         Page<Doctor> doctorPage = new PageImpl<>(List.of(doctor));

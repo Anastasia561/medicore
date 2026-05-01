@@ -16,6 +16,7 @@ import pl.edu.medicore.statistics.dto.DoctorStatisticsDto;
 import pl.edu.medicore.statistics.dto.DoctorStatisticsResponseDto;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,24 +77,26 @@ class StatisticsServiceTest {
         long patients = 100;
         long todayAppointments = 12;
 
+        UUID doctorId = UUID.randomUUID();
+
         List<ConsultationStatisticsDto> monthlyStats = List.of(
                 new ConsultationStatisticsDto(1, Status.COMPLETED, 40),
                 new ConsultationStatisticsDto(2, Status.CANCELLED, 60)
         );
 
-        when(appointmentService.getDistinctPatientsByDoctorId(2)).thenReturn(patients);
-        when(appointmentService.getTotalAppointmentsTodayByDoctorId(2)).thenReturn(todayAppointments);
-        when(appointmentService.getMonthlyStatisticsByDoctorId(2)).thenReturn(monthlyStats);
+        when(appointmentService.getDistinctPatientsByDoctorId(doctorId)).thenReturn(patients);
+        when(appointmentService.getTotalAppointmentsTodayByDoctorId(doctorId)).thenReturn(todayAppointments);
+        when(appointmentService.getMonthlyStatisticsByDoctorId(doctorId)).thenReturn(monthlyStats);
 
-        DoctorStatisticsResponseDto result = statisticsService.getDoctorStatistics(2);
+        DoctorStatisticsResponseDto result = statisticsService.getDoctorStatistics(doctorId);
 
         assertNotNull(result);
         assertEquals(patients, result.totalPatients());
         assertEquals(todayAppointments, result.consultationsToday());
         assertEquals(monthlyStats, result.monthlyConsultations());
 
-        verify(appointmentService).getDistinctPatientsByDoctorId(2);
-        verify(appointmentService).getTotalAppointmentsTodayByDoctorId(2);
-        verify(appointmentService).getMonthlyStatisticsByDoctorId(2);
+        verify(appointmentService).getDistinctPatientsByDoctorId(doctorId);
+        verify(appointmentService).getTotalAppointmentsTodayByDoctorId(doctorId);
+        verify(appointmentService).getMonthlyStatisticsByDoctorId(doctorId);
     }
 }

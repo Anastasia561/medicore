@@ -32,6 +32,7 @@ import pl.edu.medicore.record.model.Record;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -56,7 +57,7 @@ class RecordServiceTest {
 
     @Test
     void shouldReturnRecordDto_whenRecordExists() {
-        Long appointmentId = 1L;
+        UUID appointmentId = UUID.randomUUID();
         DoctorForRecordDto doctor = new DoctorForRecordDto("fTest", "fLast", Specialization.DERMATOLOGIST);
         PatientForRecordDto patient = new PatientForRecordDto("fTest", "fLast", "test@gmail.com");
 
@@ -64,63 +65,63 @@ class RecordServiceTest {
         RecordDto dto = new RecordDto(doctor, patient, LocalDate.of(2026, 10, 2), "Test",
                 "Test summary", List.of());
 
-        when(recordRepository.findByAppointmentId(appointmentId)).thenReturn(Optional.of(record));
+        when(recordRepository.findByAppointmentPublicId(appointmentId)).thenReturn(Optional.of(record));
         when(recordMapper.toDto(record)).thenReturn(dto);
 
         RecordDto result = recordService.getByAppointmentId(appointmentId);
 
         assertEquals(result, dto);
-        verify(recordRepository).findByAppointmentId(appointmentId);
+        verify(recordRepository).findByAppointmentPublicId(appointmentId);
         verify(recordMapper).toDto(record);
         verifyNoInteractions(appointmentService);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenRecordNotFoundByAppointmentId() {
-        Long appointmentId = 1L;
+        UUID appointmentId = UUID.randomUUID();
 
-        when(recordRepository.findByAppointmentId(appointmentId)).thenReturn(Optional.empty());
+        when(recordRepository.findByAppointmentPublicId(appointmentId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = Assertions.assertThrows(EntityNotFoundException.class,
-                () -> recordService.getByAppointmentId(1L));
+                () -> recordService.getByAppointmentId(appointmentId));
 
         assertEquals("Record not found", ex.getMessage());
-        verify(recordRepository).findByAppointmentId(appointmentId);
+        verify(recordRepository).findByAppointmentPublicId(appointmentId);
         verifyNoInteractions(recordMapper, appointmentService);
     }
 
     @Test
     void shouldReturnRecordDtoById_whenRecordExists() {
-        Long id = 1L;
+        UUID id = UUID.randomUUID();
         Record record = new Record();
 
-        when(recordRepository.findById(id)).thenReturn(Optional.of(record));
+        when(recordRepository.findByPublicId(id)).thenReturn(Optional.of(record));
 
-        Record result = recordService.getById(id);
+        Record result = recordService.getByPublicId(id);
 
         assertEquals(result, record);
-        verify(recordRepository).findById(id);
+        verify(recordRepository).findByPublicId(id);
         verifyNoInteractions(appointmentService, recordMapper);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenRecordNotFoundById() {
-        Long id = 1L;
+        UUID id = UUID.randomUUID();
 
-        when(recordRepository.findById(id)).thenReturn(Optional.empty());
+        when(recordRepository.findByPublicId(id)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = Assertions.assertThrows(EntityNotFoundException.class,
-                () -> recordService.getById(1L));
+                () -> recordService.getByPublicId(id));
 
         assertEquals("Record not found", ex.getMessage());
-        verify(recordRepository).findById(id);
+        verify(recordRepository).findByPublicId(id);
         verifyNoInteractions(recordMapper, appointmentService);
     }
 
     @Test
     void shouldCreateRecord_whenAppointmentNotCompleted() {
-        Long appointmentId = 1L;
-        RecordCreateDto dto = new RecordCreateDto(1L, "test diagnosis", "test summary");
+        UUID appointmentId = UUID.randomUUID();
+        RecordCreateDto dto = new RecordCreateDto(appointmentId, "test diagnosis", "test summary");
 
         Appointment appointment = new Appointment();
         appointment.setStatus(Status.SCHEDULED);
@@ -128,29 +129,28 @@ class RecordServiceTest {
         Record record = new Record();
         record.setId(10L);
 
-        when(appointmentService.getById(appointmentId)).thenReturn(appointment);
+        when(appointmentService.getByPublicId(appointmentId)).thenReturn(appointment);
         when(recordMapper.toEntity(dto, appointment)).thenReturn(record);
         when(recordRepository.save(record)).thenReturn(record);
 
-        long result = recordService.create(dto);
+        recordService.create(dto);
 
-        assertThat(result).isEqualTo(10L);
         assertThat(appointment.getStatus()).isEqualTo(Status.COMPLETED);
 
-        verify(appointmentService).getById(appointmentId);
+        verify(appointmentService).getByPublicId(appointmentId);
         verify(recordMapper).toEntity(dto, appointment);
         verify(recordRepository).save(record);
     }
 
     @Test
     void shouldThrowIllegalStateException_whenAppointmentAlreadyCompleted() {
-        Long appointmentId = 1L;
-        RecordCreateDto dto = new RecordCreateDto(1L, "test diagnosis", "test summary");
+        UUID appointmentId = UUID.randomUUID();
+        RecordCreateDto dto = new RecordCreateDto(appointmentId, "test diagnosis", "test summary");
 
         Appointment appointment = new Appointment();
         appointment.setStatus(Status.COMPLETED);
 
-        when(appointmentService.getById(appointmentId)).thenReturn(appointment);
+        when(appointmentService.getByPublicId(appointmentId)).thenReturn(appointment);
 
         IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class,
                 () -> recordService.create(dto));
@@ -162,7 +162,6 @@ class RecordServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenStartDateAfterEndDate() {
-        CustomUserDetails userDetails = mock(CustomUserDetails.class);
         RecordFilterDto filter = mock(RecordFilterDto.class);
         Pageable pageable = Pageable.unpaged();
 
@@ -170,7 +169,7 @@ class RecordServiceTest {
         when(filter.endDate()).thenReturn(LocalDate.now().minusDays(1));
 
         IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> recordService.getAllById(userDetails, filter, pageable));
+                () -> recordService.getAllById(1L, Role.PATIENT, filter, pageable));
 
         assertEquals("Start date should be before end date", ex.getMessage());
         verifyNoInteractions(recordMapper, recordRepository);
@@ -178,12 +177,8 @@ class RecordServiceTest {
 
     @Test
     void shouldMapToDoctorPreviewDto_whenRoleIsDoctor() {
-        CustomUserDetails userDetails = mock(CustomUserDetails.class);
         RecordFilterDto filter = mock(RecordFilterDto.class);
         Pageable pageable = Pageable.unpaged();
-
-        when(userDetails.getId()).thenReturn(1L);
-        when(userDetails.getRole()).thenReturn(Role.DOCTOR);
 
         when(filter.startDate()).thenReturn(LocalDate.of(2026, 10, 2));
         when(filter.endDate()).thenReturn(LocalDate.of(2026, 10, 10));
@@ -195,7 +190,7 @@ class RecordServiceTest {
         when(recordRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(records);
         when(recordMapper.toDoctorPreviewDto(record)).thenReturn(dto);
 
-        Page<RecordPreviewDto> result = recordService.getAllById(userDetails, filter, pageable);
+        Page<RecordPreviewDto> result = recordService.getAllById(1L, Role.DOCTOR, filter, pageable);
 
         assertThat(result.getContent().size()).isEqualTo(1);
 
@@ -205,12 +200,8 @@ class RecordServiceTest {
 
     @Test
     void shouldMapToPatientPreviewDto_whenRoleIsDoctor() {
-        CustomUserDetails userDetails = mock(CustomUserDetails.class);
         RecordFilterDto filter = mock(RecordFilterDto.class);
         Pageable pageable = Pageable.unpaged();
-
-        when(userDetails.getId()).thenReturn(1L);
-        when(userDetails.getRole()).thenReturn(Role.PATIENT);
 
         when(filter.startDate()).thenReturn(LocalDate.of(2026, 10, 2));
         when(filter.endDate()).thenReturn(LocalDate.of(2026, 10, 10));
@@ -222,7 +213,7 @@ class RecordServiceTest {
         when(recordRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(records);
         when(recordMapper.toPatientPreviewDto(record)).thenReturn(dto);
 
-        Page<RecordPreviewDto> result = recordService.getAllById(userDetails, filter, pageable);
+        Page<RecordPreviewDto> result = recordService.getAllById(1L, Role.PATIENT, filter, pageable);
 
         assertThat(result.getContent().size()).isEqualTo(1);
 
