@@ -10,6 +10,7 @@ import SearchInput from "../../common/SearchInput.jsx";
 const DoctorList = () => {
     const {auth} = useAuth();
 
+    const [specialization, setSpecialization] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const pageSize = 3;
@@ -19,7 +20,7 @@ const DoctorList = () => {
         setCurrentPage(1);
     }
 
-    const {data, isLoading, isError} = useDoctors(currentPage - 1, pageSize, searchTerm);
+    const {data, isLoading, isError} = useDoctors(currentPage - 1, pageSize, searchTerm, specialization);
 
     if (isError) return <div className="alert alert-danger m-4">Failed to load doctors</div>;
 
@@ -47,11 +48,14 @@ const DoctorList = () => {
                 <div style={{minWidth: '200px'}}>
                     <select
                         className="form-select"
-                        // onChange={(e) => setSpecialization(e.target.value)}
+                        onChange={(e) => setSpecialization(e.target.value)}
                     >
                         <option value="">All Specializations</option>
-                        <option value="CARDIOLOGY">Cardiology</option>
-                        <option value="DERMATOLOGY">Dermatology</option>
+                        <option value="CARDIOLOGIST">Cardiologist</option>
+                        <option value="DERMATOLOGIST">Dermatologist</option>
+                        <option value="NEUROLOGIST">Neurologist</option>
+                        <option value="PEDIATRICIAN">Pediatrician</option>
+                        <option value="ONCOLOGIST">Oncologist</option>
                     </select>
                 </div>
             </div>

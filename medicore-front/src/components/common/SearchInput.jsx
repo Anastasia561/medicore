@@ -2,14 +2,18 @@ import {useState, useEffect} from 'react';
 
 const SearchInput = ({onSearch, placeholder = "Search...", delay = 500}) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [isFirstRender, setIsFirstRender] = useState(true);
 
     useEffect(() => {
+        if (isFirstRender) {
+            setIsFirstRender(false);
+            return;
+        }
         const handler = setTimeout(() => {
             onSearch(searchTerm);
         }, delay);
-
         return () => clearTimeout(handler);
-    }, [searchTerm, onSearch, delay]);
+    }, [searchTerm]);
 
     return (
         <div className="input-group" style={{maxWidth: '300px'}}>
