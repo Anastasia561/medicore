@@ -1,0 +1,12 @@
+.list_container {
+    width: 70%;
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.white-box-card {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}

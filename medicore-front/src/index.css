@@ -1,12 +1,12 @@
 :root {
-    --text: #08060d;
-    --text-h: #08060d;
-    --bg: #fff;
+    --text: #1f2f4f;
+    --text-h: #1f2f4f;
+    --bg: #f0f4fa;
     --border: #e5e4e7;
     --code-bg: #f4f3ec;
     --accent: #aa3bff;
 
-    --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+    --sans: 'Segoe UI', Roboto, sans-serif;
     --mono: ui-monospace, Consolas, monospace;
 
     font: 18px/145% var(--sans);
@@ -37,6 +37,8 @@
 
 body {
     margin: 0;
+    background-color: var(--bg);
+    color: var(--text) !important;
 }
 
 #root {
@@ -52,4 +54,12 @@ body {
 
 .content {
     flex: 1;
+}
+
+.login {
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--bg);
+    display: flex;
+    flex-direction: column;
 }
