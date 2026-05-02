@@ -1,5 +1,5 @@
-import axios from "../api/axios.js"
-import useAuth from "./useAuth";
+import axios from "../../api/axios.js"
+import useAuth from "./useAuth.jsx";
 import {jwtDecode} from "jwt-decode";
 
 const useRefreshToken = () => {

@@ -1,6 +1,6 @@
 import {Outlet} from "react-router-dom";
-import NavBar from "./NavBar.jsx";
-import Footer from "./Footer.jsx";
+import NavBar from "./navbar/NavBar.jsx";
+import Footer from "./footer/Footer.jsx";
 
 const ProtectedLayout = () => {
     return (

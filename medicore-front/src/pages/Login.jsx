@@ -1,8 +1,8 @@
 import {useState} from 'react';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/auth/useAuth.jsx';
 import {useNavigate, useLocation} from 'react-router-dom';
 import logo from '../../public/logo.png';
-import {useLogin} from "../hooks/useLogin.jsx";
+import {useLogin} from "../hooks/auth/useLogin.jsx";
 
 const Login = () => {
     const {setAuth} = useAuth();

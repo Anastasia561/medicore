@@ -1,5 +1,5 @@
-import axios from "../api/axios.js";
-import useAuth from "./useAuth";
+import axios from "../../api/axios.js";
+import useAuth from "./useAuth.jsx";
 
 const useLogout = () => {
     const {setAuth} = useAuth();

@@ -1,8 +1,8 @@
 import {NavLink, useNavigate} from "react-router-dom";
-import "../../styles/layout/NavBar.css";
-import logo from "../../../public/logo.png";
-import useLogout from "../../hooks/useLogout.jsx";
-import useAuth from "../../hooks/useAuth.jsx";
+import "./NavBar.css";
+import logo from "../../../../public/logo.png";
+import useLogout from "../../../hooks/auth/useLogout.jsx";
+import useAuth from "../../../hooks/auth/useAuth.jsx";
 
 const NavBar = () => {
     const logout = useLogout();
@@ -28,10 +28,10 @@ const NavBar = () => {
     return (
         <div className="header">
 
-            <div className="header-left">
+            <NavLink to="/home" className="header-left">
                 <img src={logo} alt="Logo" className="logo"/>
                 <h1 className="title">MediCore</h1>
-            </div>
+            </NavLink>
 
             <nav className="header-nav">
 
@@ -46,7 +46,7 @@ const NavBar = () => {
                 </div>
 
                 <div className="nav-actions">
-                    <NavLink to="/admin" className="nav-item">
+                    <NavLink to="/profile" className="nav-item">
                         <i className="fas fa-user-circle"></i> Profile
                     </NavLink>
 

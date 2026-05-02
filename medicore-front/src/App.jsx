@@ -4,12 +4,12 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
 import Missing from "./pages/Missing.jsx";
-import Admin from "./pages/Admin.jsx";
-import RequireAuth from "./components/RequireAuth.jsx";
+import RequireAuth from "./components/auth/RequireAuth.jsx";
 import Doctors from "./pages/Doctors.jsx";
-import PersistLogin from "./components/PersistLogin.jsx";
+import PersistLogin from "./components/auth/PersistLogin.jsx";
 import ProtectedLayout from "./components/layout/ProtectedLayout.jsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import Profile from "./components/profile/Profile.jsx";
 
 function App() {
 
@@ -28,10 +28,10 @@ function App() {
 
                         <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR"]}/>}>
                             <Route path="home" element={<Home/>}/>
+                            <Route path="profile" element={<Profile/>}/>
                         </Route>
 
                         <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_DOCTOR"]}/>}>
-                            <Route path="admin" element={<Admin/>}/>
                             <Route path="doctors" element={<Doctors/>}/>
                         </Route>
 

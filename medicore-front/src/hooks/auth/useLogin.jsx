@@ -1,5 +1,5 @@
 import {useMutation} from "@tanstack/react-query";
-import {loginRequest} from "../api/auth";
+import {loginRequest} from "../../api/auth.js";
 import {jwtDecode} from "jwt-decode";
 
 export const useLogin = ({setAuth, navigate, from, setError, username}) => {
