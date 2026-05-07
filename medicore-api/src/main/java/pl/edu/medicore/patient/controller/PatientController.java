@@ -37,6 +37,7 @@ public class PatientController {
     @GetMapping
     public ResponseWrapper<Page<PatientResponseDto>> getAllPageable(
             @RequestParam(required = false) String search,
+
             Pageable pageable) {
         return ResponseWrapper.ok(patientService.findAll(search, pageable));
     }

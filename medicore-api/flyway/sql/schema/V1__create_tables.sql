@@ -21,7 +21,6 @@ CREATE TABLE city
 CREATE TABLE address
 (
     id      BIGSERIAL PRIMARY KEY,
-    public_id  UUID NOT NULL DEFAULT gen_random_uuid(),
     street  varchar(40) NOT NULL,
     number  integer     NOT NULL,
     city_id BIGINT      NOT NULL,

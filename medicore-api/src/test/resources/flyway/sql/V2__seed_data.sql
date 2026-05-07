@@ -19,11 +19,9 @@ VALUES ('Berlin', 2),
        ('Sao Paulo', 5);
 
 -- ADDRESS
-INSERT INTO address (public_id, street, number, city_id)
-VALUES ('22222222-2222-2222-2222-222222222222', '5th Avenue', 101, 1);
-
 INSERT INTO address (street, number, city_id)
-VALUES ('Unter den Linden', 45, 2),
+VALUES ('5th Avenue', 101, 1),
+       ('Unter den Linden', 45, 2),
        ('Nowy Świat', 15, 3),
        ('Shibuya Street', 23, 4),
        ('Paulista Ave', 321, 5);
