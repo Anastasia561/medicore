@@ -6,10 +6,11 @@ import Pagination from "../../common/Pagination.jsx";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 import SearchInput from "../../common/SearchInput.jsx";
+import {useNavigate} from "react-router-dom";
 
 const DoctorList = () => {
     const {auth} = useAuth();
-
+    const navigate = useNavigate();
     const [specialization, setSpecialization] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
@@ -67,7 +68,7 @@ const DoctorList = () => {
                 ) : doctors.length > 0 ? (
                     doctors.map(doc => (
                         <DataCard
-                            key={doc.public_id}
+                            key={doc.publicId}
                             name={doc.firstName + " " + doc.lastName}
                             details={[
                                 {label: 'Email', value: doc.email},
@@ -82,7 +83,12 @@ const DoctorList = () => {
                                     {auth?.role === 'ROLE_ADMIN' &&
                                         <button
                                             className="btn btn-outline-success btn-sm text-center">Appointments</button>}
-                                    <button className="btn btn-outline-primary btn-sm text-center">Schedule</button>
+                                    <button
+                                        className="btn btn-outline-primary btn-sm text-center"
+                                        onClick={() => navigate(`/doctors/${doc.publicId}/schedule`)}
+                                    >
+                                        Schedule
+                                    </button>
                                 </>
                             )}
                         />

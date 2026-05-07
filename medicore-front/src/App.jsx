@@ -11,6 +11,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import Profile from "./components/profile/Profile.jsx";
 import PatientList from "./components/listing/roles/PatientList.jsx";
 import DoctorList from "./components/listing/roles/DoctorList.jsx";
+import DoctorSchedule from "./components/schedule/DoctorSchedule.jsx";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
                         <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR"]}/>}>
                             <Route path="home" element={<Home/>}/>
                             <Route path="profile" element={<Profile/>}/>
+                            <Route path="/doctors/:doctorId/schedule" element={<DoctorSchedule/>}/>
                         </Route>
 
                         <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT"]}/>}>

@@ -3,6 +3,9 @@ import useAuth from '../hooks/auth/useAuth.jsx';
 import {useNavigate, useLocation} from 'react-router-dom';
 import logo from '../../public/logo.png';
 import {useLogin} from "../hooks/auth/useLogin.jsx";
+import * as yup from 'yup';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from "@hookform/resolvers/yup/src/index.ts";
 
 const Login = () => {
     const {setAuth} = useAuth();
@@ -10,20 +13,28 @@ const Login = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || "/home";
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [generalError, setGeneralError] = useState('');
+
+    const schema = yup.object().shape({
+        username: yup.string().email().required('Username is required'),
+        password: yup.string().required('Password is required'),
+    })
+
+    const {
+        register, handleSubmit,
+        setError, formState: {errors}
+    } = useForm({
+        resolver: yupResolver(schema),
+    })
 
     const loginMutation = useLogin({
-        setAuth, navigate, from, setError, username,
+        setAuth, navigate, from, setGeneralError, setFormError: setError,
     });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const onSubmit = async (data) => {
         loginMutation.mutate({
-            email: username,
-            password,
+            email: data.username,
+            password: data.password,
         });
     }
 
@@ -44,42 +55,40 @@ const Login = () => {
             <div className="row justify-content-center">
                 <div className="col-md-5">
                     <div className="card shadow-lg p-4">
-                        {error && (
+                        {generalError && (
                             <div className="alert alert-danger py-2 text-center" role="alert">
-                                {error}
+                                {generalError}
                             </div>
                         )}
 
                         <h4 className="mb-4">Log in</h4>
 
-                        <form onSubmit={handleSubmit}>
-
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="mb-3">
                                 <label htmlFor="username" className="form-label">
                                     Username
                                 </label>
                                 <input
-                                    type="text"
+                                    {...register("username")}
                                     id="username"
-                                    className="form-control"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    required
+                                    className={`form-control ${errors.username ? 'is-invalid' : ''}`}
+                                    type="text"
                                 />
+                                {errors.username && <div className="invalid-feedback">{errors.username.message}</div>}
                             </div>
+
 
                             <div className="mb-3">
                                 <label htmlFor="password" className="form-label">
                                     Password
                                 </label>
                                 <input
-                                    type="password"
+                                    {...register("password")}
                                     id="password"
-                                    className="form-control"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
+                                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                                    type="password"
                                 />
+                                {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
                             </div>
 
                             <div className="d-grid">

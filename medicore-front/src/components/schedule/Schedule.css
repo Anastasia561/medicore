@@ -1,0 +1,84 @@
+.schedule-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.schedule-container h2 {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.day-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.day-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.day-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #6c757d;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.slot {
+    background: #e6f4ea;
+    border-left: 4px solid #198754;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.slot p {
+    margin: 0;
+    font-weight: 600;
+    color: #1e4620;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.actions button {
+    flex: 1;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.actions .edit {
+    background-color: #198754;
+    color: white;
+}
+
+.actions .edit:hover {
+    background-color: #157347;
+}
+
+.actions .delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.actions .delete:hover {
+    background-color: #bb2d3b;
+}
