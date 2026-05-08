@@ -11,16 +11,39 @@
 
 .schedule-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .day-card {
+    grid-column: span 2;
     background: #ffffff;
     border-radius: 12px;
     padding: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (min-width: 768px) {
+    .schedule-grid > :nth-child(4) {
+        grid-column: 2 / span 2;
+    }
+
+    .schedule-grid > :nth-child(5) {
+        grid-column: 4 / span 2;
+    }
+}
+
+@media (max-width: 767px) {
+    .schedule-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .day-card {
+        grid-column: span 1;
+    }
 }
 
 .day-card:hover {

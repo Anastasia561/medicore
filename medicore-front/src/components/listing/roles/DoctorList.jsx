@@ -85,7 +85,9 @@ const DoctorList = () => {
                                             className="btn btn-outline-success btn-sm text-center">Appointments</button>}
                                     <button
                                         className="btn btn-outline-primary btn-sm text-center"
-                                        onClick={() => navigate(`/doctors/${doc.publicId}/schedule`)}
+                                        onClick={() => navigate(`/doctors/${doc.publicId}/schedule`, {
+                                            state: {doctorName: `${doc.firstName} ${doc.lastName}`}
+                                        })}
                                     >
                                         Schedule
                                     </button>

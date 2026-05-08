@@ -33,7 +33,7 @@ const PatientList = () => {
                 ) : patients.length > 0 ? (
                     patients.map(patient => (
                         <DataCard
-                            key={patient.public_id}
+                            key={patient.publicId}
                             name={`${patient.firstName} ${patient.lastName}`}
                             details={[
                                 {label: 'Email', value: patient.email},
