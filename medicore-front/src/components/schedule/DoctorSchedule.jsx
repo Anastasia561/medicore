@@ -12,10 +12,11 @@ const DoctorSchedule = () => {
     const {data, isLoading} = useSchedule(doctorId);
     const {state} = useLocation();
     const {auth} = useAuth();
+    const [selectedSchedule, setSelectedSchedule] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const displayName = state?.doctorName || data?.doctorName || "Doctor";
-    const { mutate: deleteConsultation } = useDeleteSchedule(doctorId);
+    const {mutate: deleteConsultation} = useDeleteSchedule(doctorId);
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this consultation?")) {
@@ -23,8 +24,13 @@ const DoctorSchedule = () => {
         }
     };
 
-    const handleAddConsultation = () => {
+    const handleCloseModal = () => {
+        setSelectedSchedule(null);
         setIsModalOpen(false);
+    };
+
+    const handleUpdate = (day) => {
+        setSelectedSchedule(day);
     };
 
     if (isLoading) return <p>Loading...</p>;
@@ -35,7 +41,8 @@ const DoctorSchedule = () => {
 
             <div className="schedule-grid">
                 {data.map(day => (
-                    <ScheduleDayCard key={day.publicId} day={day} onDelete={handleDelete} />
+                    <ScheduleDayCard key={day.publicId} day={day} onDelete={handleDelete}
+                                     onUpdate={() => handleUpdate(day)}/>
                 ))}
             </div>
 
@@ -46,14 +53,18 @@ const DoctorSchedule = () => {
                 </div>
             )}
 
-            {isModalOpen && (
+            {(isModalOpen || selectedSchedule) && (
                 <div className="modal-overlay">
                     <div className="modal-content-custom">
-                        <h3>Add New Hours</h3>
+                        <h3>{selectedSchedule ? "Edit Hours" : "Add New Hours"}</h3>
                         <ConsultationForm
                             doctorId={doctorId}
-                            onSubmit={handleAddConsultation}
-                            onCancel={() => setIsModalOpen(false)}
+                            initialData={selectedSchedule}
+                            onSubmit={() => {
+                                setIsModalOpen(false);
+                                setSelectedSchedule(null);
+                            }}
+                            onCancel={handleCloseModal}
                         />
                     </div>
                 </div>

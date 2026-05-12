@@ -3,23 +3,25 @@ import {axiosPrivate} from "../../../api/axios.js";
 import {useNavigate} from "react-router-dom";
 import toast from "react-hot-toast";
 
-export const useCreateSchedule = (doctorId, {setGeneralError, setFormError}) => {
+export const useUpdateSchedule = (doctorId, {setGeneralError, setFormError} = {}) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
     return useMutation({
-        mutationFn: async (newSlot) => {
-            const response = await axiosPrivate.post(`/consultations`, {...newSlot, doctorId});
+        mutationFn: async ({publicId, startTime, endTime}) => {
+            const response = await axiosPrivate.put(`/consultations/${publicId}`, {
+                startTime,
+                endTime
+            });
             return response.data;
         },
         onSuccess: () => {
-            toast.success("Consultation created successfully");
+            toast.success('Schedule updated successfully');
             queryClient.invalidateQueries({queryKey: ['doctor-schedule', doctorId]});
-            setGeneralError("");
         },
         onError: (err) => {
             if (!err?.response) {
-                toast.error("Server is not responding");
+                toast.error("Server is not responding.");
                 return;
             }
             const {status, data} = err.response;
@@ -43,6 +45,8 @@ export const useCreateSchedule = (doctorId, {setGeneralError, setFormError}) => 
                 navigate("/unauthorized");
             } else if (status === 409) {
                 setGeneralError(data?.error?.message);
+            } else if (status === 404) {
+                toast.error("Consultation not found");
             } else {
                 toast.error("Something went wrong");
             }

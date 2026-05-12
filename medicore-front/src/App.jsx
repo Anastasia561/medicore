@@ -12,13 +12,12 @@ import Profile from "./components/profile/Profile.jsx";
 import PatientList from "./components/listing/roles/PatientList.jsx";
 import DoctorList from "./components/listing/roles/DoctorList.jsx";
 import DoctorSchedule from "./components/schedule/DoctorSchedule.jsx";
+import Providers from "./components/common/Providers.jsx";
 
 function App() {
 
-    const client = new QueryClient();
-
     return (
-        <QueryClientProvider client={client}>
+        <Providers>
             <Routes>
                 <Route path="/" element={<Layout/>}>
                     <Route index element={<Login/>}/>
@@ -47,7 +46,7 @@ function App() {
 
                 <Route path="*" element={<Missing/>}/>
             </Routes>
-        </QueryClientProvider>
+        </Providers>
     )
 }
 

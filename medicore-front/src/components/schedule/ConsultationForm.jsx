@@ -3,9 +3,11 @@ import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useState} from "react";
 import {useCreateSchedule} from "./hooks/useCreateSchedule.jsx";
+import {useUpdateSchedule} from "./hooks/useUpdateSchedule.jsx";
 
-const ConsultationForm = ({onSubmit, onCancel, doctorId}) => {
+const ConsultationForm = ({onSubmit, onCancel, doctorId, initialData}) => {
 
+    const isUpdate = !!initialData;
     const [generalError, setGeneralError] = useState('');
 
     const schema = yup.object().shape({
@@ -24,22 +26,30 @@ const ConsultationForm = ({onSubmit, onCancel, doctorId}) => {
         , formState: {errors}
     } = useForm({
         resolver: yupResolver(schema),
-        defaultValues: {
+        defaultValues: initialData || {
             day: 'MONDAY',
             startTime: '08:00',
             endTime: '09:00'
         }
     });
 
-    const {mutate} = useCreateSchedule(doctorId, {
-        setGeneralError,
-        setFormError: setError
-    });
+    const {mutate: createSchedule} = useCreateSchedule(doctorId, {setGeneralError, setError});
+    const {mutate: updateSchedule} = useUpdateSchedule(doctorId, {setGeneralError, setError});
 
     const submitHandler = (data) => {
-        mutate(data, {
-            onSuccess: () => onSubmit()
-        });
+        if (isUpdate) {
+            updateSchedule({
+                publicId: initialData.publicId,
+                startTime: data.startTime,
+                endTime: data.endTime
+            }, {
+                onSuccess: () => onSubmit()
+            });
+        } else {
+            createSchedule(data, {
+                onSuccess: () => onSubmit()
+            });
+        }
     };
 
     return (
@@ -51,18 +61,27 @@ const ConsultationForm = ({onSubmit, onCancel, doctorId}) => {
             )}
 
             <div className="mb-3">
-                <label className="form-label">Day of the Week</label>
-                <select
-                    {...register("day")}
-                    className={`form-select ${errors.day ? "is-invalid" : ""}`}
-                >
-                    <option value="MONDAY">Monday</option>
-                    <option value="TUESDAY">Tuesday</option>
-                    <option value="WEDNESDAY">Wednesday</option>
-                    <option value="THURSDAY">Thursday</option>
-                    <option value="FRIDAY">Friday</option>
-                </select>
-                {errors.day && <div className="invalid-feedback">{errors.day.message}</div>}
+                {isUpdate ? (
+                    <div>
+                        <input
+                            type="text"
+                            readOnly
+                            className="form-control-plaintext fw-bold"
+                            {...register("day")}
+                        />
+                    </div>
+                ) : (
+                    <select
+                        {...register("day")}
+                        className={`form-select ${errors.day ? "is-invalid" : ""}`}
+                    >
+                        <option value="MONDAY">Monday</option>
+                        <option value="TUESDAY">Tuesday</option>
+                        <option value="WEDNESDAY">Wednesday</option>
+                        <option value="THURSDAY">Thursday</option>
+                        <option value="FRIDAY">Friday</option>
+                    </select>
+                )}
             </div>
 
             <div className="row">
@@ -89,7 +108,9 @@ const ConsultationForm = ({onSubmit, onCancel, doctorId}) => {
 
             <div className="d-flex gap-2 justify-content-end mt-3">
                 <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Save Hours</button>
+                <button type="submit" className="btn btn-primary">
+                    {initialData?.publicId ? "Update Hours" : "Save Hours"}
+                </button>
             </div>
         </form>
     );
