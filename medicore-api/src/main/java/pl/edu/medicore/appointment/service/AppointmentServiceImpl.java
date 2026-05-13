@@ -3,6 +3,7 @@ package pl.edu.medicore.appointment.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.jdbc.Work;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +17,13 @@ import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.appointment.repository.AppointmentRepository;
 import pl.edu.medicore.appointment.repository.specification.AppointmentSpecification;
 import pl.edu.medicore.consultation.model.Consultation;
+import pl.edu.medicore.consultation.model.Workday;
+import pl.edu.medicore.consultation.repository.ConsultationRepository;
 import pl.edu.medicore.consultation.service.ConsultationService;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.service.DoctorService;
 import pl.edu.medicore.email.dto.AppointmentNotificationEmailDto;
+import pl.edu.medicore.exception.DoctorNotAvailableException;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.email.model.EmailType;
 import pl.edu.medicore.exception.AppointmentCancellationConflictException;
@@ -30,6 +34,7 @@ import pl.edu.medicore.person.service.PersonService;
 import pl.edu.medicore.config.properties.SchedulingProperties;
 import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -46,7 +51,6 @@ class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final AppointmentMapper appointmentMapper;
     private final SchedulingProperties schedulingProperties;
-    private final ConsultationService consultationService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
@@ -100,7 +104,16 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<LocalTime> getAvailableTimes(UUID doctorId, LocalDate date) {
-        Consultation consultation = consultationService.findByDoctorIdAndDate(doctorId, date);
+        Doctor doctor = doctorService.getByPublicId(doctorId);
+
+        Workday workday = validateWorkday(date);
+
+        Consultation consultation = doctor.getConsultations()
+                .stream()
+                .filter(c -> c.getWorkday().equals(workday))
+                .findFirst()
+                .orElseThrow(() -> new DoctorNotAvailableException("Doctor is not available"));
+
         LocalTime startTime = consultation.getStartTime();
         LocalTime endTime = consultation.getEndTime();
 
@@ -171,5 +184,18 @@ class AppointmentServiceImpl implements AppointmentService {
             eventPublisher.publishEvent(new SendEmailEvent<>(app.getPatient().getEmail(),
                     EmailType.UPCOMING_REMINDER, emailDto));
         }
+    }
+
+    @Override
+    public List<UUID> findIdsForCancellation(long doctorId, Workday dayOfWeek, LocalTime start, LocalTime end) {
+        return appointmentRepository.findIdsForCancellation(doctorId, dayOfWeek.name(), start, end);
+    }
+
+    private Workday validateWorkday(LocalDate date) {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+            throw new DoctorNotAvailableException("Doctor is not available on weekends");
+        }
+        return Workday.valueOf(date.getDayOfWeek().name());
     }
 }

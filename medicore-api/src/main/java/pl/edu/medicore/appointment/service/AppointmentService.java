@@ -2,13 +2,16 @@ package pl.edu.medicore.appointment.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import pl.edu.medicore.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
+import pl.edu.medicore.consultation.model.Workday;
 import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,4 +42,6 @@ public interface AppointmentService {
     List<Appointment> getAllAppointmentByStatusAndDate(Status status, LocalDate date);
 
     void sendReminderAboutAppointmentsBetween(LocalDateTime from, LocalDateTime to);
+
+    List<UUID> findIdsForCancellation(long doctorId, Workday dayOfWeek, LocalTime start, LocalTime end);
 }

@@ -17,6 +17,4 @@ public interface ConsultationService {
     UUID update(UUID id, ConsultationUpdateDto dto);
 
     void delete(UUID id);
-
-    Consultation findByDoctorIdAndDate(UUID doctorId, LocalDate date);
 }

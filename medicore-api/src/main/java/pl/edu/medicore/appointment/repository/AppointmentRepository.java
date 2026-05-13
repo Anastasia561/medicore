@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import pl.edu.medicore.appointment.model.Appointment;
 import pl.edu.medicore.appointment.model.Status;
+import pl.edu.medicore.consultation.model.Workday;
 import pl.edu.medicore.statistics.dto.ConsultationStatisticsDto;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -76,4 +78,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                 AND a.reminder_sent = false
             """, nativeQuery = true)
     List<Appointment> getAppointmentsBetween(LocalDateTime from, LocalDateTime to);
+
+    @Query(value = """ 
+            SELECT public_id FROM appointment
+            WHERE doctor_id = :doctorId
+            AND date >= CURRENT_DATE
+            AND TRIM(TO_CHAR(date, 'DAY')) = :dayOfWeek
+            AND time >= :start AND time < :end
+            """,
+            nativeQuery = true)
+    List<UUID> findIdsForCancellation(long doctorId, String dayOfWeek, LocalTime start, LocalTime end);
 }
