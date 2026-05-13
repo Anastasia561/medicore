@@ -139,7 +139,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenEndTimeBeforeStartTime() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID doctorId = UUID.fromString("10000000-0000-0000-0000-000000000007");
+        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
         ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.THURSDAY,
                 LocalTime.of(10, 0), LocalTime.of(9, 0));

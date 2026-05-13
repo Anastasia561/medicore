@@ -23,7 +23,7 @@ import pl.edu.medicore.appointment.model.Status;
 import pl.edu.medicore.appointment.repository.AppointmentRepository;
 import pl.edu.medicore.config.properties.SchedulingProperties;
 import pl.edu.medicore.consultation.model.Consultation;
-import pl.edu.medicore.consultation.service.ConsultationService;
+import pl.edu.medicore.consultation.model.Workday;
 import pl.edu.medicore.doctor.model.Doctor;
 import pl.edu.medicore.doctor.model.Specialization;
 import pl.edu.medicore.doctor.service.DoctorService;
@@ -42,9 +42,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -73,8 +76,6 @@ class AppointmentServiceTest {
     private AppointmentMapper appointmentMapper;
     @Mock
     private SchedulingProperties schedulingProperties;
-    @Mock
-    private ConsultationService consultationService;
     @Mock
     private ApplicationEventPublisher eventPublisher;
     @InjectMocks
@@ -247,64 +248,97 @@ class AppointmentServiceTest {
     @Test
     void shouldReturnAvailableTimes_whenScheduledAppointmentsExists() {
         UUID doctorId = UUID.randomUUID();
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026, 5, 18);
+        Workday workday = Workday.MONDAY;
+
+        Doctor doctor = new Doctor();
+        doctor.setPublicId(doctorId);
 
         Consultation consultation = new Consultation();
+        consultation.setWorkday(workday);
         consultation.setStartTime(LocalTime.of(9, 0));
         consultation.setEndTime(LocalTime.of(10, 0));
 
-        when(consultationService.findByDoctorIdAndDate(doctorId, date)).thenReturn(consultation);
+        doctor.setConsultations(Set.of(consultation));
+
+        List<LocalTime> scheduledTimes = List.of(LocalTime.of(9, 0));
+
+        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
         when(schedulingProperties.getSlotDurationMinutes()).thenReturn(30);
-
         when(appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date))
-                .thenReturn(List.of(LocalTime.of(9, 30)));
+                .thenReturn(scheduledTimes);
 
-        List<LocalTime> availableTimes = appointmentService.getAvailableTimes(doctorId, date);
+        List<LocalTime> result = appointmentService.getAvailableTimes(doctorId, date);
 
-        assertEquals(1, availableTimes.size());
-        assertEquals(LocalTime.of(9, 0), availableTimes.get(0));
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(LocalTime.of(9, 30)));
+        assertFalse(result.contains(LocalTime.of(9, 0)));
+
+        verify(doctorService).getByPublicId(doctorId);
+        verify(appointmentRepository).getScheduledTimesForDoctorAndDate(doctorId, date);
     }
 
     @Test
     void shouldReturnAvailableTimes_whenNoScheduledAppointments() {
         UUID doctorId = UUID.randomUUID();
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026, 5, 18);
+        Workday workday = Workday.MONDAY;
+
+        Doctor doctor = new Doctor();
+        doctor.setPublicId(doctorId);
 
         Consultation consultation = new Consultation();
+        consultation.setWorkday(workday);
         consultation.setStartTime(LocalTime.of(9, 0));
         consultation.setEndTime(LocalTime.of(10, 0));
 
-        when(consultationService.findByDoctorIdAndDate(doctorId, date)).thenReturn(consultation);
+        doctor.setConsultations(Set.of(consultation));
+
+        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
         when(schedulingProperties.getSlotDurationMinutes()).thenReturn(30);
-
         when(appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date))
-                .thenReturn(List.of());
+                .thenReturn(new  ArrayList<>());
 
-        List<LocalTime> availableTimes = appointmentService.getAvailableTimes(doctorId, date);
+        List<LocalTime> result = appointmentService.getAvailableTimes(doctorId, date);
 
-        assertEquals(2, availableTimes.size());
-        assertEquals(LocalTime.of(9, 0), availableTimes.get(0));
-        assertEquals(LocalTime.of(9, 30), availableTimes.get(1));
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(LocalTime.of(9, 30)));
+        assertTrue(result.contains(LocalTime.of(9, 0)));
+
+        verify(doctorService).getByPublicId(doctorId);
+        verify(appointmentRepository).getScheduledTimesForDoctorAndDate(doctorId, date);
     }
 
     @Test
-    void shouldReturnEmptyList_whenAllSlotsAreBooked() {
+    void shouldReturnAvailableTimes_whenAllSlotsAreBooked() {
         UUID doctorId = UUID.randomUUID();
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026, 5, 18);
+        Workday workday = Workday.MONDAY;
+
+        Doctor doctor = new Doctor();
+        doctor.setPublicId(doctorId);
 
         Consultation consultation = new Consultation();
+        consultation.setWorkday(workday);
         consultation.setStartTime(LocalTime.of(9, 0));
         consultation.setEndTime(LocalTime.of(10, 0));
 
-        when(consultationService.findByDoctorIdAndDate(doctorId, date)).thenReturn(consultation);
-        when(schedulingProperties.getSlotDurationMinutes()).thenReturn(30);
+        doctor.setConsultations(Set.of(consultation));
 
+        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
+        when(schedulingProperties.getSlotDurationMinutes()).thenReturn(30);
         when(appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date))
                 .thenReturn(List.of(LocalTime.of(9, 0), LocalTime.of(9, 30)));
 
-        List<LocalTime> availableTimes = appointmentService.getAvailableTimes(doctorId, date);
+        List<LocalTime> result = appointmentService.getAvailableTimes(doctorId, date);
 
-        assertTrue(availableTimes.isEmpty());
+        assertNotNull(result);
+        assertTrue( result.isEmpty());
+
+        verify(doctorService).getByPublicId(doctorId);
+        verify(appointmentRepository).getScheduledTimesForDoctorAndDate(doctorId, date);
     }
 
     @Test
