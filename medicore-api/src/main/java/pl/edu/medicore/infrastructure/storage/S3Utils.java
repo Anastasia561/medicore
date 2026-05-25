@@ -2,8 +2,8 @@ package pl.edu.medicore.infrastructure.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pl.edu.medicore.config.properties.S3Properties;
-import pl.edu.medicore.exception.FileNotFoundException;
+import pl.edu.medicore.common.config.properties.S3Properties;
+import pl.edu.medicore.common.exception.FileNotFoundException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;

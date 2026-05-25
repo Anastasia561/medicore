@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import pl.edu.medicore.AbstractIntegrationTest;
-import pl.edu.medicore.exception.FileNotFoundException;
+import pl.edu.medicore.common.exception.FileNotFoundException;
 
 import java.net.URL;
 import java.util.UUID;

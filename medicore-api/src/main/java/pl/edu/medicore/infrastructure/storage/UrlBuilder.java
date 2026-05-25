@@ -2,7 +2,7 @@ package pl.edu.medicore.infrastructure.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pl.edu.medicore.config.properties.FrontendProperties;
+import pl.edu.medicore.common.config.properties.FrontendProperties;
 
 @Component
 @RequiredArgsConstructor

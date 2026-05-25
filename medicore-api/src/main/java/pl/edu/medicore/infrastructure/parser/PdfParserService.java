@@ -1,6 +1,6 @@
 package pl.edu.medicore.infrastructure.parser;
 
-import pl.edu.medicore.labresult.model.Parameter;
+import pl.edu.medicore.application.labresult.Parameter;
 
 import java.io.InputStream;
 

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import pl.edu.medicore.infrastructure.messaging.event.PatientUpdateEvent;
-import pl.edu.medicore.risk.service.contract.RiskResultService;
+import pl.edu.medicore.application.risk.service.RiskResultService;
 
 @Async
 @Component

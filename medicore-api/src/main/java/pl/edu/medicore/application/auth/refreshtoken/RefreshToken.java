@@ -1,0 +1,34 @@
+package pl.edu.medicore.application.auth.refreshtoken;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import pl.edu.medicore.application.person.Person;
+
+import java.time.Instant;
+
+@Setter
+@Getter
+@Entity
+public class RefreshToken {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "person_id", nullable = false)
+    private Person person;
+    @Column(nullable = false)
+    private String token;
+    @Column(name = "expires_at", nullable = false)
+    private Instant expiresAt;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+}

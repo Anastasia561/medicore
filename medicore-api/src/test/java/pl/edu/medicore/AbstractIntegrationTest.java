@@ -21,11 +21,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
-import pl.edu.medicore.auth.dto.AuthRequestDto;
-import pl.edu.medicore.auth.service.AuthService;
+import pl.edu.medicore.application.auth.dto.AuthRequestDto;
+import pl.edu.medicore.application.auth.AuthService;
 import pl.edu.medicore.config.AWSTestConfig;
 import pl.edu.medicore.config.PostgreSQLTestContainersConfig;
-import pl.edu.medicore.person.model.Role;
+import pl.edu.medicore.application.person.Role;
 import software.amazon.awssdk.services.s3.S3Client;
 import tools.jackson.databind.ObjectMapper;
 

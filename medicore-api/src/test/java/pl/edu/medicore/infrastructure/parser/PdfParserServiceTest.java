@@ -5,7 +5,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.jupiter.api.Test;
-import pl.edu.medicore.labresult.model.Parameter;
+import pl.edu.medicore.application.labresult.Parameter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

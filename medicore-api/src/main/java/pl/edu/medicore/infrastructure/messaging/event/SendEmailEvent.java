@@ -1,6 +1,6 @@
 package pl.edu.medicore.infrastructure.messaging.event;
 
-import pl.edu.medicore.email.model.EmailType;
+import pl.edu.medicore.application.email.EmailType;
 
 public record SendEmailEvent<T>(
         String to,
