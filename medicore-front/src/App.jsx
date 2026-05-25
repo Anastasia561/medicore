@@ -7,12 +7,11 @@ import Missing from "./pages/Missing.jsx";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
 import PersistLogin from "./components/auth/PersistLogin.jsx";
 import ProtectedLayout from "./components/layout/ProtectedLayout.jsx";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import Profile from "./components/profile/Profile.jsx";
 import PatientList from "./components/listing/roles/PatientList.jsx";
 import DoctorList from "./components/listing/roles/DoctorList.jsx";
 import DoctorSchedule from "./components/schedule/DoctorSchedule.jsx";
-import Providers from "./components/common/Providers.jsx";
+import Providers from "./context/Providers.jsx";
 
 function App() {
 

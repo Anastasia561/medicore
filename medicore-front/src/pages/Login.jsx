@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import useAuth from '../hooks/auth/useAuth.jsx';
-import {useNavigate, useLocation} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import logo from '../../public/logo.png';
 import {useLogin} from "../hooks/auth/useLogin.jsx";
 import * as yup from 'yup';
@@ -10,8 +10,7 @@ import {yupResolver} from "@hookform/resolvers/yup/src/index.ts";
 const Login = () => {
     const {setAuth} = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/home";
+    const from = "/home";
 
     const [generalError, setGeneralError] = useState('');
 
