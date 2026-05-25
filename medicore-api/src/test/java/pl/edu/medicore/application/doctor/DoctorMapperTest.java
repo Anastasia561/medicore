@@ -1,13 +1,10 @@
-package pl.edu.medicore.doctor.mapper;
+package pl.edu.medicore.application.doctor;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
-import pl.edu.medicore.application.doctor.DoctorMapper;
-import pl.edu.medicore.application.doctor.Doctor;
-import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Role;

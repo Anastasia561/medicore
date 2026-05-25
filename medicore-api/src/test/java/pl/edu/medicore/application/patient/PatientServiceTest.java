@@ -1,4 +1,4 @@
-package pl.edu.medicore.patient.service;
+package pl.edu.medicore.application.patient;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -13,16 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
-import pl.edu.medicore.application.address.AddressMapper;
-import pl.edu.medicore.application.address.Address;
+import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.AddressMapper;
+import pl.edu.medicore.application.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
-import pl.edu.medicore.application.patient.PatientMapper;
-import pl.edu.medicore.application.patient.Patient;
-import pl.edu.medicore.application.patient.PatientRepository;
-import pl.edu.medicore.application.patient.service.PatientServiceImpl;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Status;
 import pl.edu.medicore.infrastructure.storage.UrlBuilder;

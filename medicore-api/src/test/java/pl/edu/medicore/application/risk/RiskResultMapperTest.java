@@ -1,14 +1,10 @@
-package pl.edu.medicore.risk.mapper;
+package pl.edu.medicore.application.risk;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
-import pl.edu.medicore.application.risk.RiskResultMapper;
-import pl.edu.medicore.application.risk.Disease;
-import pl.edu.medicore.application.risk.RiskGroup;
-import pl.edu.medicore.application.risk.RiskResult;
 
 import java.time.Instant;
 import java.time.LocalDate;

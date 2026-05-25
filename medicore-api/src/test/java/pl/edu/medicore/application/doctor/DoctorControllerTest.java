@@ -1,4 +1,4 @@
-package pl.edu.medicore.doctor.controller;
+package pl.edu.medicore.application.doctor;
 
 import com.jayway.jsonpath.JsonPath;
 import jakarta.mail.internet.MimeMessage;
@@ -10,8 +10,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.doctor.dto.DoctorInvitationRequestDto;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
-import pl.edu.medicore.application.doctor.Doctor;
-import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.person.Status;

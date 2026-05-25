@@ -1,4 +1,4 @@
-package pl.edu.medicore.record.service;
+package pl.edu.medicore.application.record;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -24,10 +24,6 @@ import pl.edu.medicore.application.record.dto.RecordFilterDto;
 import pl.edu.medicore.application.record.dto.RecordForDoctorPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordForPatientPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordPreviewDto;
-import pl.edu.medicore.application.record.RecordMapper;
-import pl.edu.medicore.application.record.RecordRepository;
-import pl.edu.medicore.application.record.Record;
-import pl.edu.medicore.application.record.service.RecordServiceImpl;
 
 import java.time.LocalDate;
 import java.util.List;

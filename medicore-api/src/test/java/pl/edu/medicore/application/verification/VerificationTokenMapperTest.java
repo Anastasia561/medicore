@@ -1,12 +1,8 @@
-package pl.edu.medicore.verification.mapper;
+package pl.edu.medicore.application.verification;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import pl.edu.medicore.application.verification.VerificationTokenCreateDto;
-import pl.edu.medicore.application.verification.VerificationTokenMapper;
-import pl.edu.medicore.application.verification.TokenType;
-import pl.edu.medicore.application.verification.VerificationToken;
 
 import java.time.Duration;
 

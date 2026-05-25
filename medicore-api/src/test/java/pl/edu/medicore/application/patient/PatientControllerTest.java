@@ -1,4 +1,4 @@
-package pl.edu.medicore.patient.controller;
+package pl.edu.medicore.application.patient;
 
 import com.jayway.jsonpath.JsonPath;
 import jakarta.mail.internet.MimeMessage;
@@ -8,13 +8,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
-import pl.edu.medicore.application.address.Address;
+import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.Address;
 import pl.edu.medicore.application.city.City;
 import pl.edu.medicore.application.coutry.Country;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientVerificationRequestDto;
-import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.person.Status;

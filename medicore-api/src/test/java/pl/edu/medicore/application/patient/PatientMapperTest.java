@@ -1,16 +1,14 @@
-package pl.edu.medicore.patient.mapper;
+package pl.edu.medicore.application.patient;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
-import pl.edu.medicore.application.address.AddressMapper;
-import pl.edu.medicore.application.address.Address;
+import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.AddressMapper;
+import pl.edu.medicore.application.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
-import pl.edu.medicore.application.patient.PatientMapper;
-import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.person.Status;

@@ -1,4 +1,4 @@
-package pl.edu.medicore.consultation.mapper;
+package pl.edu.medicore.application.consultation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,9 +6,6 @@ import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
-import pl.edu.medicore.application.consultation.ConsultationMapper;
-import pl.edu.medicore.application.consultation.Consultation;
-import pl.edu.medicore.application.consultation.Workday;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.email.dto.ScheduleEmailDto;
 

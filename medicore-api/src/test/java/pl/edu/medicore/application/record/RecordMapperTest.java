@@ -1,4 +1,4 @@
-package pl.edu.medicore.record.mapper;
+package pl.edu.medicore.application.record;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,6 @@ import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordForDoctorPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordForPatientPreviewDto;
-import pl.edu.medicore.application.record.RecordMapper;
-import pl.edu.medicore.application.record.Record;
 
 import java.time.LocalDate;
 import java.util.List;

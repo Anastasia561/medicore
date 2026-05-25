@@ -1,4 +1,4 @@
-package pl.edu.medicore.test.service;
+package pl.edu.medicore.application.test;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -8,14 +8,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.multipart.MultipartFile;
-import pl.edu.medicore.application.test.service.TestServiceImpl;
 import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.patient.PatientService;
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
-import pl.edu.medicore.application.test.TestMapper;
-import pl.edu.medicore.application.test.TestRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;

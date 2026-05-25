@@ -1,4 +1,4 @@
-package pl.edu.medicore.test.controller;
+package pl.edu.medicore.application.test;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterEach;

@@ -1,11 +1,9 @@
-package pl.edu.medicore.person.mapper;
+package pl.edu.medicore.application.person;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
-import pl.edu.medicore.application.person.PersonMapper;
-import pl.edu.medicore.application.person.Person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

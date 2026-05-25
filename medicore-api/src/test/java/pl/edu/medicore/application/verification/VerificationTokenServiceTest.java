@@ -1,4 +1,4 @@
-package pl.edu.medicore.verification.service;
+package pl.edu.medicore.application.verification;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,12 +7,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.edu.medicore.application.verification.VerificationTokenCreateDto;
-import pl.edu.medicore.application.verification.VerificationTokenMapper;
-import pl.edu.medicore.application.verification.TokenType;
-import pl.edu.medicore.application.verification.VerificationToken;
-import pl.edu.medicore.application.verification.VerificationTokenRepository;
-import pl.edu.medicore.application.verification.service.VerificationTokenServiceImpl;
 
 import java.time.Duration;
 import java.time.Instant;

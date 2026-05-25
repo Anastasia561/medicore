@@ -1,4 +1,4 @@
-package pl.edu.medicore.auth.controller;
+package pl.edu.medicore.application.auth;
 
 import com.jayway.jsonpath.JsonPath;
 import jakarta.mail.internet.MimeMessage;

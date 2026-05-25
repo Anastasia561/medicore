@@ -1,11 +1,10 @@
-package pl.edu.medicore.test.mapper;
+package pl.edu.medicore.application.test;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
-import pl.edu.medicore.application.test.TestMapper;
 
 import java.time.LocalDate;
 

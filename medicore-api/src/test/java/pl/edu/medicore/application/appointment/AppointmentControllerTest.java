@@ -1,4 +1,4 @@
-package pl.edu.medicore.appointment;
+package pl.edu.medicore.application.appointment;
 
 import com.jayway.jsonpath.JsonPath;
 import jakarta.mail.internet.MimeMessage;
@@ -7,8 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
-import pl.edu.medicore.application.appointment.Appointment;
-import pl.edu.medicore.application.appointment.Status;
 import pl.edu.medicore.application.person.Role;
 
 import java.time.LocalDate;

@@ -1,4 +1,4 @@
-package pl.edu.medicore.consultation.service;
+package pl.edu.medicore.application.consultation;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,11 +12,6 @@ import pl.edu.medicore.application.appointment.AppointmentService;
 import pl.edu.medicore.application.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
-import pl.edu.medicore.application.consultation.ConsultationMapper;
-import pl.edu.medicore.application.consultation.Consultation;
-import pl.edu.medicore.application.consultation.Workday;
-import pl.edu.medicore.application.consultation.ConsultationRepository;
-import pl.edu.medicore.application.consultation.service.ConsultationServiceImpl;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.DoctorService;
 import pl.edu.medicore.application.email.dto.ScheduleEmailDto;

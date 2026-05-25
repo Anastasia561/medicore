@@ -1,4 +1,4 @@
-package pl.edu.medicore.appointment;
+package pl.edu.medicore.application.appointment;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,9 +6,6 @@ import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForDoctorDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForPatientDto;
-import pl.edu.medicore.application.appointment.AppointmentMapper;
-import pl.edu.medicore.application.appointment.Appointment;
-import pl.edu.medicore.application.appointment.Status;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.email.dto.AppointmentNotificationEmailDto;

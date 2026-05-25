@@ -1,4 +1,4 @@
-package pl.edu.medicore.statistics.service;
+package pl.edu.medicore.application.statistics;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +14,6 @@ import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
 import pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
-import pl.edu.medicore.application.statistics.service.StatisticsServiceImpl;
 
 import java.util.List;
 import java.util.UUID;

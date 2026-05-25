@@ -1,11 +1,11 @@
-package pl.edu.medicore.profile.mapper;
+package pl.edu.medicore.application.profile;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
-import pl.edu.medicore.application.address.AddressMapper;
-import pl.edu.medicore.application.address.Address;
+import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.AddressMapper;
+import pl.edu.medicore.application.Address;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.patient.Patient;
@@ -16,7 +16,6 @@ import pl.edu.medicore.application.profile.dto.PatientProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
-import pl.edu.medicore.application.profile.ProfileMapper;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;

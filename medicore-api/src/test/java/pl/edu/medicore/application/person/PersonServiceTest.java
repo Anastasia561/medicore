@@ -1,4 +1,4 @@
-package pl.edu.medicore.person.service;
+package pl.edu.medicore.application.person;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -8,12 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.edu.medicore.application.auth.dto.PasswordResetDto;
-import pl.edu.medicore.application.person.service.PersonServiceImpl;
 import pl.edu.medicore.common.exception.UserNotVerifiedException;
-import pl.edu.medicore.application.person.Person;
-import pl.edu.medicore.application.person.Role;
-import pl.edu.medicore.application.person.Status;
-import pl.edu.medicore.application.person.PersonRepository;
 
 import java.util.Optional;
 import java.util.UUID;

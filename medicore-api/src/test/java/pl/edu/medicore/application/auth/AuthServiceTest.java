@@ -1,4 +1,4 @@
-package pl.edu.medicore.auth.service;
+package pl.edu.medicore.application.auth;
 
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.Test;
@@ -12,13 +12,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import pl.edu.medicore.application.auth.CustomUserDetails;
 import pl.edu.medicore.application.auth.dto.AuthRequestDto;
 import pl.edu.medicore.application.auth.dto.PasswordResetDto;
 import pl.edu.medicore.application.auth.dto.TokenResponseDto;
 import pl.edu.medicore.application.auth.jwt.JwtService;
 import pl.edu.medicore.application.auth.refreshtoken.RefreshTokenService;
-import pl.edu.medicore.application.auth.service.AuthServiceImpl;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.common.exception.InvalidRefreshTokenException;
 import pl.edu.medicore.application.person.PersonMapper;

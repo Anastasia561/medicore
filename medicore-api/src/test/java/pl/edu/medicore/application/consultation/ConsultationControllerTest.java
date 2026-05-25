@@ -1,4 +1,4 @@
-package pl.edu.medicore.consultation.controller;
+package pl.edu.medicore.application.consultation;
 
 import com.jayway.jsonpath.JsonPath;
 import jakarta.mail.internet.MimeMessage;
@@ -8,8 +8,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
-import pl.edu.medicore.application.consultation.Consultation;
-import pl.edu.medicore.application.consultation.Workday;
 import pl.edu.medicore.application.person.Role;
 
 import java.time.LocalTime;

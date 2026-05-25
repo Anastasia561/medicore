@@ -1,4 +1,4 @@
-package pl.edu.medicore.risk.service.impl;
+package pl.edu.medicore.application.risk.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,14 +11,11 @@ import pl.edu.medicore.application.labresult.LabResultService;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.patient.PatientService;
 import pl.edu.medicore.application.person.Gender;
-import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
-import pl.edu.medicore.application.risk.RiskResultMapper;
 import pl.edu.medicore.application.risk.Disease;
 import pl.edu.medicore.application.risk.RiskGroup;
 import pl.edu.medicore.application.risk.RiskResult;
-import pl.edu.medicore.application.risk.RiskResultRepository;
-import pl.edu.medicore.application.risk.service.RiskCalculatorService;
-import pl.edu.medicore.application.risk.service.impl.RiskResultServiceImpl;
+import pl.edu.medicore.application.risk.RiskResultMapper;
+import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
 import pl.edu.medicore.application.test.TestService;
 
 import java.time.LocalDate;

@@ -1,4 +1,4 @@
-package pl.edu.medicore.record.controller;
+package pl.edu.medicore.application.record;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.record.dto.RecordCreateDto;
-import pl.edu.medicore.application.record.Record;
 
 import java.util.UUID;
 

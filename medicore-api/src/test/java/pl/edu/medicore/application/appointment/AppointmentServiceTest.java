@@ -1,4 +1,4 @@
-package pl.edu.medicore.appointment;
+package pl.edu.medicore.application.appointment;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -12,17 +12,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import pl.edu.medicore.application.appointment.AppointmentRepository;
-import pl.edu.medicore.application.appointment.AppointmentServiceImpl;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForDoctorDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForPatientDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentInfoDto;
-import pl.edu.medicore.application.appointment.AppointmentMapper;
-import pl.edu.medicore.application.appointment.Appointment;
-import pl.edu.medicore.application.appointment.Status;
-import pl.edu.medicore.application.appointment.AppointmentService;
 import pl.edu.medicore.common.config.properties.SchedulingProperties;
 import pl.edu.medicore.application.consultation.Consultation;
 import pl.edu.medicore.application.consultation.Workday;

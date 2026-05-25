@@ -1,11 +1,11 @@
-package pl.edu.medicore.address;
+package pl.edu.medicore.application.address;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
-import pl.edu.medicore.application.address.AddressMapper;
-import pl.edu.medicore.application.address.Address;
+import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.AddressMapper;
+import pl.edu.medicore.application.Address;
 import pl.edu.medicore.application.city.City;
 import pl.edu.medicore.application.coutry.Country;
 

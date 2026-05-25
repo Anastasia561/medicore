@@ -1,4 +1,4 @@
-package pl.edu.medicore.prescription.service;
+package pl.edu.medicore.application.prescription;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,10 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
-import pl.edu.medicore.application.prescription.PrescriptionMapper;
-import pl.edu.medicore.application.prescription.Prescription;
-import pl.edu.medicore.application.prescription.PrescriptionRepository;
-import pl.edu.medicore.application.prescription.service.PrescriptionServiceImpl;
 import pl.edu.medicore.application.record.Record;
 import pl.edu.medicore.application.record.RecordService;
 

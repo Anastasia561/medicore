@@ -1,4 +1,4 @@
-package pl.edu.medicore.statistics.controller;
+package pl.edu.medicore.application.statistics;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;

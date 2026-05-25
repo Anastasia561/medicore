@@ -1,4 +1,4 @@
-package pl.edu.medicore.labresult.service;
+package pl.edu.medicore.application.labresult;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,13 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import pl.edu.medicore.application.labresult.service.LabResultServiceImpl;
 import pl.edu.medicore.infrastructure.messaging.event.LabResultsExtractedEvent;
 import pl.edu.medicore.infrastructure.parser.PdfParserService;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
-import pl.edu.medicore.application.labresult.LabResult;
-import pl.edu.medicore.application.labresult.Parameter;
-import pl.edu.medicore.application.labresult.LabResultRepository;
 import pl.edu.medicore.application.test.TestService;
 
 import java.io.ByteArrayInputStream;

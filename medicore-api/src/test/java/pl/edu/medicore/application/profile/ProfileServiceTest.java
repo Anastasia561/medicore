@@ -1,4 +1,4 @@
-package pl.edu.medicore.profile.service;
+package pl.edu.medicore.application.profile;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.dto.PatientAddressDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.DoctorService;
 import pl.edu.medicore.application.patient.Patient;
@@ -20,8 +20,6 @@ import pl.edu.medicore.application.profile.dto.PatientProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
-import pl.edu.medicore.application.profile.ProfileMapper;
-import pl.edu.medicore.application.profile.service.ProfileServiceImpl;
 
 import java.time.LocalDate;
 

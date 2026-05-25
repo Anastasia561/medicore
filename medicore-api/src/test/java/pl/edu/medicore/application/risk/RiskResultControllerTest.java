@@ -1,4 +1,4 @@
-package pl.edu.medicore.risk.controller;
+package pl.edu.medicore.application.risk;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;

@@ -1,9 +1,7 @@
-package pl.edu.medicore.risk.service.impl;
+package pl.edu.medicore.application.risk.service;
 
 import org.junit.jupiter.api.Test;
 import pl.edu.medicore.application.person.Gender;
-import pl.edu.medicore.application.risk.service.RiskCalculatorService;
-import pl.edu.medicore.application.risk.service.impl.RiskCalculatorServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

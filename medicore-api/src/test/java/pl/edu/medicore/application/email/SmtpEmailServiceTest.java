@@ -1,4 +1,4 @@
-package pl.edu.medicore.email.service;
+package pl.edu.medicore.application.email;
 
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
@@ -13,8 +13,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import pl.edu.medicore.application.email.dto.VerificationEmailDto;
-import pl.edu.medicore.application.email.EmailType;
-import pl.edu.medicore.application.email.service.SmtpEmailService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -1,11 +1,11 @@
-package pl.edu.medicore.profile.controller;
+package pl.edu.medicore.application.profile;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.dto.PatientAddressDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.person.Gender;

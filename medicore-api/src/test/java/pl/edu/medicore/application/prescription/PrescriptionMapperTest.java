@@ -1,11 +1,9 @@
-package pl.edu.medicore.prescription.mapper;
+package pl.edu.medicore.application.prescription;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
-import pl.edu.medicore.application.prescription.PrescriptionMapper;
-import pl.edu.medicore.application.prescription.Prescription;
 import pl.edu.medicore.application.record.Record;
 
 import java.time.LocalDate;

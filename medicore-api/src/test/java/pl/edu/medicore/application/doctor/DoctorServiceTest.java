@@ -1,4 +1,4 @@
-package pl.edu.medicore.doctor.service;
+package pl.edu.medicore.application.doctor;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -16,11 +16,6 @@ import pl.edu.medicore.application.doctor.dto.DoctorFilterDto;
 import pl.edu.medicore.application.doctor.dto.DoctorInvitationRequestDto;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
-import pl.edu.medicore.application.doctor.DoctorMapper;
-import pl.edu.medicore.application.doctor.Doctor;
-import pl.edu.medicore.application.doctor.Specialization;
-import pl.edu.medicore.application.doctor.DoctorRepository;
-import pl.edu.medicore.application.doctor.service.DoctorServiceImpl;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
