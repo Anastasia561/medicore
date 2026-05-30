@@ -1,5 +1,5 @@
 import {useQuery} from "@tanstack/react-query";
-import useAxiosPrivate from "../../auth/hooks/useAxiosPrivate.jsx";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate.jsx";
 
 export const useSchedule = (doctorId) => {
     const axiosPrivate = useAxiosPrivate();

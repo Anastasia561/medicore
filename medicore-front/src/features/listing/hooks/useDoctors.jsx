@@ -1,4 +1,4 @@
-import useAxiosPrivate from "../../auth/hooks/useAxiosPrivate.jsx";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate.jsx";
 import {useQuery} from "@tanstack/react-query";
 
 export const useDoctors = (page = 0, size = 5, query = "", specialization = "") => {

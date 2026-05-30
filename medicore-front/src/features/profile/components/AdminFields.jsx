@@ -1,5 +1,5 @@
-import Field from "../common/Field.jsx";
-import IconField from "../common/IconField.jsx";
+import Field from "./Field.jsx";
+import IconField from "./IconField.jsx";
 
 const AdminFields = ({user}) => (
     <>

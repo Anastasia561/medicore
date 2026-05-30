@@ -1,4 +1,4 @@
-import '../styles/ListContainer.css';
+import './ListContainer.css';
 
 const ListContainer = ({title, children, headerActions}) => {
     return (

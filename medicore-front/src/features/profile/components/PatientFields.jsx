@@ -1,6 +1,6 @@
-import Field from "../common/Field.jsx";
-import IconField from "../common/IconField.jsx";
-import AddressField from "../common/AddressField.jsx";
+import Field from "./Field.jsx";
+import IconField from "./IconField.jsx";
+import AddressField from "./AddressField.jsx";
 
 const PatientFields = ({user}) => (
     <>

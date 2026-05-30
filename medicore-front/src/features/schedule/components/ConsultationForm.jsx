@@ -2,8 +2,8 @@ import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useState} from "react";
-import {useCreateSchedule} from "./hooks/useCreateSchedule.jsx";
-import {useUpdateSchedule} from "./hooks/useUpdateSchedule.jsx";
+import {useCreateSchedule} from "../hooks/useCreateSchedule.jsx";
+import {useUpdateSchedule} from "../hooks/useUpdateSchedule.jsx";
 
 const ConsultationForm = ({onSubmit, onCancel, doctorId, initialData}) => {
 

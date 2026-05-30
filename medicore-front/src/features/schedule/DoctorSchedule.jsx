@@ -1,10 +1,10 @@
-import ScheduleDayCard from "./ScheduleDayCard";
+import ScheduleDayCard from "./components/ScheduleDayCard.jsx";
 import {useSchedule} from "./hooks/useSchedule.jsx";
 import {useLocation, useParams} from "react-router-dom";
-import "./Schedule.css";
-import useAuth from "../auth/hooks/useAuth.jsx";
+import "./DoctorSchedule.css";
+import useAuth from "../../hooks/useAuth.jsx";
 import {useState} from "react";
-import ConsultationForm from "./ConsultationForm.jsx";
+import ConsultationForm from "./components/ConsultationForm.jsx";
 import {useDeleteSchedule} from "./hooks/useDeleteSchedule.jsx";
 
 const DoctorSchedule = () => {

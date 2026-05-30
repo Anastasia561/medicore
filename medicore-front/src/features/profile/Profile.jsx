@@ -1,8 +1,8 @@
 import "./Profile.css";
-import DoctorFields from "./roles/DoctorFields.jsx";
-import PatientFields from "./roles/PatientFields.jsx";
-import AdminFields from "./roles/AdminFields.jsx";
-import useAuth from "../auth/hooks/useAuth.jsx";
+import DoctorFields from "./components/DoctorFields.jsx";
+import PatientFields from "./components/PatientFields.jsx";
+import AdminFields from "./components/AdminFields.jsx";
+import useAuth from "../../hooks/useAuth.jsx";
 import {useProfile} from "./hooks/useProfile.jsx";
 
 const Profile = () => {

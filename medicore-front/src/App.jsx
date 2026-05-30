@@ -1,16 +1,16 @@
 import {Routes, Route} from 'react-router-dom'
-import Layout from "./components/layout/Layout.jsx";
+import Layout from "./layouts/Layout.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
 import Missing from "./pages/Missing.jsx";
-import RequireAuth from "./components/auth/RequireAuth.jsx";
-import PersistLogin from "./components/auth/PersistLogin.jsx";
-import ProtectedLayout from "./components/layout/ProtectedLayout.jsx";
-import Profile from "./components/profile/Profile.jsx";
-import PatientList from "./components/listing/roles/PatientList.jsx";
-import DoctorList from "./components/listing/roles/DoctorList.jsx";
-import DoctorSchedule from "./components/schedule/DoctorSchedule.jsx";
+import RequireAuth from "./features/auth/RequireAuth.jsx";
+import PersistLogin from "./features/auth/PersistLogin.jsx";
+import ProtectedLayout from "./layouts/ProtectedLayout.jsx";
+import Profile from "./features/profile/Profile.jsx";
+import PatientList from "./features/listing/components/PatientList.jsx";
+import DoctorList from "./features/listing/components/DoctorList.jsx";
+import DoctorSchedule from "./features/schedule/DoctorSchedule.jsx";
 import Providers from "./context/Providers.jsx";
 
 function App() {

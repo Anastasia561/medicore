@@ -1,5 +1,5 @@
-import DataCard from "../common/DataCard.jsx";
-import ListContainer from "../common/ListContainer.jsx";
+import DataCard from "./DataCard.jsx";
+import ListContainer from "../ListContainer.jsx";
 import {useState} from "react";
 import {usePatients} from "../hooks/usePatients.jsx";
 import Pagination from "../../../components/Pagination.jsx";
