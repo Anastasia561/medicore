@@ -13,6 +13,7 @@ import lombok.Setter;
 import pl.edu.medicore.application.patient.Patient;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -25,6 +26,8 @@ public class Test {
     private Long id;
     @Column(name = "performed_date", nullable = false)
     private LocalDate date;
+    @Column(nullable = false, unique = true)
+    private UUID storageKey;
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;

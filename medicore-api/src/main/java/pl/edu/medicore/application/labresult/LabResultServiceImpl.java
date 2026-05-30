@@ -27,7 +27,7 @@ class LabResultServiceImpl implements LabResultService {
     @Transactional
     public void processLabResults(HashId testId) {
         Test test = testService.getById(testId);
-        InputStream file = storageService.getFile(testId);
+        InputStream file = storageService.getFile(test.getStorageKey());
         String text = pdfParserService.extractText(file);
 
         for (Parameter param : Parameter.values()) {

@@ -10,5 +10,6 @@ public interface TestMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "patient", target = "patient")
+    @Mapping(target = "storageKey", expression = "java(java.util.UUID.randomUUID())")
     Test toEntity(TestUploadRequestDto dto, Patient patient);
 }

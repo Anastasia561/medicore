@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.medicore.common.config.properties.S3Properties;
-import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.exception.UploadFileException;
 import pl.edu.medicore.infrastructure.storage.S3Utils;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
@@ -16,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +26,8 @@ class StorageServiceImpl implements StorageService {
     private final S3Utils s3Utils;
 
     @Override
-    public void uploadFile(MultipartFile file, HashId testId) {
-        String key = s3Utils.buildKey(testId);
+    public void uploadFile(MultipartFile file, UUID storageKey) {
+        String key = s3Utils.buildKey(storageKey);
 
         try (InputStream inputStream = file.getInputStream()) {
 
@@ -48,8 +48,8 @@ class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void deleteFile(HashId testId) {
-        String key = s3Utils.buildKey(testId);
+    public void deleteFile(UUID storageKey) {
+        String key = s3Utils.buildKey(storageKey);
         s3Utils.checkObject(key);
 
         DeleteObjectRequest request = DeleteObjectRequest.builder()
@@ -61,8 +61,8 @@ class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public InputStream getFile(HashId testId) {
-        String key = s3Utils.buildKey(testId);
+    public InputStream getFile(UUID storageKey) {
+        String key = s3Utils.buildKey(storageKey);
         s3Utils.checkObject(key);
 
         GetObjectRequest request = GetObjectRequest.builder()

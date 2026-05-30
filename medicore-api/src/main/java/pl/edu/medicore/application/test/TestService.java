@@ -1,5 +1,7 @@
 package pl.edu.medicore.application.test;
 
+import java.net.URL;
+
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.common.encryption.HashId;
 
@@ -9,4 +11,8 @@ public interface TestService {
     Test getById(HashId testId);
 
     void checkExistsById(HashId id);
+
+    URL generateViewUrl(HashId id);
+
+    URL generateDownloadUrl(HashId id);
 }

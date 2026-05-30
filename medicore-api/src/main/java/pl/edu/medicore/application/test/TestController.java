@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.auth.CustomUserDetails;
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.common.encryption.HashId;
-import pl.edu.medicore.infrastructure.storage.contract.UrlGeneratorService;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 import java.net.URL;
@@ -29,20 +28,19 @@ import java.net.URL;
 @Tag(name = "Tests", description = "Endpoints for managing patients blood tests")
 public class TestController {
     private final TestService testService;
-    private final UrlGeneratorService urlGeneratorService;
 
     @Operation(summary = "Get presigned url to view blood test file")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/view/{id}")
     public ResponseWrapper<URL> getViewUrl(@PathVariable HashId id) {
-        return ResponseWrapper.ok(urlGeneratorService.generateViewUrl(id));
+        return ResponseWrapper.ok(testService.generateViewUrl(id));
     }
 
     @Operation(summary = "Get presigned url to download blood test file")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/download/{id}")
     public ResponseWrapper<URL> getDownloadUrl(@PathVariable HashId id) {
-        return ResponseWrapper.ok(urlGeneratorService.generateDownloadUrl(id));
+        return ResponseWrapper.ok(testService.generateDownloadUrl(id));
     }
 
     @Operation(summary = "Endpoint for uploading blood test file")

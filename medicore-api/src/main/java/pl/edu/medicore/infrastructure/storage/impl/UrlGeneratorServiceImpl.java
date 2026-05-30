@@ -3,7 +3,6 @@ package pl.edu.medicore.infrastructure.storage.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.common.config.properties.S3Properties;
-import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.storage.S3Utils;
 import pl.edu.medicore.infrastructure.storage.contract.UrlGeneratorService;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -22,8 +21,8 @@ class UrlGeneratorServiceImpl implements UrlGeneratorService {
     private final S3Utils s3Utils;
 
     @Override
-    public URL generateViewUrl(HashId testId) {
-        String key = s3Utils.buildKey(testId);
+    public URL generateViewUrl(UUID storageKey) {
+        String key = s3Utils.buildKey(storageKey);
         s3Utils.checkObject(key);
 
         GetObjectRequest request = GetObjectRequest.builder()
@@ -40,15 +39,15 @@ class UrlGeneratorServiceImpl implements UrlGeneratorService {
     }
 
     @Override
-    public URL generateDownloadUrl(HashId testId) {
-        String key = s3Utils.buildKey(testId);
+    public URL generateDownloadUrl(UUID storageKey) {
+        String key = s3Utils.buildKey(storageKey);
         s3Utils.checkObject(key);
 
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(s3Properties.getBucket())
                 .key(key)
                 .responseContentDisposition(
-                        "attachment; filename=\"blood_test_" + testId + ".pdf\""
+                        "attachment; filename=\"blood_test_" + storageKey + ".pdf\""
                 )
                 .build();
 

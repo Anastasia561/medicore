@@ -9,6 +9,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class S3Utils {
@@ -27,7 +29,7 @@ public class S3Utils {
         }
     }
 
-    public String buildKey(HashId testId) {
+    public String buildKey(UUID testId) {
         return s3Properties.getFolderName() + "/" +
                 testId + "/" +
                 s3Properties.getFileName();
