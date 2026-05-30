@@ -2,7 +2,7 @@ package pl.edu.medicore.application.profile.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.PatientAddressDto;
 
 import java.time.LocalDate;
 

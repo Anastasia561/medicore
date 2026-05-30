@@ -4,7 +4,7 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import pl.edu.medicore.application.AddressMapper;
+import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.person.Person;

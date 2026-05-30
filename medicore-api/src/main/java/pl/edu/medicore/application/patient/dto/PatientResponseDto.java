@@ -1,6 +1,6 @@
 package pl.edu.medicore.application.patient.dto;
 
-import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.PatientAddressDto;
 
 import java.time.LocalDate;
 import java.util.UUID;

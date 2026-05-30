@@ -2,7 +2,7 @@ package pl.edu.medicore.application.patient;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import pl.edu.medicore.application.AddressMapper;
+import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;

@@ -7,7 +7,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
-import pl.edu.medicore.application.Address;
+import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.person.Person;
 
 import java.time.LocalDate;

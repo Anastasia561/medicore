@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import pl.edu.medicore.application.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.PatientAddressDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.common.validation.annotation.MinAge;
 import pl.edu.medicore.common.validation.annotation.Password;
