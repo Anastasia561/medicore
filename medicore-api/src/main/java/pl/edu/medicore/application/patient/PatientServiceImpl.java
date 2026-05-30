@@ -49,6 +49,12 @@ class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
     }
 
+    @Override
+    public void checkExistsById(HashId id) {
+        if (!patientRepository.existsById(id.value())) {
+            throw new EntityNotFoundException("Patient not found");
+        }
+    }
 
     @Override
     @Transactional

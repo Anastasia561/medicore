@@ -7,4 +7,6 @@ public interface TestService {
     HashId save(TestUploadRequestDto dto, HashId patientId);
 
     Test getById(HashId testId);
+
+    void checkExistsById(HashId id);
 }

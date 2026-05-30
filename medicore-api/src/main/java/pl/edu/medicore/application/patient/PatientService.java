@@ -14,6 +14,8 @@ public interface PatientService {
 
     Patient getById(HashId id);
 
+    void checkExistsById(HashId id);
+
     long register(PatientRegisterDto dto);
 
     void updateStatus(String email, Status status);

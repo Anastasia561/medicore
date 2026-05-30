@@ -58,4 +58,11 @@ class TestServiceImpl implements TestService {
         return testRepository.findById(testId.value())
                 .orElseThrow(() -> new EntityNotFoundException("Test not found"));
     }
+
+    @Override
+    public void checkExistsById(HashId id) {
+        if (!testRepository.existsById(id.value())) {
+            throw new EntityNotFoundException("Test not found");
+        }
+    }
 }

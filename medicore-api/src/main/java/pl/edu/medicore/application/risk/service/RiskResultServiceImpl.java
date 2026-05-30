@@ -35,7 +35,7 @@ class RiskResultServiceImpl implements RiskResultService {
     @Override
     @Transactional
     public void calculateRiskForTest(HashId testId) {
-        testService.getById(testId);
+        testService.checkExistsById(testId);
 
         List<LabResult> labResults = labResultService.getLabResultsByTestId(testId);
         if (labResults.isEmpty()) {
@@ -46,8 +46,7 @@ class RiskResultServiceImpl implements RiskResultService {
 
     @Override
     public void calculateRiskForPatient(HashId patientId) {
-        patientService.getById(patientId);
-
+        patientService.checkExistsById(patientId);
         List<LabResult> labResults = labResultService.getLabResultsByPatientId(patientId);
         if (!labResults.isEmpty()) {
             save(labResults);
@@ -56,7 +55,7 @@ class RiskResultServiceImpl implements RiskResultService {
 
     @Override
     public List<RiskResultResponseDto> getLatestByPatientId(HashId patientId) {
-        patientService.getById(patientId);
+        patientService.checkExistsById(patientId);
         return riskResultRepository.getLatestByPatientPublicId(patientId.value())
                 .stream()
                 .map(riskResultMapper::toDto)
