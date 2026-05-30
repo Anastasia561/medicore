@@ -4,12 +4,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = HashIdMapper.class)
 public interface RiskResultMapper {
 
     @Mapping(source = "patient.id", target = "patientId")

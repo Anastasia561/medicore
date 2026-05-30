@@ -7,13 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import pl.edu.medicore.application.record.Record;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -22,8 +20,6 @@ public class Prescription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true, updatable = false)
-    private UUID publicId;
     @Column(name = "medicine", length = 60, nullable = false)
     private String medicine;
     @Column(name = "dosage", length = 20, nullable = false)
@@ -37,11 +33,4 @@ public class Prescription {
     @ManyToOne
     @JoinColumn(name = "record_id")
     private Record record;
-
-    @PrePersist
-    public void prePersist() {
-        if (publicId == null) {
-            publicId = UUID.randomUUID();
-        }
-    }
 }

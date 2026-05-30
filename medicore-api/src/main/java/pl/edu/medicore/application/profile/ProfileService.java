@@ -4,13 +4,12 @@ import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
-
-import java.util.UUID;
+import pl.edu.medicore.common.encryption.HashId;
 
 public interface ProfileService {
-    ProfileResponseDto getProfileById(long id, Role role);
+    ProfileResponseDto getProfileById(HashId id, Role role);
 
-    UUID updateProfile(ProfileUpdateDto dto, long id);
+    HashId updateProfile(ProfileUpdateDto dto, HashId id);
 
-    UUID updatePatientProfile(PatientProfileUpdateDto dto, long id);
+    HashId updatePatientProfile(PatientProfileUpdateDto dto, HashId id);
 }

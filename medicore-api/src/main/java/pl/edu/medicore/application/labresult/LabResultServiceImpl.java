@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.LabResultsExtractedEvent;
 import pl.edu.medicore.infrastructure.parser.PdfParserService;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
@@ -12,7 +13,6 @@ import pl.edu.medicore.application.test.TestService;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +25,9 @@ class LabResultServiceImpl implements LabResultService {
 
     @Override
     @Transactional
-    public void processLabResults(Long testId) {
+    public void processLabResults(HashId testId) {
         Test test = testService.getById(testId);
-        InputStream file = storageService.getFile(test.getPublicId());
+        InputStream file = storageService.getFile(testId);
         String text = pdfParserService.extractText(file);
 
         for (Parameter param : Parameter.values()) {
@@ -44,12 +44,12 @@ class LabResultServiceImpl implements LabResultService {
     }
 
     @Override
-    public List<LabResult> getLabResultsByTestId(Long testId) {
-        return labResultRepository.getLabResultsByTestId(testId);
+    public List<LabResult> getLabResultsByTestId(HashId testId) {
+        return labResultRepository.getLabResultsByTestId(testId.value());
     }
 
     @Override
-    public List<LabResult> getLabResultsByPatientId(UUID patientId) {
-        return labResultRepository.getLatestLabResultsByPatientId(patientId);
+    public List<LabResult> getLabResultsByPatientId(HashId patientId) {
+        return labResultRepository.getLatestLabResultsByPatientId(patientId.value());
     }
 }

@@ -12,6 +12,7 @@ import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.email.dto.VerificationEmailDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.application.email.EmailType;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
@@ -22,7 +23,6 @@ import pl.edu.medicore.application.verification.TokenType;
 import pl.edu.medicore.application.verification.VerificationTokenService;
 
 import java.time.Duration;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,14 +44,8 @@ class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient getByPublicId(UUID id) {
-        return patientRepository.findByPublicId(id)
-                .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
-    }
-
-    @Override
-    public Patient getById(long id) {
-        return patientRepository.findById(id)
+    public Patient getById(HashId id) {
+        return patientRepository.findById(id.value())
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
     }
 

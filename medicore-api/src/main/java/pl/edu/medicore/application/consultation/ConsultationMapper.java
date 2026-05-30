@@ -8,15 +8,15 @@ import pl.edu.medicore.application.consultation.dto.ConsultationDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.email.dto.ScheduleEmailDto;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = HashIdMapper.class)
 public interface ConsultationMapper {
 
     @Mapping(source = "workday", target = "day")
     ConsultationDto toDto(Consultation consultation);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "publicId", ignore = true)
     @Mapping(source = "dto.day", target = "workday")
     @Mapping(source = "doctor", target = "doctor")
     Consultation toEntity(ConsultationCreateDto dto, Doctor doctor);

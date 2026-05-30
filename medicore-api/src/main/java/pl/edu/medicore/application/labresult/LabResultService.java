@@ -1,12 +1,13 @@
 package pl.edu.medicore.application.labresult;
 
+import pl.edu.medicore.common.encryption.HashId;
+
 import java.util.List;
-import java.util.UUID;
 
 public interface LabResultService {
-    void processLabResults(Long testId);
+    void processLabResults(HashId testId);
 
-    List<LabResult> getLabResultsByTestId(Long testId);
+    List<LabResult> getLabResultsByTestId(HashId testId);
 
-    List<LabResult> getLabResultsByPatientId(UUID patientId);
+    List<LabResult> getLabResultsByPatientId(HashId patientId);
 }

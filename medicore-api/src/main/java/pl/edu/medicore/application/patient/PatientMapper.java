@@ -6,8 +6,9 @@ import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
-@Mapper(componentModel = "spring", uses = AddressMapper.class)
+@Mapper(componentModel = "spring", uses = {AddressMapper.class, HashIdMapper.class})
 public interface PatientMapper {
     PatientResponseDto toPatientResponseDto(Patient patient);
 

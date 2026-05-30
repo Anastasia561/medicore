@@ -21,6 +21,7 @@ import pl.edu.medicore.application.doctor.dto.DoctorFilterDto;
 import pl.edu.medicore.application.doctor.dto.DoctorInvitationRequestDto;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ public class DoctorController {
     @Operation(summary = "Get free slots for selected doctor")
     @PreAuthorize("hasRole('PATIENT')")
     @GetMapping("/{doctorId}/times")
-    public ResponseWrapper<List<LocalTime>> getAvailableTimes(@PathVariable UUID doctorId,
+    public ResponseWrapper<List<LocalTime>> getAvailableTimes(@PathVariable HashId doctorId,
                                                               @RequestParam LocalDate date) {
         return ResponseWrapper.ok(appointmentService.getAvailableTimes(doctorId, date));
     }

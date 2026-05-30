@@ -3,15 +3,15 @@ package pl.edu.medicore.application.appointment.dto;
 import lombok.Getter;
 import lombok.Setter;
 import pl.edu.medicore.application.appointment.Status;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Getter
 @Setter
 public abstract class AppointmentInfoDto {
-    private UUID publicId;
+    private HashId id;
     private LocalDate date;
     private LocalTime time;
     private Status status;

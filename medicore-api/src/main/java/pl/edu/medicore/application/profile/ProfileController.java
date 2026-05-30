@@ -15,6 +15,7 @@ import pl.edu.medicore.application.auth.CustomUserDetails;
 import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 import java.util.UUID;
@@ -36,15 +37,15 @@ public class ProfileController {
     @Operation(summary = "Update profile info for admin or doctor")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @PutMapping
-    public ResponseWrapper<UUID> updateProfile(@Valid @RequestBody ProfileUpdateDto dto,
-                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseWrapper<HashId> updateProfile(@Valid @RequestBody ProfileUpdateDto dto,
+                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseWrapper.ok(profileService.updateProfile(dto, userDetails.getId()));
     }
 
     @Operation(summary = "Update patient profile info")
     @PreAuthorize("hasRole('PATIENT')")
     @PutMapping("/patient")
-    public ResponseWrapper<UUID> updatePatientProfile(@Valid @RequestBody PatientProfileUpdateDto dto,
+    public ResponseWrapper<HashId> updatePatientProfile(@Valid @RequestBody PatientProfileUpdateDto dto,
                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseWrapper.ok(profileService.updatePatientProfile(dto, userDetails.getId()));
     }

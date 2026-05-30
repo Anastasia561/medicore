@@ -5,14 +5,13 @@ import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.application.doctor.Specialization;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 class AppointmentSpecification {
 
     public static Specification<Appointment> withFilter(AppointmentFilterDto filter) {
 
         Specification<Appointment> spec =
-                Specification.where(hasUser(filter.userId()))
+                Specification.where(hasUser(filter.userId().value()))
                         .and(hasDateBetween(filter.startDate(), filter.endDate()));
 
         if (filter.status() != null) {
@@ -26,11 +25,11 @@ class AppointmentSpecification {
         return spec;
     }
 
-    private static Specification<Appointment> hasUser(UUID userId) {
+    private static Specification<Appointment> hasUser(long userId) {
         return (root, query, cb) ->
                 cb.or(
-                        cb.equal(root.get("doctor").get("publicId"), userId),
-                        cb.equal(root.get("patient").get("publicId"), userId)
+                        cb.equal(root.get("doctor").get("id"), userId),
+                        cb.equal(root.get("patient").get("id"), userId)
                 );
     }
 

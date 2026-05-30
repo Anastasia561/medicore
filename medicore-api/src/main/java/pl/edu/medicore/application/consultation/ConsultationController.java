@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/consultations")
@@ -33,7 +33,7 @@ public class ConsultationController {
     @Operation(summary = "Get all doctor consultations")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @GetMapping("/doctor/{doctorId}")
-    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@PathVariable UUID doctorId) {
+    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@PathVariable HashId doctorId) {
         return ResponseWrapper.ok(consultationService.findByDoctorId(doctorId));
     }
 
@@ -41,14 +41,15 @@ public class ConsultationController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseWrapper<UUID> create(@RequestBody @Valid ConsultationCreateDto dto) {
+    public ResponseWrapper<HashId> create(@RequestBody @Valid ConsultationCreateDto dto) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, consultationService.create(dto));
     }
 
     @Operation(summary = "Update doctor schedule")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{consultationId}")
-    public ResponseWrapper<UUID> update(@RequestBody @Valid ConsultationUpdateDto dto, @PathVariable UUID consultationId) {
+    public ResponseWrapper<HashId> update(@RequestBody @Valid ConsultationUpdateDto dto,
+                                          @PathVariable HashId consultationId) {
         return ResponseWrapper.ok(consultationService.update(consultationId, dto));
     }
 
@@ -56,7 +57,7 @@ public class ConsultationController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{consultationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID consultationId) {
+    public void delete(@PathVariable HashId consultationId) {
         consultationService.delete(consultationId);
     }
 }

@@ -3,16 +3,16 @@ package pl.edu.medicore.application.consultation;
 import pl.edu.medicore.application.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface ConsultationService {
-    List<ConsultationDto> findByDoctorId(UUID doctorId);
+    List<ConsultationDto> findByDoctorId(HashId doctorId);
 
-    UUID create(ConsultationCreateDto dto);
+    HashId create(ConsultationCreateDto dto);
 
-    UUID update(UUID id, ConsultationUpdateDto dto);
+    HashId update(HashId id, ConsultationUpdateDto dto);
 
-    void delete(UUID id);
+    void delete(HashId id);
 }

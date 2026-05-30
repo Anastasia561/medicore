@@ -8,8 +8,9 @@ import pl.edu.medicore.application.appointment.dto.AppointmentForPatientDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.email.dto.AppointmentNotificationEmailDto;
 import pl.edu.medicore.application.patient.Patient;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = HashIdMapper.class)
 public interface AppointmentMapper {
 
     @Mapping(source = "patient.firstName", target = "firstName")
@@ -23,7 +24,6 @@ public interface AppointmentMapper {
     AppointmentForPatientDto toPatientDto(Appointment appointment);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "status", constant = "SCHEDULED")
     @Mapping(source = "doctor", target = "doctor")
     @Mapping(source = "patient", target = "patient")

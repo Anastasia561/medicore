@@ -1,16 +1,13 @@
 package pl.edu.medicore.application.person;
 
-
 import pl.edu.medicore.application.auth.dto.PasswordResetDto;
-
-import java.util.UUID;
+import pl.edu.medicore.common.encryption.HashId;
 
 public interface PersonService {
-    Role getRoleByPublicId(UUID id);
 
     Person getByEmail(String email);
 
-    Person getById(long id);
+    Person getById(HashId id);
 
     void updatePassword(PasswordResetDto dto);
 

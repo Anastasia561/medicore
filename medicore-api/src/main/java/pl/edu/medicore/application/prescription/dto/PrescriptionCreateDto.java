@@ -1,16 +1,15 @@
 package pl.edu.medicore.application.prescription.dto;
 
-
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public record PrescriptionCreateDto(
         @NotNull(message = "Record id is required")
-        UUID recordId,
+        HashId recordId,
 
         @NotNull(message = "Medicine name is required")
         @Size(min = 1, max = 60, message = "Medicine name must be 1-60 characters")

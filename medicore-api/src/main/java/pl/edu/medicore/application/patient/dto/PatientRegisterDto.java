@@ -72,6 +72,7 @@ public record PatientRegisterDto(
 ) {
     @AssertTrue(message = "Only female patients can be marked as pregnant")
     public boolean isPregnancyValid() {
+        if (gender == null) return true;
         return !pregnant || gender == Gender.FEMALE;
     }
 }

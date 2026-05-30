@@ -9,9 +9,9 @@ import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
 import pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public DoctorStatisticsResponseDto getDoctorStatistics(UUID id) {
+    public DoctorStatisticsResponseDto getDoctorStatistics(HashId id) {
         long totalPatients = appointmentService.getDistinctPatientsByDoctorId(id);
         long todayAppointments = appointmentService.getTotalAppointmentsTodayByDoctorId(id);
         List<ConsultationStatisticsDto> monthlyConsultations = appointmentService.getMonthlyStatisticsByDoctorId(id);

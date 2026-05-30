@@ -13,6 +13,7 @@ import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.email.dto.VerificationEmailDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.application.email.EmailType;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
@@ -22,7 +23,6 @@ import pl.edu.medicore.application.verification.VerificationTokenService;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,21 +34,15 @@ class DoctorServiceImpl implements DoctorService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public void checkExistsById(UUID doctorId) {
-        if (!doctorRepository.existsByPublicId(doctorId)) {
+    public void checkExistsById(HashId doctorId) {
+        if (!doctorRepository.existsById(doctorId.value())) {
             throw new EntityNotFoundException("Doctor not found");
         }
     }
 
     @Override
-    public Doctor getByPublicId(UUID id) {
-        return doctorRepository.findByPublicId(id).orElseThrow(
-                () -> new EntityNotFoundException("Doctor not found"));
-    }
-
-    @Override
-    public Doctor getById(long doctorId) {
-        return doctorRepository.findById(doctorId).orElseThrow(
+    public Doctor getById(HashId doctorId) {
+        return doctorRepository.findById(doctorId.value()).orElseThrow(
                 () -> new EntityNotFoundException("Doctor not found"));
     }
 

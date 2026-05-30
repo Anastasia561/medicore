@@ -9,24 +9,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
     @Query("""
             SELECT a.time
             FROM Appointment a
-            WHERE a.doctor.publicId = :doctorId
+            WHERE a.doctor.id = :doctorId
             AND a.date = :date
             AND a.status = 'SCHEDULED'
             """)
-    List<LocalTime> getScheduledTimesForDoctorAndDate(UUID doctorId, LocalDate date);
+    List<LocalTime> getScheduledTimesForDoctorAndDate(long doctorId, LocalDate date);
 
     long countByDate(LocalDate date);
 
-    Optional<Appointment> findByPublicId(UUID uuid);
-
-    long countByDateAndDoctorPublicId(LocalDate date, UUID doctorId);
+    long countByDateAndDoctorId(LocalDate date, long doctorId);
 
     @Query("""
             SELECT new pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto(
@@ -48,18 +44,18 @@ interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpe
                  COUNT(a)
             )
             FROM Appointment a
-            WHERE YEAR(a.date) = :year AND a.doctor.publicId= :id
+            WHERE YEAR(a.date) = :year AND a.doctor.id= :id
             GROUP BY MONTH(a.date), a.status
             ORDER BY MONTH(a.date)
             """)
-    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(UUID id, int year);
+    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id, int year);
 
     @Query("""
             SELECT COUNT(DISTINCT a.patient.id)
             FROM Appointment a
-            WHERE a.doctor.publicId = :doctorId
+            WHERE a.doctor.id = :doctorId
             """)
-    long countDistinctPatientsByDoctorId(UUID doctorId);
+    long countDistinctPatientsByDoctorId(long doctorId);
 
     @Query("""
             SELECT a FROM Appointment a WHERE a.status = :status AND a.date = :date
@@ -76,12 +72,12 @@ interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpe
     List<Appointment> getAppointmentsBetween(LocalDateTime from, LocalDateTime to);
 
     @Query(value = """ 
-            SELECT public_id FROM appointment
+            SELECT id FROM appointment
             WHERE doctor_id = :doctorId
             AND date >= CURRENT_DATE
             AND TRIM(TO_CHAR(date, 'DAY')) = :dayOfWeek
             AND time >= :start AND time < :end
             """,
             nativeQuery = true)
-    List<UUID> findIdsForCancellation(long doctorId, String dayOfWeek, LocalTime start, LocalTime end);
+    List<Long> findIdsForCancellation(long doctorId, String dayOfWeek, LocalTime start, LocalTime end);
 }

@@ -7,16 +7,15 @@ import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordFilterDto;
 import pl.edu.medicore.application.record.dto.RecordPreviewDto;
-
-import java.util.UUID;
+import pl.edu.medicore.common.encryption.HashId;
 
 public interface RecordService {
-    RecordDto getByAppointmentId(UUID id);
+    RecordDto getByAppointmentId(HashId id);
 
-    Page<RecordPreviewDto> getAllById(long id, Role role, RecordFilterDto filter, Pageable pageable);
+    Page<RecordPreviewDto> getAllByPersonId(HashId id, Role role, RecordFilterDto filter, Pageable pageable);
 
-    UUID create(RecordCreateDto dto);
+    HashId create(RecordCreateDto dto);
 
-    Record getByPublicId(UUID id);
+    Record getById(HashId id);
 }
 

@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 interface DoctorRepository extends JpaRepository<Doctor, Long>, JpaSpecificationExecutor<Doctor> {
     @Query("""
@@ -19,8 +17,4 @@ interface DoctorRepository extends JpaRepository<Doctor, Long>, JpaSpecification
             GROUP BY d.specialization
             """)
     List<DoctorStatisticsDto> countDoctorsBySpecialization();
-
-    boolean existsByPublicId(UUID publicId);
-
-    Optional<Doctor> findByPublicId(UUID publicId);
 }

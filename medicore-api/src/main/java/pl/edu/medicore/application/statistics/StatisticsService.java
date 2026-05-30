@@ -2,11 +2,10 @@ package pl.edu.medicore.application.statistics;
 
 import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
-
-import java.util.UUID;
+import pl.edu.medicore.common.encryption.HashId;
 
 public interface StatisticsService {
     AdminStatisticsResponseDto getAdminStatistics();
 
-    DoctorStatisticsResponseDto getDoctorStatistics(UUID doctorId);
+    DoctorStatisticsResponseDto getDoctorStatistics(HashId doctorId);
 }

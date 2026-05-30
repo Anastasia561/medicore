@@ -6,21 +6,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.application.auth.dto.PasswordResetDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.exception.UserNotVerifiedException;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public Role getRoleByPublicId(UUID id) {
-        return personRepository.getRoleByPublicId(id).orElseThrow(
-                () -> new EntityNotFoundException("Person not found"));
-    }
 
     @Override
     public Person getByEmail(String email) {
@@ -32,8 +25,8 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person getById(long id) {
-        return personRepository.findById(id).orElseThrow(
+    public Person getById(HashId id) {
+        return personRepository.findById(id.value()).orElseThrow(
                 () -> new EntityNotFoundException("Person not found"));
     }
 

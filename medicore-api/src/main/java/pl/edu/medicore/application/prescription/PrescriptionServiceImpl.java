@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
 import pl.edu.medicore.application.record.RecordService;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.UUID;
 
@@ -17,11 +18,12 @@ class PrescriptionServiceImpl implements PrescriptionService {
 
     @Override
     @Transactional
-    public UUID create(PrescriptionCreateDto dto) {
+    public HashId create(PrescriptionCreateDto dto) {
         if (dto.endDate() != null && dto.startDate().isAfter(dto.endDate())) {
             throw new IllegalArgumentException("End date must be after start date");
         }
-        Prescription prescription = prescriptionMapper.toEntity(dto, recordService.getByPublicId(dto.recordId()));
-        return prescriptionRepository.save(prescription).getPublicId();
+        Prescription prescription = prescriptionMapper.toEntity(dto, recordService.getById(dto.recordId()));
+        Prescription saved = prescriptionRepository.save(prescription);
+        return HashId.of(saved.getId());
     }
 }

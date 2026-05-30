@@ -1,10 +1,11 @@
 package pl.edu.medicore.infrastructure.storage.contract;
 
+import pl.edu.medicore.common.encryption.HashId;
+
 import java.net.URL;
-import java.util.UUID;
 
 public interface UrlGeneratorService {
-    URL generateViewUrl(UUID testId);
+    URL generateViewUrl(HashId testId);
 
-    URL generateDownloadUrl(UUID testId);
+    URL generateDownloadUrl(HashId testId);
 }

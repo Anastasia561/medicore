@@ -7,11 +7,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.application.patient.PatientService;
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +24,12 @@ class TestServiceImpl implements TestService {
 
     @Override
     @Transactional
-    public UUID save(TestUploadRequestDto dto, Long patientId) {
+    public HashId save(TestUploadRequestDto dto, HashId patientId) {
         if (dto.file().isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
 
-        Optional<Test> latestTestOpt = testRepository.findTopByPatientIdOrderByDateDesc(patientId);
+        Optional<Test> latestTestOpt = testRepository.findTopByPatientIdOrderByDateDesc(patientId.value());
 
         boolean isNewest = latestTestOpt
                 .map(latest -> dto.date().isAfter(latest.getDate()))
@@ -37,24 +37,25 @@ class TestServiceImpl implements TestService {
 
         Test test = testMapper.toEntity(dto, patientService.getById(patientId));
         Test saved = testRepository.save(test);
+        HashId id = HashId.of(saved.getId());
 
         try {
-            storageService.uploadFile(dto.file(), saved.getPublicId());
+            storageService.uploadFile(dto.file(), id);
 
             if (isNewest) {
-                publisher.publishEvent(new FileUploadEvent(saved.getId()));
+                publisher.publishEvent(new FileUploadEvent(id));
             }
-            return saved.getPublicId();
+            return HashId.of(saved.getId());
 
         } catch (Exception e) {
-            storageService.deleteFile(saved.getPublicId());
+            storageService.deleteFile(id);
             throw new RuntimeException("Failed to save test", e);
         }
     }
 
     @Override
-    public Test getById(Long testId) {
-        return testRepository.findById(testId)
+    public Test getById(HashId testId) {
+        return testRepository.findById(testId.value())
                 .orElseThrow(() -> new EntityNotFoundException("Test not found"));
     }
 }

@@ -6,8 +6,8 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pl.edu.medicore.application.person.Person;
 import pl.edu.medicore.application.person.Role;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
-    private Long id;
+    private HashId id;
     private String email;
     private String passwordHash;
     private Role role;

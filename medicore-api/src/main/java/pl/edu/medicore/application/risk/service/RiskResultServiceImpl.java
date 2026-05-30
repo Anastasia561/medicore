@@ -16,11 +16,11 @@ import pl.edu.medicore.application.risk.RiskGroup;
 import pl.edu.medicore.application.risk.RiskResult;
 import pl.edu.medicore.application.test.Test;
 import pl.edu.medicore.application.test.TestService;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ class RiskResultServiceImpl implements RiskResultService {
 
     @Override
     @Transactional
-    public void calculateRiskForTest(long testId) {
+    public void calculateRiskForTest(HashId testId) {
         testService.getById(testId);
 
         List<LabResult> labResults = labResultService.getLabResultsByTestId(testId);
@@ -45,8 +45,8 @@ class RiskResultServiceImpl implements RiskResultService {
     }
 
     @Override
-    public void calculateRiskForPatient(UUID patientId) {
-        patientService.getByPublicId(patientId);
+    public void calculateRiskForPatient(HashId patientId) {
+        patientService.getById(patientId);
 
         List<LabResult> labResults = labResultService.getLabResultsByPatientId(patientId);
         if (!labResults.isEmpty()) {
@@ -55,9 +55,9 @@ class RiskResultServiceImpl implements RiskResultService {
     }
 
     @Override
-    public List<RiskResultResponseDto> getLatestByPatientId(UUID patientId) {
-        patientService.getByPublicId(patientId);
-        return riskResultRepository.getLatestByPatientPublicId(patientId)
+    public List<RiskResultResponseDto> getLatestByPatientId(HashId patientId) {
+        patientService.getById(patientId);
+        return riskResultRepository.getLatestByPatientPublicId(patientId.value())
                 .stream()
                 .map(riskResultMapper::toDto)
                 .toList();

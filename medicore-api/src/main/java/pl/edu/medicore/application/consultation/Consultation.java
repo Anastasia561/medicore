@@ -9,13 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import pl.edu.medicore.application.doctor.Doctor;
 
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -24,8 +22,6 @@ public class Consultation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true, updatable = false)
-    private UUID publicId;
     @Enumerated(EnumType.STRING)
     @Column(name = "day", nullable = false)
     private Workday workday;
@@ -36,12 +32,4 @@ public class Consultation {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
-
-    @PrePersist
-    public void prePersist() {
-        if (publicId == null) {
-            publicId = UUID.randomUUID();
-        }
-    }
-
 }

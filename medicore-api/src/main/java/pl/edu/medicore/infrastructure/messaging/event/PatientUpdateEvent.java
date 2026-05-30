@@ -1,6 +1,6 @@
 package pl.edu.medicore.infrastructure.messaging.event;
 
-import java.util.UUID;
+import pl.edu.medicore.common.encryption.HashId;
 
-public record PatientUpdateEvent(UUID patientId) {
+public record PatientUpdateEvent(HashId patientId) {
 }

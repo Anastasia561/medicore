@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
 import pl.edu.medicore.application.risk.service.RiskResultService;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/risks")
@@ -26,7 +26,7 @@ public class RiskResultController {
     @Operation(summary = "Find latest estimated risks for selected diseases by patient id")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/{patientId}")
-    public ResponseWrapper<List<RiskResultResponseDto>> getLatestRiskByPatientId(@PathVariable UUID patientId) {
+    public ResponseWrapper<List<RiskResultResponseDto>> getLatestRiskByPatientId(@PathVariable HashId patientId) {
         List<RiskResultResponseDto> risks = riskResultService.getLatestByPatientId(patientId);
         if (risks.isEmpty()) return ResponseWrapper.withStatus(HttpStatus.NO_CONTENT, risks);
         return ResponseWrapper.ok(riskResultService.getLatestByPatientId(patientId));

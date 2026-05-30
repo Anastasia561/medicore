@@ -1,4 +1,6 @@
 package pl.edu.medicore.infrastructure.messaging.event;
 
-public record LabResultsExtractedEvent(long testId) {
+import pl.edu.medicore.common.encryption.HashId;
+
+public record LabResultsExtractedEvent(HashId testId) {
 }

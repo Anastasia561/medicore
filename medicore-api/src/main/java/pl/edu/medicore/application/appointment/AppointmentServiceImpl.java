@@ -15,6 +15,7 @@ import pl.edu.medicore.application.consultation.Workday;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.DoctorService;
 import pl.edu.medicore.application.email.dto.AppointmentNotificationEmailDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.exception.DoctorNotAvailableException;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.application.email.EmailType;
@@ -47,7 +48,7 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable) {
-        Role role = personService.getRoleByPublicId(filter.userId());
+        Role role = personService.getById(filter.userId()).getRole();
 
         if (filter.endDate().isBefore(filter.startDate()))
             throw new IllegalArgumentException("End date must be after start date");
@@ -61,8 +62,8 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public void cancel(UUID id) {
-        Appointment appointment = getByPublicId(id);
+    public void cancel(HashId id) {
+        Appointment appointment = getById(id);
         if (!appointment.getStatus().equals(Status.SCHEDULED)) {
             throw new AppointmentCancellationConflictException("Appointment can not be cancelled");
         }
@@ -77,13 +78,13 @@ class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public UUID create(long patientId, AppointmentCreateDto dto) {
+    public HashId create(HashId patientId, AppointmentCreateDto dto) {
         List<LocalTime> availableTimes = getAvailableTimes(dto.doctorId(), dto.date());
         if (availableTimes.isEmpty() || !availableTimes.contains(dto.time())) {
             throw new IllegalStateException("Selected time slot is not available");
         }
 
-        Doctor doctor = doctorService.getByPublicId(dto.doctorId());
+        Doctor doctor = doctorService.getById(dto.doctorId());
         Patient patient = patientService.getById(patientId);
 
         Appointment entity = appointmentMapper.toEntity(dto, doctor, patient);
@@ -91,12 +92,13 @@ class AppointmentServiceImpl implements AppointmentService {
         eventPublisher.publishEvent(new SendEmailEvent<>(entity.getPatient().getEmail(),
                 EmailType.APPOINTMENT_SCHEDULED, emailDto));
 
-        return appointmentRepository.save(entity).getPublicId();
+        Appointment saved = appointmentRepository.save(entity);
+        return HashId.of(saved.getId());
     }
 
     @Override
-    public List<LocalTime> getAvailableTimes(UUID doctorId, LocalDate date) {
-        Doctor doctor = doctorService.getByPublicId(doctorId);
+    public List<LocalTime> getAvailableTimes(HashId doctorId, LocalDate date) {
+        Doctor doctor = doctorService.getById(doctorId);
 
         Workday workday = validateWorkday(date);
 
@@ -109,7 +111,8 @@ class AppointmentServiceImpl implements AppointmentService {
         LocalTime startTime = consultation.getStartTime();
         LocalTime endTime = consultation.getEndTime();
 
-        List<LocalTime> scheduledTimes = appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date);
+        List<LocalTime> scheduledTimes = appointmentRepository
+                .getScheduledTimesForDoctorAndDate(doctorId.value(), date);
 
         List<LocalTime> allSlots = new ArrayList<>();
         LocalTime current = startTime;
@@ -124,8 +127,8 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment getByPublicId(UUID id) {
-        return appointmentRepository.findByPublicId(id).orElseThrow(
+    public Appointment getById(HashId id) {
+        return appointmentRepository.findById(id.value()).orElseThrow(
                 () -> new EntityNotFoundException("Appointment not found"));
     }
 
@@ -135,9 +138,9 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public long getTotalAppointmentsTodayByDoctorId(UUID id) {
+    public long getTotalAppointmentsTodayByDoctorId(HashId id) {
         doctorService.checkExistsById(id);
-        return appointmentRepository.countByDateAndDoctorPublicId(LocalDate.now(), id);
+        return appointmentRepository.countByDateAndDoctorId(LocalDate.now(), id.value());
     }
 
     @Override
@@ -146,15 +149,15 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(UUID id) {
+    public List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(HashId id) {
         doctorService.checkExistsById(id);
-        return appointmentRepository.getMonthlyStatisticsByDoctorId(id, LocalDate.now().getYear());
+        return appointmentRepository.getMonthlyStatisticsByDoctorId(id.value(), LocalDate.now().getYear());
     }
 
     @Override
-    public long getDistinctPatientsByDoctorId(UUID doctorId) {
+    public long getDistinctPatientsByDoctorId(HashId doctorId) {
         doctorService.checkExistsById(doctorId);
-        return appointmentRepository.countDistinctPatientsByDoctorId(doctorId);
+        return appointmentRepository.countDistinctPatientsByDoctorId(doctorId.value());
     }
 
     @Override
@@ -179,8 +182,9 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<UUID> findIdsForCancellation(long doctorId, Workday dayOfWeek, LocalTime start, LocalTime end) {
-        return appointmentRepository.findIdsForCancellation(doctorId, dayOfWeek.name(), start, end);
+    public List<HashId> findIdsForCancellation(HashId doctorId, Workday dayOfWeek, LocalTime start, LocalTime end) {
+        return appointmentRepository.findIdsForCancellation(doctorId.value(), dayOfWeek.name(), start, end)
+                .stream().map(HashId::of).toList();
     }
 
     private Workday validateWorkday(LocalDate date) {

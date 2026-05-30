@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/prescriptions")
@@ -27,7 +26,7 @@ public class PrescriptionController {
     @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseWrapper<UUID> create(@Valid @RequestBody PrescriptionCreateDto dto) {
+    public ResponseWrapper<HashId> create(@Valid @RequestBody PrescriptionCreateDto dto) {
         return ResponseWrapper.withStatus(HttpStatus.CREATED, prescriptionService.create(dto));
     }
 }

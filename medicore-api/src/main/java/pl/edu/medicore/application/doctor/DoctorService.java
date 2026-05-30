@@ -7,15 +7,14 @@ import pl.edu.medicore.application.doctor.dto.DoctorInvitationRequestDto;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface DoctorService {
-    void checkExistsById(UUID doctorId);
+    void checkExistsById(HashId doctorId);
 
-    Doctor getByPublicId(UUID doctorId);
-    Doctor getById(long doctorId);
+    Doctor getById(HashId doctorId);
 
     Page<DoctorResponseDto> getAll(DoctorFilterDto filter, Pageable pageable);
 

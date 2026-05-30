@@ -1,14 +1,14 @@
 package pl.edu.medicore.infrastructure.storage.contract;
 
 import org.springframework.web.multipart.MultipartFile;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.io.InputStream;
-import java.util.UUID;
 
 public interface StorageService {
-    void uploadFile(MultipartFile file, UUID testId);
+    void uploadFile(MultipartFile file, HashId testId);
 
-    void deleteFile(UUID testId);
+    void deleteFile(HashId testId);
 
-    InputStream getFile(UUID testId);
+    InputStream getFile(HashId testId);
 }

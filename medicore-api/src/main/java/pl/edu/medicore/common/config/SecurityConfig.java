@@ -27,6 +27,7 @@ import pl.edu.medicore.application.auth.CustomUserDetails;
 import pl.edu.medicore.application.auth.jwt.JwtAuthenticationFilter;
 import pl.edu.medicore.common.config.properties.CorsProperties;
 import pl.edu.medicore.application.person.PersonRepository;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(PersonRepository userRepository) {
         return email -> userRepository.findByEmail(email)
-                .map(user -> new CustomUserDetails(user.getId(), user.getEmail(),
+                .map(user -> new CustomUserDetails(HashId.of(user.getId()), user.getEmail(),
                         user.getPassword(), user.getRole()))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

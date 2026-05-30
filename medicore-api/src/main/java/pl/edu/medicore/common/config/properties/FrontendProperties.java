@@ -10,5 +10,5 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "app.frontend")
 public class FrontendProperties {
-    private String baseUrl;
+    private String frontBaseUrl;
 }

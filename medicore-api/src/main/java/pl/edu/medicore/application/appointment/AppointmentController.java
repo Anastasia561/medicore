@@ -21,6 +21,7 @@ import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.application.auth.CustomUserDetails;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 import java.util.UUID;
@@ -44,7 +45,7 @@ public class AppointmentController {
     @Operation(summary = "Cancel appointment")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @PutMapping("/cancel/{id}")
-    public void cancel(@PathVariable UUID id) {
+    public void cancel(@PathVariable HashId id) {
         appointmentService.cancel(id);
     }
 
@@ -52,12 +53,12 @@ public class AppointmentController {
     @PreAuthorize("hasRole('PATIENT')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseWrapper<UUID> create(
+    public ResponseWrapper<HashId> create(
             @Valid @RequestBody AppointmentCreateDto dto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        Long patientId = userDetails.getId();
-        UUID appointmentId = appointmentService.create(patientId, dto);
+        HashId patientId = userDetails.getId();
+        HashId appointmentId = appointmentService.create(patientId, dto);
         return ResponseWrapper.withStatus(HttpStatus.CREATED, appointmentId);
     }
 }

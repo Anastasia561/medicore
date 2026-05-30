@@ -14,8 +14,7 @@ import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordFilterDto;
 import pl.edu.medicore.application.record.dto.RecordPreviewDto;
-
-import java.util.UUID;
+import pl.edu.medicore.common.encryption.HashId;
 
 @Service
 @RequiredArgsConstructor
@@ -25,20 +24,20 @@ class RecordServiceImpl implements RecordService {
     private final AppointmentService appointmentService;
 
     @Override
-    public RecordDto getByAppointmentId(UUID id) {
-        return recordRepository.findByAppointmentPublicId(id)
+    public RecordDto getByAppointmentId(HashId id) {
+        return recordRepository.findByAppointmentId(id.value())
                 .map(recordMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Record not found"));
     }
 
     @Override
-    public Page<RecordPreviewDto> getAllById(long id, Role role, RecordFilterDto filter, Pageable pageable) {
+    public Page<RecordPreviewDto> getAllByPersonId(HashId id, Role role, RecordFilterDto filter, Pageable pageable) {
         if (filter.startDate() != null && filter.endDate() != null
                 && filter.startDate().isAfter(filter.endDate()))
             throw new IllegalArgumentException("Start date should be before end date");
 
         Page<Record> all = recordRepository.findAll(RecordSpecification
-                .withFilter(id, role, filter), pageable);
+                .withFilter(id.value(), role, filter), pageable);
 
         return role == Role.DOCTOR ? all.map(recordMapper::toDoctorPreviewDto)
                 : all.map(recordMapper::toPatientPreviewDto);
@@ -46,19 +45,20 @@ class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public UUID create(RecordCreateDto dto) {
-        Appointment appointment = appointmentService.getByPublicId(dto.appointmentId());
+    public HashId create(RecordCreateDto dto) {
+        Appointment appointment = appointmentService.getById(dto.appointmentId());
         if (appointment.getStatus() == Status.COMPLETED) {
             throw new IllegalStateException("Appointment is already completed");
         }
         appointment.setStatus(Status.COMPLETED);
         Record record = recordMapper.toEntity(dto, appointment);
-        return recordRepository.save(record).getPublicId();
+        Record saved = recordRepository.save(record);
+        return HashId.of(saved.getId());
     }
 
     @Override
-    public Record getByPublicId(UUID id) {
-        return recordRepository.findByPublicId(id)
+    public Record getById(HashId id) {
+        return recordRepository.findById(id.value())
                 .orElseThrow(() -> new EntityNotFoundException("Record not found"));
     }
 }

@@ -9,7 +9,6 @@ import pl.edu.medicore.application.record.Record;
 public interface PrescriptionMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "publicId", ignore = true)
     @Mapping(source = "record", target = "record")
     Prescription toEntity(PrescriptionCreateDto dto, Record record);
 }

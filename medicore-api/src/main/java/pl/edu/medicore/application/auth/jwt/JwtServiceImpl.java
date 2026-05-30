@@ -87,12 +87,12 @@ class JwtServiceImpl implements JwtService {
     @Override
     public boolean isTokenValid(String token, CustomUserDetails userDetails) {
         String usernameFromToken = extractUsername(token);
-        Long idFromToken = extractClaim(token, c -> c.get(CLAIM_UID, Long.class));
+        Long idValue = extractClaim(token, c -> c.get(CLAIM_UID, Long.class));
         String roleFromToken = extractClaim(token, c -> c.get(CLAIM_ROLE, String.class));
 
         boolean notExpired = !isTokenExpired(token);
         boolean usernameMatches = usernameFromToken.equals(userDetails.getUsername());
-        boolean idMatches = idFromToken.equals(userDetails.getId());
+        boolean idMatches = idValue != null && idValue.equals(userDetails.getId().value());
         boolean roleMatches = roleFromToken.equals(userDetails.getRoleName());
 
         return notExpired && usernameMatches && idMatches && roleMatches;
@@ -100,7 +100,7 @@ class JwtServiceImpl implements JwtService {
 
     private Map<String, Object> buildBaseClaims(CustomUserDetails user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_UID, user.getId());
+        claims.put(CLAIM_UID, user.getId().value());
         claims.put(CLAIM_ROLE, user.getRoleName());
         return claims;
     }

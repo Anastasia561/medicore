@@ -1,12 +1,12 @@
 package pl.edu.medicore.application.doctor.dto;
 
 import pl.edu.medicore.application.doctor.Specialization;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public record DoctorResponseDto(
-        UUID publicId,
+        HashId id,
         String firstName,
         String lastName,
         String email,

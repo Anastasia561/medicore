@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/statistics")
@@ -31,7 +30,7 @@ public class StatisticsController {
     @Operation(summary = "Get patient, appointments statistics for doctor")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping("/doctor/{id}")
-    public ResponseWrapper<DoctorStatisticsResponseDto> getDoctorStatistics(@PathVariable UUID id) {
+    public ResponseWrapper<DoctorStatisticsResponseDto> getDoctorStatistics(@PathVariable HashId id) {
         return ResponseWrapper.ok(statisticsService.getDoctorStatistics(id));
     }
 }

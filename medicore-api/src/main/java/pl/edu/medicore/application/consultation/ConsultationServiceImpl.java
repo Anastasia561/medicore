@@ -13,6 +13,7 @@ import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.DoctorService;
 import pl.edu.medicore.application.email.dto.ScheduleEmailDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.application.email.EmailType;
 import pl.edu.medicore.common.config.properties.ConsultationProperties;
@@ -21,7 +22,6 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +34,8 @@ class ConsultationServiceImpl implements ConsultationService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public List<ConsultationDto> findByDoctorId(UUID doctorId) {
-        return doctorService.getByPublicId(doctorId).getConsultations()
+    public List<ConsultationDto> findByDoctorId(HashId doctorId) {
+        return doctorService.getById(doctorId).getConsultations()
                 .stream()
                 .sorted(Comparator.comparing(Consultation::getWorkday))
                 .map(consultationMapper::toDto)
@@ -44,8 +44,8 @@ class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     @Transactional
-    public UUID create(ConsultationCreateDto dto) {
-        Doctor doctor = doctorService.getByPublicId(dto.doctorId());
+    public HashId create(ConsultationCreateDto dto) {
+        Doctor doctor = doctorService.getById(dto.doctorId());
 
         checkExistsByDay(doctor, dto.day());
         validateTime(dto.startTime(), dto.endTime());
@@ -54,13 +54,14 @@ class ConsultationServiceImpl implements ConsultationService {
 
         ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation);
         eventPublisher.publishEvent(new SendEmailEvent<>(consultation.getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto));
-        return consultationRepository.save(consultation).getPublicId();
+        Consultation saved = consultationRepository.save(consultation);
+        return HashId.of(saved.getId());
     }
 
     @Override
     @Transactional
-    public UUID update(UUID id, ConsultationUpdateDto dto) {
-        Consultation consultation = consultationRepository.findByPublicId(id)
+    public HashId update(HashId id, ConsultationUpdateDto dto) {
+        Consultation consultation = consultationRepository.findById(id.value())
                 .orElseThrow(() -> new EntityNotFoundException("Consultation not found"));
 
         LocalTime oldStart = consultation.getStartTime();
@@ -89,8 +90,8 @@ class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     @Transactional
-    public void delete(UUID id) {
-        Optional<Consultation> consultation = consultationRepository.findByPublicId(id);
+    public void delete(HashId id) {
+        Optional<Consultation> consultation = consultationRepository.findById(id.value());
         if (consultation.isEmpty()) {
             throw new EntityNotFoundException("Consultation not found");
         }
@@ -100,12 +101,12 @@ class ConsultationServiceImpl implements ConsultationService {
 
         ScheduleEmailDto emailDto = consultationMapper.toEmailDto(consultation.get());
         eventPublisher.publishEvent(new SendEmailEvent<>(consultation.get().getDoctor().getEmail(), EmailType.SCHEDULE_UPDATE, emailDto));
-        consultationRepository.deleteByPublicId(id);
+        consultationRepository.deleteById(id.value());
     }
 
     private void cancelAppointmentsInRange(Consultation consultation, LocalTime start, LocalTime end) {
         appointmentService.findIdsForCancellation(
-                consultation.getDoctor().getId(),
+                HashId.of(consultation.getDoctor().getId()),
                 consultation.getWorkday(),
                 start,
                 end

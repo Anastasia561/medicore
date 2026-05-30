@@ -26,7 +26,6 @@ public interface RecordMapper {
     RecordForDoctorPreviewDto toDoctorPreviewDto(Record record);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "publicId", ignore = true)
     @Mapping(source = "appointment", target = "appointment")
     Record toEntity(RecordCreateDto recordCreateDto, Appointment appointment);
 }

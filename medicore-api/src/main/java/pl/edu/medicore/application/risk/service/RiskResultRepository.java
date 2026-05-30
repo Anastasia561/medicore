@@ -11,9 +11,9 @@ interface RiskResultRepository extends JpaRepository<RiskResult, Long> {
     @Query("""
                 SELECT r
                 FROM RiskResult r
-                WHERE r.patient.publicId = :patientId
+                WHERE r.patient.id = :patientId
                 ORDER BY r.calculatedAt DESC
                 LIMIT 3
             """)
-    List<RiskResult> getLatestByPatientPublicId(UUID patientId);
+    List<RiskResult> getLatestByPatientPublicId(long patientId);
 }

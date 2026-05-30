@@ -7,37 +7,37 @@ import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.application.consultation.Workday;
 import pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 public interface AppointmentService {
     Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable);
 
-    void cancel(UUID id);
+    void cancel(HashId id);
 
-    UUID create(long patientId, AppointmentCreateDto dto);
+    HashId create(HashId patientId, AppointmentCreateDto dto);
 
-    Appointment getByPublicId(UUID id);
+    Appointment getById(HashId id);
 
-    List<LocalTime> getAvailableTimes(UUID doctorId, LocalDate date);
+    List<LocalTime> getAvailableTimes(HashId doctorId, LocalDate date);
 
     long getTotalAppointmentsToday();
 
-    long getTotalAppointmentsTodayByDoctorId(UUID id);
+    long getTotalAppointmentsTodayByDoctorId(HashId id);
 
     List<ConsultationStatisticsDto> getMonthlyStatistics();
 
-    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(UUID id);
+    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(HashId id);
 
-    long getDistinctPatientsByDoctorId(UUID doctorId);
+    long getDistinctPatientsByDoctorId(HashId doctorId);
 
     List<Appointment> getAllAppointmentByStatusAndDate(Status status, LocalDate date);
 
     void sendReminderAboutAppointmentsBetween(LocalDateTime from, LocalDateTime to);
 
-    List<UUID> findIdsForCancellation(long doctorId, Workday dayOfWeek, LocalTime start, LocalTime end);
+    List<HashId> findIdsForCancellation(HashId doctorId, Workday dayOfWeek, LocalTime start, LocalTime end);
 }
