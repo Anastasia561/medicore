@@ -19,7 +19,7 @@ class PersonServiceImpl implements PersonService {
     public Person getByEmail(String email) {
         Person p = personRepository.findByEmail(email.toLowerCase())
                 .orElseThrow(() -> new EntityNotFoundException("Person not found"));
-        if (p.getStatus() == Status.UNVERIFIED)
+        if (p.getStatus() == UserStatus.UNVERIFIED)
             throw new UserNotVerifiedException("User not verified");
         return p;
     }

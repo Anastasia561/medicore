@@ -1,10 +1,10 @@
 package pl.edu.medicore.application.statistics.dto;
 
-import pl.edu.medicore.application.appointment.Status;
+import pl.edu.medicore.application.appointment.AppointmentStatus;
 
 public record ConsultationStatisticsDto(
         int month,
-        Status status,
+        AppointmentStatus status,
         long count
 ) {
 }

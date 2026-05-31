@@ -12,12 +12,12 @@ import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.email.dto.VerificationEmailDto;
+import pl.edu.medicore.application.person.UserStatus;
 import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.application.email.EmailType;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
-import pl.edu.medicore.application.person.Status;
 import pl.edu.medicore.infrastructure.storage.UrlBuilder;
 import pl.edu.medicore.application.verification.TokenType;
 import pl.edu.medicore.application.verification.VerificationTokenService;
@@ -80,7 +80,7 @@ class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public void updateStatus(String email, Status status) {
+    public void updateStatus(String email, UserStatus status) {
         Patient patient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
         patient.setStatus(status);

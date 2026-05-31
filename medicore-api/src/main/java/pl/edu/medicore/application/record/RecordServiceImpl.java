@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.application.appointment.Appointment;
-import pl.edu.medicore.application.appointment.Status;
+import pl.edu.medicore.application.appointment.AppointmentStatus;
 import pl.edu.medicore.application.appointment.AppointmentService;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.record.dto.RecordCreateDto;
@@ -47,10 +47,10 @@ class RecordServiceImpl implements RecordService {
     @Transactional
     public HashId create(RecordCreateDto dto) {
         Appointment appointment = appointmentService.getById(dto.appointmentId());
-        if (appointment.getStatus() == Status.COMPLETED) {
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
             throw new IllegalStateException("Appointment is already completed");
         }
-        appointment.setStatus(Status.COMPLETED);
+        appointment.setStatus(AppointmentStatus.COMPLETED);
         Record record = recordMapper.toEntity(dto, appointment);
         Record saved = recordRepository.save(record);
         return HashId.of(saved.getId());

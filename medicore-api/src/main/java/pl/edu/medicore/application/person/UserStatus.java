@@ -1,6 +1,6 @@
 package pl.edu.medicore.application.person;
 
-public enum Status {
+public enum UserStatus {
     ACTIVE,
     UNVERIFIED
 }

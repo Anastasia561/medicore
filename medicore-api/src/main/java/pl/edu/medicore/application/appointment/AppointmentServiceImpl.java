@@ -33,7 +33,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -64,10 +63,10 @@ class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public void cancel(HashId id) {
         Appointment appointment = getById(id);
-        if (!appointment.getStatus().equals(Status.SCHEDULED)) {
+        if (!appointment.getStatus().equals(AppointmentStatus.SCHEDULED)) {
             throw new AppointmentCancellationConflictException("Appointment can not be cancelled");
         }
-        appointment.setStatus(Status.CANCELLED);
+        appointment.setStatus(AppointmentStatus.CANCELLED);
 
         AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(appointment);
         eventPublisher.publishEvent(new SendEmailEvent<>(appointment.getPatient().getEmail(),
@@ -161,7 +160,7 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<Appointment> getAllAppointmentByStatusAndDate(Status status, LocalDate date) {
+    public List<Appointment> getAllAppointmentByStatusAndDate(AppointmentStatus status, LocalDate date) {
         return appointmentRepository.findAllByStatusAndDate(status, date);
     }
 

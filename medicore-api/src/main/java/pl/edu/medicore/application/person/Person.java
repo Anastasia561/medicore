@@ -31,7 +31,7 @@ public class Person {
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private UserStatus status;
     @Enumerated(EnumType.STRING)
     private Gender gender;
 }

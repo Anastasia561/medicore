@@ -38,7 +38,7 @@ class AppointmentSpecification {
                 cb.between(root.get("date"), start, end);
     }
 
-    private static Specification<Appointment> hasStatus(Status status) {
+    private static Specification<Appointment> hasStatus(AppointmentStatus status) {
         return (root, query, cb) ->
                 cb.equal(root.get("status"), status);
     }

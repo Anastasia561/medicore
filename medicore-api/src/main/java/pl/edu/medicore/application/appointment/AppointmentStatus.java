@@ -1,6 +1,6 @@
 package pl.edu.medicore.application.appointment;
 
-public enum Status {
+public enum AppointmentStatus {
     SCHEDULED,
     COMPLETED,
     CANCELLED,

@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.edu.medicore.application.appointment.Status;
+import pl.edu.medicore.application.appointment.AppointmentStatus;
 import pl.edu.medicore.application.appointment.AppointmentService;
 
 import java.time.LocalDate;
@@ -19,9 +19,9 @@ public class MissedAppointmentScheduler {
     public void markTodayMissedAppointments() {
         LocalDate today = LocalDate.now();
 
-        appointmentService.getAllAppointmentByStatusAndDate(Status.SCHEDULED, today)
+        appointmentService.getAllAppointmentByStatusAndDate(AppointmentStatus.SCHEDULED, today)
                 .forEach(a -> {
-                    a.setStatus(Status.MISSED);
+                    a.setStatus(AppointmentStatus.MISSED);
                 });
     }
 }

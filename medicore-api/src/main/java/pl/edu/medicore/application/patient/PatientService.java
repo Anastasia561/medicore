@@ -4,10 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
-import pl.edu.medicore.application.person.Status;
+import pl.edu.medicore.application.person.UserStatus;
 import pl.edu.medicore.common.encryption.HashId;
-
-import java.util.UUID;
 
 public interface PatientService {
     Page<PatientResponseDto> findAll(String search, Pageable pageable);
@@ -18,7 +16,7 @@ public interface PatientService {
 
     long register(PatientRegisterDto dto);
 
-    void updateStatus(String email, Status status);
+    void updateStatus(String email, UserStatus status);
 
     long getTotalCount();
 }

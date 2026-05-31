@@ -60,7 +60,7 @@ interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpe
     @Query("""
             SELECT a FROM Appointment a WHERE a.status = :status AND a.date = :date
             """)
-    List<Appointment> findAllByStatusAndDate(Status status, LocalDate date);
+    List<Appointment> findAllByStatusAndDate(AppointmentStatus status, LocalDate date);
 
     @Query(value = """
                 SELECT *

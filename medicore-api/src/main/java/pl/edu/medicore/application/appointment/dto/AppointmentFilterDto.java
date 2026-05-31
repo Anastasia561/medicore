@@ -1,7 +1,7 @@
 package pl.edu.medicore.application.appointment.dto;
 
 import jakarta.validation.constraints.NotNull;
-import pl.edu.medicore.application.appointment.Status;
+import pl.edu.medicore.application.appointment.AppointmentStatus;
 import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.common.encryption.HashId;
 
@@ -14,7 +14,7 @@ public record AppointmentFilterDto(
         LocalDate startDate,
         @NotNull(message = "End date is required")
         LocalDate endDate,
-        Status status,
+        AppointmentStatus status,
         Specialization specialization
 ) {
 }

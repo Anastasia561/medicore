@@ -35,7 +35,7 @@ public interface AppointmentService {
 
     long getDistinctPatientsByDoctorId(HashId doctorId);
 
-    List<Appointment> getAllAppointmentByStatusAndDate(Status status, LocalDate date);
+    List<Appointment> getAllAppointmentByStatusAndDate(AppointmentStatus status, LocalDate date);
 
     void sendReminderAboutAppointmentsBetween(LocalDateTime from, LocalDateTime to);
 
