@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.LabResultsExtractedEvent;
 import pl.edu.medicore.infrastructure.parser.PdfParserService;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
@@ -39,25 +40,27 @@ class LabResultServiceTest {
 
     @Test
     void shouldProcessLabResults_whenInputIsValid() {
-        UUID testPublicId = UUID.randomUUID();
         long testId = 1L;
+        HashId hashId = new HashId(testId);
+        UUID storageKey = UUID.randomUUID();
 
         InputStream mockStream = new ByteArrayInputStream("pdf".getBytes());
         pl.edu.medicore.application.test.Test test = new pl.edu.medicore.application.test.Test();
-        test.setPublicId(testPublicId);
+        test.setId(testId);
+        test.setStorageKey(storageKey);
 
-        when(storageService.getFile(testPublicId)).thenReturn(mockStream);
+        when(storageService.getFile(storageKey)).thenReturn(mockStream);
         when(pdfParserService.extractText(mockStream)).thenReturn("parsed text");
-        when(testService.getById(testId)).thenReturn(test);
+        when(testService.getById(hashId)).thenReturn(test);
 
 
         for (Parameter param : Parameter.values()) {
             when(pdfParserService.parse("parsed text", param)).thenReturn(1.0);
         }
 
-        labResultService.processLabResults(testId);
+        labResultService.processLabResults(hashId);
 
-        verify(storageService).getFile(testPublicId);
+        verify(storageService).getFile(storageKey);
         verify(pdfParserService).extractText(mockStream);
         verify(labResultRepository, times(Parameter.values().length)).save(any(LabResult.class));
         verify(publisher).publishEvent(any(LabResultsExtractedEvent.class));
@@ -66,11 +69,13 @@ class LabResultServiceTest {
     @Test
     void shouldReturnLabResultsByTestId_whenInputIsValid() {
         Long testId = 1L;
+        HashId hashId = HashId.of(testId);
+
         List<LabResult> expected = List.of(new LabResult(), new LabResult());
 
         when(labResultRepository.getLabResultsByTestId(testId)).thenReturn(expected);
 
-        List<LabResult> result = labResultService.getLabResultsByTestId(testId);
+        List<LabResult> result = labResultService.getLabResultsByTestId(hashId);
 
         assertEquals(expected, result);
         verify(labResultRepository).getLabResultsByTestId(testId);
@@ -78,12 +83,13 @@ class LabResultServiceTest {
 
     @Test
     void shouldReturnLabResultsByPatientId_whenInputU() {
-        UUID patientId = UUID.randomUUID();
+        long patientId = 1L;
+        HashId patientHash = HashId.of(patientId);
         List<LabResult> expected = List.of(new LabResult());
 
         when(labResultRepository.getLatestLabResultsByPatientId(patientId)).thenReturn(expected);
 
-        List<LabResult> result = labResultService.getLabResultsByPatientId(patientId);
+        List<LabResult> result = labResultService.getLabResultsByPatientId(patientHash);
 
         assertEquals(expected, result);
         verify(labResultRepository).getLatestLabResultsByPatientId(patientId);

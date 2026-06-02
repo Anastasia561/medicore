@@ -20,14 +20,14 @@ import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
 import pl.edu.medicore.application.person.Gender;
-import pl.edu.medicore.application.person.Status;
+import pl.edu.medicore.application.person.UserStatus;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.storage.UrlBuilder;
 import pl.edu.medicore.application.verification.VerificationTokenService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.Assert.assertThrows;
@@ -60,7 +60,7 @@ class PatientServiceTest {
     @Test
     void shouldReturnAllPatients_whenQueryIsNull() {
         Patient patient = new Patient();
-        PatientResponseDto dto = new PatientResponseDto(UUID.randomUUID(),"John", "Doe", "test@gmail.com",
+        PatientResponseDto dto = new PatientResponseDto(HashId.of(1L), "John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
                 new PatientAddressDto("Poland", "Warsaw", "Street", 10));
 
@@ -80,7 +80,7 @@ class PatientServiceTest {
     @Test
     void shouldReturnAllPatients_whenQueryIsBlank() {
         Patient patient = new Patient();
-        PatientResponseDto dto = new PatientResponseDto(UUID.randomUUID(),"John", "Doe", "test@gmail.com",
+        PatientResponseDto dto = new PatientResponseDto(HashId.of(1L), "John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
                 new PatientAddressDto("Poland", "Warsaw", "Street", 10));
 
@@ -101,7 +101,7 @@ class PatientServiceTest {
     void shouldSearchPatients_whenQueryIsProvided() {
         String query = "john";
         Patient patient = new Patient();
-        PatientResponseDto dto = new PatientResponseDto(UUID.randomUUID(),"John", "Doe", "test@gmail.com",
+        PatientResponseDto dto = new PatientResponseDto(HashId.of(1L), "John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
                 new PatientAddressDto("Poland", "Warsaw", "Street", 10));
 
@@ -121,38 +121,68 @@ class PatientServiceTest {
 
     @Test
     void shouldReturnPatient_whenPatientExists() {
-        UUID id =  UUID.randomUUID();
+        long patientId = 1L;
+        HashId hashId = HashId.of(patientId);
         Patient patient = new Patient();
 
-        when(patientRepository.findByPublicId(id)).thenReturn(Optional.of(patient));
+        when(patientRepository.findById(patientId)).thenReturn(Optional.of(patient));
 
-        Patient result = patientService.getByPublicId(id);
+        Patient result = patientService.getById(hashId);
 
         assertNotNull(result);
         assertEquals(patient, result);
-        verify(patientRepository).findByPublicId(id);
+        verify(patientRepository).findById(patientId);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenPatientNotFound() {
-        UUID id = UUID.randomUUID();
+        long patientId = 1L;
+        HashId hashId = HashId.of(patientId);
 
-        when(patientRepository.findByPublicId(id)).thenReturn(Optional.empty());
+        when(patientRepository.findById(patientId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(
                 EntityNotFoundException.class,
-                () -> patientService.getByPublicId(id)
+                () -> patientService.getById(hashId)
         );
 
         assertEquals("Patient not found", ex.getMessage());
-        verify(patientRepository).findByPublicId(id);
+        verify(patientRepository).findById(patientId);
+    }
+
+    @Test
+    void shouldNotThrowEntityNotFoundException_whenPatientExistsById() {
+        long patientId = 1L;
+        HashId hashId = HashId.of(patientId);
+
+        when(patientRepository.existsById(patientId)).thenReturn(true);
+
+        patientService.checkExistsById(hashId);
+
+        verify(patientRepository).existsById(patientId);
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundException_whenPatientNotFoundByCheckById() {
+        long patientId = 1L;
+        HashId hashId = HashId.of(patientId);
+
+        when(patientRepository.existsById(patientId)).thenReturn(false);
+
+        EntityNotFoundException ex = assertThrows(
+                EntityNotFoundException.class,
+                () -> patientService.checkExistsById(hashId)
+        );
+
+        assertEquals("Patient not found", ex.getMessage());
+        verify(patientRepository).existsById(patientId);
     }
 
     @Test
     void shouldRegisterPatient_whenInputIsValid() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, false,LocalDate.of(2006, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8, false, LocalDate.of(2006, 7, 2), "123", addressDto);
 
         Address address = new Address();
         Patient patient = new Patient();
@@ -181,7 +211,7 @@ class PatientServiceTest {
     void shouldThrowIllegalArgumentException_whenPasswordsDoNotMatch() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass1", "pass2", Gender.MALE, 67.8, 167.9, false,LocalDate.of(2006, 7, 2),
+                "pass1", "pass2", Gender.MALE, 67.8, 167.9, false, LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -197,7 +227,7 @@ class PatientServiceTest {
     void shouldNotSendEmail_whenSavingPatientFails() {
         PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, false,LocalDate.of(2006, 7, 2),
+                "pass", "pass", Gender.MALE, 67.8, 167.8, false, LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         Address address = new Address();
@@ -216,7 +246,7 @@ class PatientServiceTest {
     @Test
     void shouldUpdateStatusAndSendEmail_whenPatientExists() {
         String email = "test@mail.com";
-        Status status = Status.ACTIVE;
+        UserStatus status = UserStatus.ACTIVE;
 
         Patient patient = new Patient();
         patient.setEmail(email);
@@ -241,7 +271,7 @@ class PatientServiceTest {
 
         EntityNotFoundException ex = assertThrows(
                 EntityNotFoundException.class,
-                () -> patientService.updateStatus(email, Status.ACTIVE)
+                () -> patientService.updateStatus(email, UserStatus.ACTIVE)
         );
 
         assertEquals("Patient not found", ex.getMessage());

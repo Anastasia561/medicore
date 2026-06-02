@@ -11,7 +11,8 @@ import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Role;
-import pl.edu.medicore.application.person.Status;
+import pl.edu.medicore.application.person.UserStatus;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -26,10 +27,15 @@ class PatientMapperTest {
     void setUp() throws NoSuchFieldException, IllegalAccessException {
         patientMapper = Mappers.getMapper(PatientMapper.class);
         AddressMapper addressMapper = Mappers.getMapper(AddressMapper.class);
+        HashIdMapper hashIdMapper = new HashIdMapper();
 
         Field field = patientMapper.getClass().getDeclaredField("addressMapper");
         field.setAccessible(true);
         field.set(patientMapper, addressMapper);
+
+        Field hashIdMapperField = patientMapper.getClass().getDeclaredField("hashIdMapper");
+        hashIdMapperField.setAccessible(true);
+        hashIdMapperField.set(patientMapper, hashIdMapper);
     }
 
     @Test
@@ -66,7 +72,7 @@ class PatientMapperTest {
         Patient entity = patientMapper.toEntity(dto);
         assertEquals("John", entity.getFirstName());
         assertEquals("Doe", entity.getLastName());
-        assertEquals(Status.UNVERIFIED, entity.getStatus());
+        assertEquals(UserStatus.UNVERIFIED, entity.getStatus());
         assertEquals(Role.PATIENT, entity.getRole());
         assertEquals("Poland", entity.getAddress().getCity().getCountry().getName());
     }
