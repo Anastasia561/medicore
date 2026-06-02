@@ -19,6 +19,7 @@ import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
+import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.storage.UrlBuilder;
 import pl.edu.medicore.application.verification.TokenType;
 import pl.edu.medicore.application.verification.VerificationTokenService;
@@ -27,7 +28,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,57 +54,63 @@ class DoctorServiceTest {
     @InjectMocks
     private DoctorServiceImpl doctorService;
 
-
     @Test
     void shouldNotThrowEntityNotFoundException_whenDoctorExistsWithCheckById() {
-        UUID doctorId = UUID.randomUUID();
-        when(doctorRepository.existsByPublicId(doctorId)).thenReturn(true);
+        long doctorId = 6L;
+        HashId hashId = new HashId(doctorId);
 
-        assertDoesNotThrow(() -> doctorService.checkExistsById(doctorId));
+        when(doctorRepository.existsById(doctorId)).thenReturn(true);
 
-        verify(doctorRepository).existsByPublicId(doctorId);
+        assertDoesNotThrow(() -> doctorService.checkExistsById(hashId));
+
+        verify(doctorRepository).existsById(doctorId);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistWithCheckById() {
-        UUID doctorId = UUID.randomUUID();
-        when(doctorRepository.existsByPublicId(doctorId)).thenReturn(false);
+        long doctorId = 6L;
+        HashId hashId = new HashId(doctorId);
+
+        when(doctorRepository.existsById(doctorId)).thenReturn(false);
 
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> doctorService.checkExistsById(doctorId)
+                () -> doctorService.checkExistsById(hashId)
         );
 
         assertEquals("Doctor not found", exception.getMessage());
-        verify(doctorRepository).existsByPublicId(doctorId);
+        verify(doctorRepository).existsById(doctorId);
     }
 
     @Test
     void shouldReturnDoctorById_whenDoctorExists() {
-        UUID doctorId = UUID.randomUUID();
+        long doctorId = 6L;
+        HashId hashId = new HashId(doctorId);
+
         Doctor doctor = new Doctor();
 
-        when(doctorRepository.findByPublicId(doctorId)).thenReturn(Optional.of(doctor));
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
 
-        Doctor result = doctorService.getByPublicId(doctorId);
+        Doctor result = doctorService.getById(hashId);
 
         assertEquals(doctor, result);
-        verify(doctorRepository).findByPublicId(doctorId);
+        verify(doctorRepository).findById(doctorId);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistById() {
-        UUID doctorId = UUID.randomUUID();
+        long doctorId = 6L;
+        HashId hashId = new HashId(doctorId);
 
-        when(doctorRepository.findByPublicId(doctorId)).thenReturn(Optional.empty());
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.empty());
 
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> doctorService.getByPublicId(doctorId)
+                () -> doctorService.getById(hashId)
         );
 
         assertEquals("Doctor not found", exception.getMessage());
-        verify(doctorRepository).findByPublicId(doctorId);
+        verify(doctorRepository).findById(doctorId);
     }
 
     @Test
@@ -112,7 +118,7 @@ class DoctorServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Doctor doctor = new Doctor();
-        DoctorResponseDto responseDto = new DoctorResponseDto(UUID.randomUUID(),"John", "Doe", "test@mail.com",
+        DoctorResponseDto responseDto = new DoctorResponseDto(HashId.of(6L), "John", "Doe", "test@mail.com",
                 Specialization.DERMATOLOGIST, 10, LocalDate.of(2023, 10, 10));
 
         Page<Doctor> doctorPage = new PageImpl<>(List.of(doctor));
@@ -136,7 +142,7 @@ class DoctorServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Doctor doctor = new Doctor();
-        DoctorResponseDto responseDto = new DoctorResponseDto(UUID.randomUUID(),"John", "Doe", "test@mail.com",
+        DoctorResponseDto responseDto = new DoctorResponseDto(HashId.of(6L), "John", "Doe", "test@mail.com",
                 Specialization.DERMATOLOGIST, 10, LocalDate.of(2023, 10, 10));
 
         Page<Doctor> doctorPage = new PageImpl<>(List.of(doctor));

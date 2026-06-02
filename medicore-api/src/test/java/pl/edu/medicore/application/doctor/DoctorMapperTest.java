@@ -8,8 +8,10 @@ import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Role;
-import pl.edu.medicore.application.person.Status;
+import pl.edu.medicore.application.person.UserStatus;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,8 +21,13 @@ class DoctorMapperTest {
     private DoctorMapper doctorMapper;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         doctorMapper = Mappers.getMapper(DoctorMapper.class);
+        HashIdMapper hashIdMapper = new HashIdMapper();
+
+        Field hashIdMapperField = doctorMapper.getClass().getDeclaredField("hashIdMapper");
+        hashIdMapperField.setAccessible(true);
+        hashIdMapperField.set(doctorMapper, hashIdMapper);
     }
 
     @Test
@@ -51,7 +58,7 @@ class DoctorMapperTest {
         Doctor entity = doctorMapper.toEntity(dto);
         assertEquals("John", entity.getFirstName());
         assertEquals("Doe", entity.getLastName());
-        assertEquals(Status.ACTIVE, entity.getStatus());
+        assertEquals(UserStatus.ACTIVE, entity.getStatus());
         assertEquals(Role.DOCTOR, entity.getRole());
         assertEquals(Specialization.DERMATOLOGIST, entity.getSpecialization());
     }
