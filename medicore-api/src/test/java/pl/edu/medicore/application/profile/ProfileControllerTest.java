@@ -14,7 +14,6 @@ import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -99,16 +98,16 @@ class ProfileControllerTest extends AbstractIntegrationTest {
         ResultActions resultActions = performRequest(HttpMethod.PUT, "/profiles", dto)
                 .andExpect(status().isOk());
 
-        String publicId = JsonPath.read(
+        String hashId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
         );
 
-        UUID id = UUID.fromString(publicId);
+        long internalId = idObfuscator.decode(hashId);
 
         Doctor doctor = em.createQuery(
-                "SELECT a FROM Doctor a WHERE a.publicId = :publicId",
-                Doctor.class).setParameter("publicId", id).getSingleResult();
+                "SELECT a FROM Doctor a WHERE a.id = :id",
+                Doctor.class).setParameter("id", internalId).getSingleResult();
 
         assertEquals("TestF", doctor.getFirstName());
         assertEquals("TestL", doctor.getLastName());
@@ -160,16 +159,16 @@ class ProfileControllerTest extends AbstractIntegrationTest {
         ResultActions resultActions = performRequest(HttpMethod.PUT, "/profiles/patient", dto)
                 .andExpect(status().isOk());
 
-        String publicId = JsonPath.read(
+        String hashId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
         );
 
-        UUID id = UUID.fromString(publicId);
+        long internalId = idObfuscator.decode(hashId);
 
         Patient patient = em.createQuery(
-                "SELECT a FROM Patient a WHERE a.publicId = :publicId",
-                Patient.class).setParameter("publicId", id).getSingleResult();
+                "SELECT a FROM Patient a WHERE a.id = :id",
+                Patient.class).setParameter("id", internalId).getSingleResult();
 
         assertEquals("testF", patient.getFirstName());
         assertEquals("testL", patient.getLastName());

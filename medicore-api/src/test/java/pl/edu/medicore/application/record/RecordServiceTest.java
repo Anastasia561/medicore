@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import pl.edu.medicore.application.appointment.Appointment;
-import pl.edu.medicore.application.appointment.Status;
+import pl.edu.medicore.application.appointment.AppointmentStatus;
 import pl.edu.medicore.application.appointment.AppointmentService;
 import pl.edu.medicore.application.doctor.dto.DoctorForRecordDto;
 import pl.edu.medicore.application.doctor.Specialization;
@@ -24,11 +24,11 @@ import pl.edu.medicore.application.record.dto.RecordFilterDto;
 import pl.edu.medicore.application.record.dto.RecordForDoctorPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordForPatientPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordPreviewDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -53,7 +53,9 @@ class RecordServiceTest {
 
     @Test
     void shouldReturnRecordDto_whenRecordExists() {
-        UUID appointmentId = UUID.randomUUID();
+        long appointmentId = 1L;
+        HashId appointmentHash = HashId.of(appointmentId);
+
         DoctorForRecordDto doctor = new DoctorForRecordDto("fTest", "fLast", Specialization.DERMATOLOGIST);
         PatientForRecordDto patient = new PatientForRecordDto("fTest", "fLast", "test@gmail.com");
 
@@ -61,92 +63,99 @@ class RecordServiceTest {
         RecordDto dto = new RecordDto(doctor, patient, LocalDate.of(2026, 10, 2), "Test",
                 "Test summary", List.of());
 
-        when(recordRepository.findByAppointmentPublicId(appointmentId)).thenReturn(Optional.of(record));
+        when(recordRepository.findByAppointmentId(appointmentId)).thenReturn(Optional.of(record));
         when(recordMapper.toDto(record)).thenReturn(dto);
 
-        RecordDto result = recordService.getByAppointmentId(appointmentId);
+        RecordDto result = recordService.getByAppointmentId(appointmentHash);
 
         assertEquals(result, dto);
-        verify(recordRepository).findByAppointmentPublicId(appointmentId);
+        verify(recordRepository).findByAppointmentId(appointmentId);
         verify(recordMapper).toDto(record);
         verifyNoInteractions(appointmentService);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenRecordNotFoundByAppointmentId() {
-        UUID appointmentId = UUID.randomUUID();
+        long appointmentId = 1L;
+        HashId appointmentHash = HashId.of(appointmentId);
 
-        when(recordRepository.findByAppointmentPublicId(appointmentId)).thenReturn(Optional.empty());
+        when(recordRepository.findByAppointmentId(appointmentId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = Assertions.assertThrows(EntityNotFoundException.class,
-                () -> recordService.getByAppointmentId(appointmentId));
+                () -> recordService.getByAppointmentId(appointmentHash));
 
         assertEquals("Record not found", ex.getMessage());
-        verify(recordRepository).findByAppointmentPublicId(appointmentId);
+        verify(recordRepository).findByAppointmentId(appointmentId);
         verifyNoInteractions(recordMapper, appointmentService);
     }
 
     @Test
     void shouldReturnRecordDtoById_whenRecordExists() {
-        UUID id = UUID.randomUUID();
+        long id = 1L;
+        HashId hashId = HashId.of(id);
         Record record = new Record();
 
-        when(recordRepository.findByPublicId(id)).thenReturn(Optional.of(record));
+        when(recordRepository.findById(id)).thenReturn(Optional.of(record));
 
-        Record result = recordService.getByPublicId(id);
+        Record result = recordService.getById(hashId);
 
         assertEquals(result, record);
-        verify(recordRepository).findByPublicId(id);
+        verify(recordRepository).findById(id);
         verifyNoInteractions(appointmentService, recordMapper);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenRecordNotFoundById() {
-        UUID id = UUID.randomUUID();
+        long id = 1L;
+        HashId hashId = HashId.of(id);
 
-        when(recordRepository.findByPublicId(id)).thenReturn(Optional.empty());
+        when(recordRepository.findById(id)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = Assertions.assertThrows(EntityNotFoundException.class,
-                () -> recordService.getByPublicId(id));
+                () -> recordService.getById(hashId));
 
         assertEquals("Record not found", ex.getMessage());
-        verify(recordRepository).findByPublicId(id);
+        verify(recordRepository).findById(id);
         verifyNoInteractions(recordMapper, appointmentService);
     }
 
     @Test
     void shouldCreateRecord_whenAppointmentNotCompleted() {
-        UUID appointmentId = UUID.randomUUID();
-        RecordCreateDto dto = new RecordCreateDto(appointmentId, "test diagnosis", "test summary");
+        long appointmentId = 1L;
+        HashId appointmentHash = HashId.of(appointmentId);
+
+        RecordCreateDto dto = new RecordCreateDto(appointmentHash, "test diagnosis", "test summary");
 
         Appointment appointment = new Appointment();
-        appointment.setStatus(Status.SCHEDULED);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
 
         Record record = new Record();
         record.setId(10L);
 
-        when(appointmentService.getByPublicId(appointmentId)).thenReturn(appointment);
+        when(appointmentService.getById(appointmentHash)).thenReturn(appointment);
         when(recordMapper.toEntity(dto, appointment)).thenReturn(record);
         when(recordRepository.save(record)).thenReturn(record);
 
         recordService.create(dto);
 
-        assertThat(appointment.getStatus()).isEqualTo(Status.COMPLETED);
+        assertThat(appointment.getStatus()).isEqualTo(AppointmentStatus.COMPLETED);
 
-        verify(appointmentService).getByPublicId(appointmentId);
+        verify(appointmentService).getById(appointmentHash);
         verify(recordMapper).toEntity(dto, appointment);
         verify(recordRepository).save(record);
     }
 
     @Test
     void shouldThrowIllegalStateException_whenAppointmentAlreadyCompleted() {
-        UUID appointmentId = UUID.randomUUID();
-        RecordCreateDto dto = new RecordCreateDto(appointmentId, "test diagnosis", "test summary");
+        long appointmentId = 1L;
+        HashId appointmentHash = HashId.of(appointmentId);
+
+        RecordCreateDto dto = new RecordCreateDto(appointmentHash, "test diagnosis", "test summary");
 
         Appointment appointment = new Appointment();
-        appointment.setStatus(Status.COMPLETED);
+        appointment.setStatus(AppointmentStatus.COMPLETED);
 
-        when(appointmentService.getByPublicId(appointmentId)).thenReturn(appointment);
+        when(appointmentService.getById(appointmentHash)).thenReturn(appointment);
 
         IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class,
                 () -> recordService.create(dto));
@@ -165,7 +174,7 @@ class RecordServiceTest {
         when(filter.endDate()).thenReturn(LocalDate.now().minusDays(1));
 
         IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> recordService.getAllById(1L, Role.PATIENT, filter, pageable));
+                () -> recordService.getAllByPersonId(HashId.of(1L), Role.PATIENT, filter, pageable));
 
         assertEquals("Start date should be before end date", ex.getMessage());
         verifyNoInteractions(recordMapper, recordRepository);
@@ -186,7 +195,7 @@ class RecordServiceTest {
         when(recordRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(records);
         when(recordMapper.toDoctorPreviewDto(record)).thenReturn(dto);
 
-        Page<RecordPreviewDto> result = recordService.getAllById(1L, Role.DOCTOR, filter, pageable);
+        Page<RecordPreviewDto> result = recordService.getAllByPersonId(HashId.of(1L), Role.DOCTOR, filter, pageable);
 
         assertThat(result.getContent().size()).isEqualTo(1);
 
@@ -209,7 +218,7 @@ class RecordServiceTest {
         when(recordRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(records);
         when(recordMapper.toPatientPreviewDto(record)).thenReturn(dto);
 
-        Page<RecordPreviewDto> result = recordService.getAllById(1L, Role.PATIENT, filter, pageable);
+        Page<RecordPreviewDto> result = recordService.getAllByPersonId(HashId.of(1L), Role.PATIENT, filter, pageable);
 
         assertThat(result.getContent().size()).isEqualTo(1);
 

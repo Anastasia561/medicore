@@ -7,9 +7,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -21,9 +21,8 @@ class PrescriptionControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenCreatePrescriptionAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("20000000-0000-0000-0000-000000000001");
 
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(id, "test medicine", "10mg",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "test medicine", "10mg",
                 LocalDate.of(2026, 12, 3), null, "daily");
 
         performRequest(HttpMethod.POST, "/prescriptions", dto)
@@ -32,8 +31,7 @@ class PrescriptionControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenCreatePrescriptionWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("20000000-0000-0000-0000-000000000001");
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(id, "test medicine", "10mg",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "test medicine", "10mg",
                 LocalDate.of(2026, 12, 3), null, "daily");
 
         mockMvc.perform(post("/prescriptions", dto)
@@ -44,9 +42,8 @@ class PrescriptionControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenValidationErrorsInCreateDto() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        UUID id = UUID.fromString("20000000-0000-0000-0000-000000000001");
 
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(id, "", null,
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "", null,
                 LocalDate.of(2026, 12, 3), null, "daily");
 
         performRequest(HttpMethod.POST, "/prescriptions", dto)
@@ -59,24 +56,23 @@ class PrescriptionControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldCreateConsultation_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        UUID prescriptionId = UUID.fromString("20000000-0000-0000-0000-000000000001");
 
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(prescriptionId, "test medicine", "10mg",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "test medicine", "10mg",
                 LocalDate.of(2026, 12, 3), null, "daily");
 
         ResultActions resultActions = performRequest(HttpMethod.POST, "/prescriptions", dto)
                 .andExpect(status().isCreated());
 
-        String publicId = JsonPath.read(
+        String hashId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
         );
 
-        UUID id = UUID.fromString(publicId);
+        long id = idObfuscator.decode(hashId);
 
         Prescription prescription = em.createQuery(
-                "SELECT a FROM Prescription a WHERE a.publicId = :publicId",
-                Prescription.class).setParameter("publicId", id).getSingleResult();
+                "SELECT a FROM Prescription a WHERE a.id = :id",
+                Prescription.class).setParameter("id", id).getSingleResult();
 
         assertEquals("test medicine", prescription.getMedicine());
         assertEquals("10mg", prescription.getDosage());
@@ -86,9 +82,8 @@ class PrescriptionControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenEndTimeBeforeStartTime() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        UUID id = UUID.fromString("20000000-0000-0000-0000-000000000001");
 
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(id, "test medicine", "10mg",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "test medicine", "10mg",
                 LocalDate.of(2026, 12, 3), LocalDate.of(2026, 11, 9),
                 "daily");
 

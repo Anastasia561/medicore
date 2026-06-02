@@ -8,9 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
 import pl.edu.medicore.application.record.Record;
 import pl.edu.medicore.application.record.RecordService;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,26 +31,26 @@ class PrescriptionServiceTest {
 
     @Test
     void shouldCreatePrescription_whenInputIsValid() {
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(UUID.randomUUID(), "Test medicine",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "Test medicine",
                 "10g", LocalDate.of(2026, 10, 2), null, "daily");
 
         Record record = new Record();
         Prescription prescription = new Prescription();
         prescription.setId(10L);
-        when(recordService.getByPublicId(dto.recordId())).thenReturn(record);
+        when(recordService.getById(dto.recordId())).thenReturn(record);
         when(prescriptionMapper.toEntity(dto, record)).thenReturn(prescription);
         when(prescriptionRepository.save(prescription)).thenReturn(prescription);
 
-         prescriptionService.create(dto);
+        prescriptionService.create(dto);
 
-        verify(recordService).getByPublicId(dto.recordId());
+        verify(recordService).getById(dto.recordId());
         verify(prescriptionMapper).toEntity(dto, record);
         verify(prescriptionRepository).save(prescription);
     }
 
     @Test
     void shouldThrowIllegalArgumentException_whenStartDateAfterEndDateForCreate() {
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(UUID.randomUUID(), "Test medicine",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "Test medicine",
                 "10g", LocalDate.of(2026, 10, 2),
                 LocalDate.of(2026, 10, 1), "daily");
 

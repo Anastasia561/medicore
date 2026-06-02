@@ -11,10 +11,10 @@ import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordForDoctorPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordForPatientPreviewDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -90,7 +90,7 @@ class RecordMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        RecordCreateDto dto = new RecordCreateDto(UUID.randomUUID(), "Test diagnosis",
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "Test diagnosis",
                 "Test summary");
         Appointment appointment = new Appointment();
 

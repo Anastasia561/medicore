@@ -7,8 +7,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.record.dto.RecordCreateDto;
-
-import java.util.UUID;
+import pl.edu.medicore.common.encryption.HashId;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -21,7 +20,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnRecordByAppointmentId_whenRequestedAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000012");
+        String id = idObfuscator.encode(12L);
 
         performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
                 .andExpect(status().isOk())
@@ -40,7 +39,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedRecordWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
         mockMvc.perform(get("/records/appointment/{appointmentId}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
@@ -49,7 +48,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedRecordAsAdmin() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
 
         performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
                 .andExpect(status().isForbidden());
@@ -58,7 +57,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn404_whenRecordNotFound() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000106");
+        String id = idObfuscator.encode(106L);
 
         performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
                 .andExpect(status().isNotFound())
@@ -68,8 +67,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenCreateRecordAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000001");
-        RecordCreateDto dto = new RecordCreateDto(id, "test diagnosis", "test summary");
+
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary");
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isForbidden());
@@ -77,8 +76,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenCreateConsultationWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000001");
-        RecordCreateDto dto = new RecordCreateDto(id, "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary");
 
         mockMvc.perform(post("/records", dto)
                         .header("Authorization", "Bearer invalid-token"))
@@ -100,8 +98,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenAppointmentAlreadyCompleted() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000003");
-        RecordCreateDto dto = new RecordCreateDto(id, "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(3L), "test diagnosis", "test summary");
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isBadRequest())
@@ -111,23 +108,22 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldCreateRecord_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        UUID appId = UUID.fromString("10000000-0000-0000-0000-000000000001");
 
-        RecordCreateDto dto = new RecordCreateDto(appId, "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary");
 
         ResultActions resultActions = performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isCreated());
 
-        String publicId = JsonPath.read(
+        String hashId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
         );
 
-        UUID id = UUID.fromString(publicId);
+        long internalId = idObfuscator.decode(hashId);
 
         Record record = em.createQuery(
-                "SELECT a FROM Record a WHERE a.publicId = :publicId",
-                Record.class).setParameter("publicId", id).getSingleResult();
+                "SELECT a FROM Record a WHERE a.id = :id",
+                Record.class).setParameter("id", internalId).getSingleResult();
 
         assertEquals("test diagnosis", record.getDiagnosis());
         assertEquals("test summary", record.getSummary());
