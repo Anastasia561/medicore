@@ -7,7 +7,6 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
@@ -23,10 +22,10 @@ import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
 import pl.edu.medicore.application.auth.dto.AuthRequestDto;
 import pl.edu.medicore.application.auth.AuthService;
+import pl.edu.medicore.common.encryption.IdObfuscatorService;
 import pl.edu.medicore.config.AWSTestConfig;
 import pl.edu.medicore.config.PostgreSQLTestContainersConfig;
 import pl.edu.medicore.application.person.Role;
-import software.amazon.awssdk.services.s3.S3Client;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -58,10 +57,7 @@ public abstract class AbstractIntegrationTest {
     protected EntityManager em;
 
     @Autowired
-    protected S3Client s3Client;
-
-    @Value("${app.aws.s3.bucket}")
-    protected String bucketName;
+    protected IdObfuscatorService idObfuscator;
 
     @RegisterExtension
     protected static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)

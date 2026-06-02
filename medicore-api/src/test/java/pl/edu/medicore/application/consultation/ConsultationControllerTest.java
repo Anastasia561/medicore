@@ -9,10 +9,10 @@ import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
 import pl.edu.medicore.application.person.Role;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +28,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldGetAllDoctorConsultations_whenConsultationsExist() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
 
         performRequest(HttpMethod.GET, "/consultations/doctor/{id}", null, id)
                 .andExpect(status().isOk())
@@ -41,7 +41,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedConsultationsForDoctorWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
         mockMvc.perform(get("/consultations/doctor/{id}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
@@ -50,9 +50,8 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenCreateConsultationAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000006");
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(id, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(HashId.of(6L), Workday.FRIDAY,
                 LocalTime.of(10, 0), LocalTime.of(12, 0));
 
         performRequest(HttpMethod.POST, "/consultations", dto)
@@ -61,9 +60,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenCreateConsultationWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("10000000-0000-0000-0000-000000000006");
-
-        ConsultationCreateDto dto = new ConsultationCreateDto(id, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(HashId.of(6L), Workday.FRIDAY,
                 LocalTime.of(10, 0), LocalTime.of(12, 0));
 
         mockMvc.perform(post("/consultations", dto, 6)
@@ -87,24 +84,23 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldCreateConsultation_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.THURSDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(HashId.of(7L), Workday.THURSDAY,
                 LocalTime.of(10, 0), LocalTime.of(12, 0));
 
         ResultActions resultActions = performRequest(HttpMethod.POST, "/consultations", dto)
                 .andExpect(status().isCreated());
 
-        String publicId = JsonPath.read(
+        String hashId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
         );
 
-        UUID id = UUID.fromString(publicId);
+        Long internalId = idObfuscator.decode(hashId);
 
         Consultation consultation = em.createQuery(
-                "SELECT a FROM Consultation a WHERE a.publicId = :id",
-                Consultation.class).setParameter("id", id).getSingleResult();
+                "SELECT a FROM Consultation a WHERE a.id = :id",
+                Consultation.class).setParameter("id", internalId).getSingleResult();
 
         assertEquals(Workday.THURSDAY, consultation.getWorkday());
         assertEquals(LocalTime.of(10, 0), consultation.getStartTime());
@@ -124,22 +120,21 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn409_whenConsultationExistsForProvidedDay() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000006");
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(HashId.of(6L), Workday.FRIDAY,
                 LocalTime.of(10, 0), LocalTime.of(12, 0));
 
         performRequest(HttpMethod.POST, "/consultations", dto)
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error.message").value("Doctor has consultation schedule for selected day"));
+                .andExpect(jsonPath("$.error.message")
+                        .value("Doctor has consultation schedule for selected day"));
     }
 
     @Test
     void shouldReturn400_whenEndTimeBeforeStartTime() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID doctorId = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.THURSDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(HashId.of(7L), Workday.THURSDAY,
                 LocalTime.of(10, 0), LocalTime.of(9, 0));
 
         performRequest(HttpMethod.POST, "/consultations", dto)
@@ -150,7 +145,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenUpdateConsultationAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000005");
+        String consultationId = idObfuscator.encode(5L);
 
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0), LocalTime.of(12, 0));
 
@@ -160,7 +155,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenUpdateConsultationWithInvalidToken() throws Exception {
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000005");
+        String consultationId = idObfuscator.encode(5L);
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0), LocalTime.of(12, 0));
 
         mockMvc.perform(put("/consultations/{consultationId}", dto, consultationId)
@@ -171,7 +166,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenValidationErrorsInUpdate() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000005");
+        String consultationId = idObfuscator.encode(5L);
 
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0), null);
         performRequest(HttpMethod.PUT, "/consultations/{consultationId}", dto, consultationId)
@@ -184,7 +179,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldUpdateConsultation_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000005");
+        String consultationId = idObfuscator.encode(5L);
 
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0), LocalTime.of(12, 0));
 
@@ -210,7 +205,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn404_whenConsultationNotFoundForUpdate() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000105");
+        String consultationId = idObfuscator.encode(105L);
 
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0), LocalTime.of(12, 0));
         performRequest(HttpMethod.PUT, "/consultations/{consultationId}", dto, consultationId)
@@ -221,7 +216,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenDeleteConsultationAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000005");
+        String consultationId = idObfuscator.encode(5L);
 
         performRequest(HttpMethod.DELETE, "/consultations/{consultationId}", null, consultationId)
                 .andExpect(status().isForbidden());
@@ -229,7 +224,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenDeleteConsultationWithInvalidToken() throws Exception {
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000005");
+        String consultationId = idObfuscator.encode(5L);
         mockMvc.perform(delete("/consultations/{consultationId}", consultationId)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
@@ -238,7 +233,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn404_whenConsultationNotFoundForDelete() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000105");
+        String consultationId = idObfuscator.encode(105L);
 
         performRequest(HttpMethod.DELETE, "/consultations/{consultationId}", null, consultationId)
                 .andExpect(status().isNotFound())
@@ -248,15 +243,16 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldDeleteConsultation_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID consultationId = UUID.fromString("40000000-0000-0000-0000-000000000001");
+        String consultationId = idObfuscator.encode(5L);
+        Long internalId = idObfuscator.decode(consultationId);
 
         performRequest(HttpMethod.DELETE, "/consultations/{consultationId}", null, consultationId)
                 .andExpect(status().isNoContent());
 
         List<Consultation> result = em.createQuery(
-                        "SELECT a FROM Consultation a WHERE a.publicId = :publicId",
+                        "SELECT a FROM Consultation a WHERE a.id = :id",
                         Consultation.class)
-                .setParameter("publicId", consultationId)
+                .setParameter("id", internalId)
                 .getResultList();
 
         assertTrue(result.isEmpty());

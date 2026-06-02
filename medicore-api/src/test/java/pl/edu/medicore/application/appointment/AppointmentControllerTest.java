@@ -26,7 +26,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldGetAppointmentPageForPatient_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = "RVMg8o0m";
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", null, id)
                 .andExpect(status().isOk())
@@ -40,7 +40,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldGetAppointmentPageForDoctor_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        String id = "E4M2ypvn";
+        String id = idObfuscator.encode(6L);
 
         performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", null, id)
                 .andExpect(status().isOk())
@@ -57,7 +57,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldGetAppointmentPageForPatientWithStatusFiltering_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = "RVMg8o0m";
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10&status=SCHEDULED",
                 null, id)
@@ -74,7 +74,8 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedAppointmentsWithInvalidToken() throws Exception {
-        mockMvc.perform(get("/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", "RVMg8o0m")
+        String id = idObfuscator.encode(1L);
+        mockMvc.perform(get("/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
     }
@@ -82,7 +83,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenRequiredParamIsNotPresent() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        String id = "RVMg8o0m";
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10", null, id)
                 .andExpect(status().isBadRequest())
@@ -94,7 +95,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenGetAppointmentsWithInvalidDateRange() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = "VKMANoXR";
+        String id = idObfuscator.encode(7L);
 
         performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-03-10&endDate=2026-01-10", null,
                 id)
@@ -104,7 +105,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenCancelAppointmentWithInvalidToken() throws Exception {
-        String id = "VKMANoXR";
+        String id = idObfuscator.encode(7L);
         mockMvc.perform(put("/appointments/cancel/{id}", id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
@@ -113,7 +114,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn409_whenCancelCompletedAppointment() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = "J5eJ0MvB";
+        String id = idObfuscator.encode(3L);
 
         performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, id)
                 .andExpect(status().isConflict())
@@ -123,7 +124,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn409_whenCancelCancelledAppointment() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = "xqMXwpnj";
+        String id = idObfuscator.encode(4L);
 
         performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, id)
                 .andExpect(status().isConflict())
@@ -133,7 +134,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn404_whenAppointmentNotFound() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = "bkev1oYE";
+        String id = idObfuscator.encode(105L);
 
         performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, id)
                 .andExpect(status().isNotFound())
@@ -143,7 +144,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldCancelAppointment_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = "RVMg8o0m";
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.PUT, "/appointments/cancel/{id}", null, id)
                 .andExpect(status().isOk());

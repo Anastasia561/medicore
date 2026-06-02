@@ -74,6 +74,7 @@ interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpe
     @Query(value = """ 
             SELECT id FROM appointment
             WHERE doctor_id = :doctorId
+            AND status = 'SCHEDULED'
             AND date >= CURRENT_DATE
             AND TRIM(TO_CHAR(date, 'DAY')) = :dayOfWeek
             AND time >= :start AND time < :end

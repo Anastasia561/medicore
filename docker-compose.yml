@@ -8,10 +8,11 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
+      - SALT=${SALT}
       - RESOURCE_SERVER_URL=${RESOURCE_SERVER_URL}
       - EMAIL_USERNAME=${EMAIL_USERNAME}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
-      - BASE_URL=${BASE_URL}
+      - FRONT_BASE_URL=${FRONT_BASE_URL}
       - AWS_S3_REGION=${AWS_S3_REGION}
       - AWS_S3_BUCKET=${AWS_S3_BUCKET}
     ports:
@@ -31,7 +32,7 @@ services:
       - ./medicore-front:/app
       - /app/node_modules
     environment:
-      - VITE_API_BASE_URL=${API_BASE_URL}
+      - VITE_API_BASE_URL=${RESOURCE_SERVER_URL}
     depends_on:
       - app
 

@@ -16,12 +16,12 @@ import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.DoctorService;
 import pl.edu.medicore.application.email.dto.ScheduleEmailDto;
 import pl.edu.medicore.common.config.properties.ConsultationProperties;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,56 +50,57 @@ class ConsultationServiceTest {
 
     @Test
     void shouldReturnConsultationsByDoctorId_whenInputIsValid() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = new HashId(1L);
+
         Consultation consultation = new Consultation();
         Doctor doctor = new Doctor();
         doctor.setConsultations(Set.of(consultation));
 
-        ConsultationDto dto = new ConsultationDto(UUID.randomUUID(), Workday.FRIDAY, LocalTime.of(10, 30),
+        ConsultationDto dto = new ConsultationDto(hashId, Workday.FRIDAY, LocalTime.of(10, 30),
                 LocalTime.of(11, 0));
 
         when(consultationMapper.toDto(consultation)).thenReturn(dto);
-        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
-        List<ConsultationDto> result = consultationService.findByDoctorId(doctorId);
+        when(doctorService.getById(hashId)).thenReturn(doctor);
+        List<ConsultationDto> result = consultationService.findByDoctorId(hashId);
 
         assertEquals(1, result.size());
         assertEquals(dto, result.getFirst());
 
-        verify(doctorService).getByPublicId(doctorId);
+        verify(doctorService).getById(hashId);
         verify(consultationMapper).toDto(consultation);
     }
 
     @Test
     void shouldReturnEmptyList_whenNoConsultations() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = HashId.of(1L);
 
-        when(doctorService.getByPublicId(doctorId)).thenReturn(new Doctor());
+        when(doctorService.getById(hashId)).thenReturn(new Doctor());
 
-        List<ConsultationDto> result = consultationService.findByDoctorId(doctorId);
+        List<ConsultationDto> result = consultationService.findByDoctorId(hashId);
         assertTrue(result.isEmpty());
 
-        verify(doctorService).getByPublicId(doctorId);
+        verify(doctorService).getById(hashId);
         verifyNoInteractions(consultationMapper);
     }
 
     @Test
     void shouldThrowException_whenDoctorDoesNotExist() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = HashId.of(1L);
 
-        doThrow(new RuntimeException("Doctor not found")).when(doctorService).getByPublicId(doctorId);
-        assertThrows(RuntimeException.class, () -> consultationService.findByDoctorId(doctorId));
+        doThrow(new RuntimeException("Doctor not found")).when(doctorService).getById(hashId);
+        assertThrows(RuntimeException.class, () -> consultationService.findByDoctorId(hashId));
 
-        verify(doctorService).getByPublicId(doctorId);
+        verify(doctorService).getById(hashId);
         verifyNoInteractions(consultationRepository);
         verifyNoInteractions(consultationMapper);
     }
 
     @Test
     void shouldCreateConsultation_whenInputIsValid() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = HashId.of(1L);
 
         ConsultationCreateDto dto = new ConsultationCreateDto(
-                doctorId,
+                hashId,
                 Workday.FRIDAY,
                 LocalTime.of(10, 0),
                 LocalTime.of(11, 0)
@@ -119,7 +120,7 @@ class ConsultationServiceTest {
 
         ScheduleEmailDto emailDto = new ScheduleEmailDto(Workday.FRIDAY, "John", "Doe");
 
-        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
+        when(doctorService.getById(hashId)).thenReturn(doctor);
         when(consultationMapper.toEntity(dto, doctor)).thenReturn(consultation);
         when(consultationMapper.toEmailDto(consultation)).thenReturn(emailDto);
         when(consultationRepository.save(consultation)).thenReturn(consultation);
@@ -128,7 +129,7 @@ class ConsultationServiceTest {
 
         consultationService.create(dto);
 
-        verify(doctorService).getByPublicId(doctorId);
+        verify(doctorService).getById(hashId);
         verify(consultationMapper).toEntity(dto, doctor);
         verify(consultationMapper).toEmailDto(consultation);
         verify(consultationRepository).save(consultation);
@@ -136,16 +137,16 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowEntityExistsExceptionException_whenDayAlreadyExists() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = HashId.of(1L);
 
         Doctor doctor = new Doctor();
         Consultation c = new Consultation();
         c.setWorkday(Workday.FRIDAY);
         doctor.setConsultations(Set.of(c));
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(hashId, Workday.FRIDAY,
                 LocalTime.of(10, 0), LocalTime.of(11, 0));
-        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
+        when(doctorService.getById(hashId)).thenReturn(doctor);
 
         EntityExistsException ex = assertThrows(EntityExistsException.class,
                 () -> consultationService.create(dto));
@@ -156,17 +157,17 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenEndTimeBeforeStartTimeForCreate() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = HashId.of(1L);
 
         Doctor doctor = new Doctor();
         Consultation c = new Consultation();
         c.setWorkday(Workday.THURSDAY);
         doctor.setConsultations(Set.of(c));
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(hashId, Workday.FRIDAY,
                 LocalTime.of(12, 0), LocalTime.of(11, 0));
 
-        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
+        when(doctorService.getById(hashId)).thenReturn(doctor);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> consultationService.create(dto));
@@ -177,17 +178,17 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenEndTimeNotInValidRangeForCreate() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = HashId.of(1L);
 
         Doctor doctor = new Doctor();
         Consultation c = new Consultation();
         c.setWorkday(Workday.THURSDAY);
         doctor.setConsultations(Set.of(c));
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(hashId, Workday.FRIDAY,
                 LocalTime.of(12, 0), LocalTime.of(21, 0));
 
-        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
+        when(doctorService.getById(hashId)).thenReturn(doctor);
         when(consultationProperties.getEnd()).thenReturn(LocalTime.of(18, 0));
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> consultationService.create(dto));
@@ -198,17 +199,17 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenStartTimeNotInValidRangeForCreate() {
-        UUID doctorId = UUID.randomUUID();
+        HashId hashId = HashId.of(1L);
 
         Doctor doctor = new Doctor();
         Consultation c = new Consultation();
         c.setWorkday(Workday.THURSDAY);
         doctor.setConsultations(Set.of(c));
 
-        ConsultationCreateDto dto = new ConsultationCreateDto(doctorId, Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(hashId, Workday.FRIDAY,
                 LocalTime.of(6, 0), LocalTime.of(11, 0));
 
-        when(doctorService.getByPublicId(doctorId)).thenReturn(doctor);
+        when(doctorService.getById(hashId)).thenReturn(doctor);
         when(consultationProperties.getEnd()).thenReturn(LocalTime.of(18, 0));
         when(consultationProperties.getStart()).thenReturn(LocalTime.of(8, 0));
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -220,26 +221,29 @@ class ConsultationServiceTest {
 
     @Test
     void shouldThrowEntityNotFoundException_whenConsultationDoesNotExistForUpdate() {
-        UUID consultationId = UUID.randomUUID();
+        long consultationId = 1L;
+        HashId hashId = HashId.of(consultationId);
 
         ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0),
                 LocalTime.of(11, 0));
 
-        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.empty());
+        when(consultationRepository.findById(consultationId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> consultationService.update(consultationId, dto));
+                () -> consultationService.update(hashId, dto));
 
         assertEquals("Consultation not found", ex.getMessage());
-        verify(consultationRepository).findByPublicId(consultationId);
+        verify(consultationRepository).findById(consultationId);
         verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
     void shouldUpdateConsultationSuccessfully() {
-        UUID consultationId = UUID.randomUUID();
+        long consultationId = 1L;
+        HashId hashId = HashId.of(consultationId);
 
-        ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0), LocalTime.of(11, 0));
+        ConsultationUpdateDto dto = new ConsultationUpdateDto(LocalTime.of(10, 0),
+                LocalTime.of(11, 0));
 
         Doctor doctor = new Doctor();
         doctor.setId(1L);
@@ -254,40 +258,43 @@ class ConsultationServiceTest {
 
         ScheduleEmailDto emailDto = new ScheduleEmailDto(Workday.FRIDAY, doctor.getFirstName(), doctor.getLastName());
 
-        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.of(consultation));
+        when(consultationRepository.findById(consultationId)).thenReturn(Optional.of(consultation));
         when(consultationMapper.toEmailDto(consultation)).thenReturn(emailDto);
         when(consultationProperties.getEnd()).thenReturn(LocalTime.of(18, 0));
         when(consultationProperties.getStart()).thenReturn(LocalTime.of(8, 0));
 
-        UUID result = consultationService.update(consultationId, dto);
+        HashId result = consultationService.update(hashId, dto);
 
-        assertEquals(consultationId, result);
-        verify(consultationRepository).findByPublicId(consultationId);
+        assertEquals(hashId, result);
+        verify(consultationRepository).findById(consultationId);
         verify(consultationMapper).updateConsultationFromDto(dto, consultation);
         verify(consultationMapper).toEmailDto(consultation);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenConsultationDoesNotExistForDelete() {
-        UUID consultationId = UUID.randomUUID();
+        long consultationId = 1L;
+        HashId hashId = HashId.of(consultationId);
 
         new ConsultationUpdateDto(LocalTime.of(10, 0),
                 LocalTime.of(11, 0));
 
-        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.empty());
+        when(consultationRepository.findById(consultationId)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> consultationService.delete(consultationId));
+                () -> consultationService.delete(hashId));
 
         assertEquals("Consultation not found", ex.getMessage());
-        verify(consultationRepository).findByPublicId(consultationId);
+        verify(consultationRepository).findById(consultationId);
         verifyNoInteractions(doctorService, eventPublisher, consultationMapper);
     }
 
     @Test
     void shouldDeleteConsultationAndCancelAppointments_whenInputIsValid() {
-        UUID consultationId = UUID.randomUUID();
-        UUID appointmentId = UUID.randomUUID();
+        long consultationId = 1L;
+        HashId consultationHash = HashId.of(consultationId);
+        HashId appointmentId = HashId.of(1L);
+        HashId doctorHash = HashId.of(1L);
         long doctorId = 1L;
 
         Doctor doctor = new Doctor();
@@ -304,16 +311,16 @@ class ConsultationServiceTest {
 
         ScheduleEmailDto emailDto = new ScheduleEmailDto(Workday.FRIDAY, doctor.getFirstName(), doctor.getLastName());
 
-        when(consultationRepository.findByPublicId(consultationId)).thenReturn(Optional.of(consultation));
+        when(consultationRepository.findById(consultationId)).thenReturn(Optional.of(consultation));
         when(consultationMapper.toEmailDto(consultation)).thenReturn(emailDto);
-        when(appointmentService.findIdsForCancellation(doctorId, Workday.FRIDAY, consultation.getStartTime(), consultation.getEndTime()))
+        when(appointmentService.findIdsForCancellation(doctorHash, Workday.FRIDAY, consultation.getStartTime(), consultation.getEndTime()))
                 .thenReturn(List.of(appointmentId));
 
-        consultationService.delete(consultationId);
+        consultationService.delete(consultationHash);
 
-        verify(appointmentService).findIdsForCancellation(doctorId, Workday.FRIDAY, consultation.getStartTime(), consultation.getEndTime());
+        verify(appointmentService).findIdsForCancellation(doctorHash, Workday.FRIDAY, consultation.getStartTime(), consultation.getEndTime());
         verify(appointmentService).cancel(appointmentId);
-        verify(consultationRepository).findByPublicId(consultationId);
-        verify(consultationRepository).deleteByPublicId(consultationId);
+        verify(consultationRepository).findById(consultationId);
+        verify(consultationRepository).deleteById(consultationId);
     }
 }

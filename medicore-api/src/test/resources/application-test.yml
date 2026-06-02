@@ -26,3 +26,4 @@ app:
     s3:
       bucket: ${AWS_S3_BUCKET_TEST}
       region: ${AWS_S3_REGION_TEST}
+  salt: ${SALT}

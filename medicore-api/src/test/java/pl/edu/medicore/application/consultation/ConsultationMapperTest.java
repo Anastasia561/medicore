@@ -8,9 +8,12 @@ import pl.edu.medicore.application.consultation.dto.ConsultationDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.email.dto.ScheduleEmailDto;
+import pl.edu.medicore.common.encryption.HashId;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
+import java.lang.reflect.Field;
 import java.time.LocalTime;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -19,8 +22,13 @@ class ConsultationMapperTest {
     private ConsultationMapper consultationMapper;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         consultationMapper = Mappers.getMapper(ConsultationMapper.class);
+        HashIdMapper hashIdMapper = new HashIdMapper();
+
+        Field hashIdMapperField = consultationMapper.getClass().getDeclaredField("hashIdMapper");
+        hashIdMapperField.setAccessible(true);
+        hashIdMapperField.set(consultationMapper, hashIdMapper);
     }
 
     @Test
@@ -53,7 +61,7 @@ class ConsultationMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        ConsultationCreateDto dto = new ConsultationCreateDto(UUID.randomUUID(), Workday.FRIDAY,
+        ConsultationCreateDto dto = new ConsultationCreateDto(HashId.of(1L), Workday.FRIDAY,
                 LocalTime.of(8, 30), LocalTime.of(17, 30));
 
         Doctor doctor = new Doctor();
