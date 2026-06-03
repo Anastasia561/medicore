@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
@@ -26,6 +27,7 @@ import pl.edu.medicore.common.encryption.IdObfuscatorService;
 import pl.edu.medicore.config.AWSTestConfig;
 import pl.edu.medicore.config.PostgreSQLTestContainersConfig;
 import pl.edu.medicore.application.person.Role;
+import software.amazon.awssdk.services.s3.S3Client;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -55,6 +57,12 @@ public abstract class AbstractIntegrationTest {
 
     @Autowired
     protected EntityManager em;
+
+    @Autowired
+    protected S3Client s3Client;
+
+    @Value("${app.aws.s3.bucket}")
+    protected String bucketName;
 
     @Autowired
     protected IdObfuscatorService idObfuscator;

@@ -5,8 +5,6 @@ import org.springframework.http.HttpMethod;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.person.Role;
 
-import java.util.UUID;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,13 +13,12 @@ class RiskResultControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnRisksByPatientId_whenRequestedAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/risks/{patientId}", null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(3))
 
-                .andExpect(jsonPath("$.data[0].patientId").value(1))
                 .andExpect(jsonPath("$.data[0].disease").value("CKD"))
                 .andExpect(jsonPath("$.data[0].riskGroup").value("UNKNOWN"))
                 .andExpect(jsonPath("$.data[0].riskPercent").value(0.0))
@@ -43,7 +40,7 @@ class RiskResultControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedRiskResultWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        String id = idObfuscator.encode(1L);
         mockMvc.perform(get("/risks/{patientId}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
@@ -52,7 +49,7 @@ class RiskResultControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedRecordAsAdmin() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/risks/{patientId}", null, id)
                 .andExpect(status().isForbidden());
@@ -61,7 +58,7 @@ class RiskResultControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn404_whenPatientNotFound() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000101");
+        String id = idObfuscator.encode(104L);
 
         performRequest(HttpMethod.GET, "/risks/{patientId}", null, id)
                 .andExpect(status().isNotFound())

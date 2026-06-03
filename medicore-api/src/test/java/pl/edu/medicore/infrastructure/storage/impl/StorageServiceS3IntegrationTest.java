@@ -27,7 +27,7 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldUploadFile_whenInputIsValid() {
-        UUID testId = UUID.randomUUID();
+        UUID storageKey = UUID.randomUUID();
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -36,9 +36,9 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
                 "sample pdf content".getBytes()
         );
 
-        storageService.uploadFile(file, testId);
+        storageService.uploadFile(file, storageKey);
 
-        String expectedKey = "test/%s/report".formatted(testId);
+        String expectedKey = "test/%s/report".formatted(storageKey);
 
         ResponseBytes<GetObjectResponse> downloadedFile = s3Client.getObjectAsBytes(
                 GetObjectRequest.builder()
@@ -48,23 +48,23 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
         );
 
         assertThat(downloadedFile.asUtf8String()).isEqualTo("sample pdf content");
-        storageService.deleteFile(testId);
+        storageService.deleteFile(storageKey);
     }
 
     @Test
     void shouldDeleteFile_whenFileExists() {
-        UUID testId = UUID.randomUUID();
+        UUID storageKey = UUID.randomUUID();
 
-        String key = "test/%s/report".formatted(testId);
+        String key = "test/%s/report".formatted(storageKey);
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
                 "application/pdf",
                 "Dummy content".getBytes()
         );
-        storageService.uploadFile(file, testId);
+        storageService.uploadFile(file, storageKey);
 
-        assertDoesNotThrow(() -> storageService.deleteFile(testId));
+        assertDoesNotThrow(() -> storageService.deleteFile(storageKey));
         assertThrows(Exception.class, () -> {
             s3Client.headObject(builder -> builder.bucket(bucketName).key(key).build());
         });
@@ -72,16 +72,16 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExistForDelete() {
-        UUID testId = UUID.randomUUID();
+        UUID storageKey = UUID.randomUUID();
 
         FileNotFoundException ex = assertThrows(FileNotFoundException.class,
-                () -> storageService.deleteFile(testId));
+                () -> storageService.deleteFile(storageKey));
         assertEquals("File not found", ex.getMessage());
     }
 
     @Test
     void shouldReturnInputStream_whenFileExists() throws IOException {
-        UUID testId = UUID.randomUUID();
+        UUID storageKey = UUID.randomUUID();
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
@@ -89,23 +89,23 @@ class StorageServiceS3IntegrationTest extends AbstractIntegrationTest {
                 "Dummy content".getBytes()
         );
 
-        storageService.uploadFile(file, testId);
+        storageService.uploadFile(file, storageKey);
 
-        InputStream inputStream = storageService.getFile(testId);
+        InputStream inputStream = storageService.getFile(storageKey);
         assertNotNull(inputStream);
 
         String downloadedContent = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         assertEquals("Dummy content", downloadedContent);
 
         inputStream.close();
-        storageService.deleteFile(testId);
+        storageService.deleteFile(storageKey);
     }
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExist() {
-        UUID testId = UUID.randomUUID();
+        UUID storageKey = UUID.randomUUID();
 
-        FileNotFoundException exception = assertThrows(FileNotFoundException.class, () -> storageService.getFile(testId));
+        FileNotFoundException exception = assertThrows(FileNotFoundException.class, () -> storageService.getFile(storageKey));
 
         assertEquals("File not found", exception.getMessage());
     }

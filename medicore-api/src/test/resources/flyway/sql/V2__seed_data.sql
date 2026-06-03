@@ -161,7 +161,7 @@ VALUES ('MONDAY', '08:00:00', '12:00:00', 6),
 
 -- TEST
 INSERT INTO test (performed_date, patient_id, storage_key)
-VALUES ('2025-01-11', 1, gen_random_uuid());
+VALUES ('2025-01-11', 1, '11100000-0000-0000-0000-000000000000');
 
 -- LAB RESULT
 INSERT INTO lab_result (parameter, value, unit, test_id)

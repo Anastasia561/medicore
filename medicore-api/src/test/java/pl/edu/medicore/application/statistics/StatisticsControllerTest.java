@@ -5,8 +5,6 @@ import org.springframework.http.HttpMethod;
 import pl.edu.medicore.AbstractIntegrationTest;
 import pl.edu.medicore.application.person.Role;
 
-import java.util.UUID;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,7 +28,7 @@ class StatisticsControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnDoctorStatistics_wheRecordsExist() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
 
         performRequest(HttpMethod.GET, "/statistics/doctor/{id}", null, id)
                 .andExpect(status().isOk())
@@ -43,7 +41,7 @@ class StatisticsControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedDoctorStatisticsAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
 
         performRequest(HttpMethod.GET, "/statistics/doctor/{id}", null, id)
                 .andExpect(status().isForbidden());
@@ -52,7 +50,7 @@ class StatisticsControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedAdminStatisticsAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
 
         performRequest(HttpMethod.GET, "/statistics/admin", null, id)
                 .andExpect(status().isForbidden());
@@ -67,7 +65,7 @@ class StatisticsControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedDoctorStatisticsWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000006");
+        String id = idObfuscator.encode(6L);
 
         mockMvc.perform(get("/statistics/doctor/{id}", id)
                         .header("Authorization", "Bearer invalid-token"))

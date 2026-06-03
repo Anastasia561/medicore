@@ -24,64 +24,64 @@ class UrlGeneratorServiceS3IntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldGenerateViewUrl_whenFileExists() {
-        UUID testId = UUID.randomUUID();
-        String key = "test/%s/report".formatted(testId);
+        UUID storageKey = UUID.randomUUID();
+        String key = "test/%s/report".formatted(storageKey);
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
                 "application/pdf",
                 "Dummy content".getBytes()
         );
-        storageService.uploadFile(file, testId);
+        storageService.uploadFile(file, storageKey);
 
-        URL url = urlGeneratorService.generateViewUrl(testId);
+        URL url = urlGeneratorService.generateViewUrl(storageKey);
 
         assertNotNull(url);
         String urlString = url.toString();
         assertTrue(urlString.contains(key));
         assertTrue(urlString.startsWith("http"));
 
-        storageService.deleteFile(testId);
+        storageService.deleteFile(storageKey);
     }
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExistForViewUrl() {
-        UUID testId = UUID.randomUUID();
+        UUID storageKey = UUID.randomUUID();
 
         FileNotFoundException exception = assertThrows(FileNotFoundException.class,
-                () -> urlGeneratorService.generateViewUrl(testId));
+                () -> urlGeneratorService.generateViewUrl(storageKey));
 
         assertEquals("File not found", exception.getMessage());
     }
 
     @Test
     void shouldGenerateDownloadUrl_whenFileExists() {
-        UUID testId = UUID.randomUUID();
-        String key = "test/%s/report".formatted(testId);
+        UUID storageKey = UUID.randomUUID();
+        String key = "test/%s/report".formatted(storageKey);
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.pdf",
                 "application/pdf",
                 "Dummy content".getBytes()
         );
-        storageService.uploadFile(file, testId);
+        storageService.uploadFile(file, storageKey);
 
-        URL url = urlGeneratorService.generateDownloadUrl(testId);
+        URL url = urlGeneratorService.generateDownloadUrl(storageKey);
 
         assertNotNull(url);
         String urlString = url.toString();
         assertTrue(urlString.contains(key));
         assertTrue(urlString.startsWith("http"));
 
-        storageService.deleteFile(testId);
+        storageService.deleteFile(storageKey);
     }
 
     @Test
     void shouldThrowFileNotFoundException_whenFileDoesNotExistForDownloadUrl() {
-        UUID testId = UUID.randomUUID();
+        UUID storageKey = UUID.randomUUID();
 
         FileNotFoundException exception = assertThrows(FileNotFoundException.class,
-                () -> urlGeneratorService.generateDownloadUrl(testId));
+                () -> urlGeneratorService.generateDownloadUrl(storageKey));
 
         assertEquals("File not found", exception.getMessage());
     }

@@ -21,7 +21,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,7 +71,7 @@ class TestControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnPresignedUrl_whenFileExists() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000000");
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/tests/view/{id}", null, id)
                 .andExpect(status().isOk())
@@ -81,7 +80,7 @@ class TestControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedTestViewWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000000");
+        String id = idObfuscator.encode(1L);
 
         mockMvc.perform(get("/tests/view/{id}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
@@ -91,7 +90,7 @@ class TestControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedTestViewAsAdmin() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000000");
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/tests/view/{id}", null, id)
                 .andExpect(status().isForbidden());
@@ -100,17 +99,17 @@ class TestControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn404_whenTestNotFound() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000001");
+        String id = idObfuscator.encode(101L);
 
         performRequest(HttpMethod.GET, "/tests/view/{id}", null, id)
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error.message").value("File not found"));
+                .andExpect(jsonPath("$.error.message").value("Test not found"));
     }
 
     @Test
     void shouldReturnPresignedUrlForDownload_whenFileExists() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000000");
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/tests/download/{id}", null, id)
                 .andExpect(status().isOk())
@@ -119,7 +118,7 @@ class TestControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenAccessedTestDownloadWithInvalidToken() throws Exception {
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000000");
+        String id = idObfuscator.encode(1L);
 
         mockMvc.perform(get("/tests/download/{id}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
@@ -129,7 +128,7 @@ class TestControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn403_whenAccessedTestDownloadAsAdmin() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000000");
+        String id = idObfuscator.encode(1L);
 
         performRequest(HttpMethod.GET, "/tests/download/{id}", null, id)
                 .andExpect(status().isForbidden());
@@ -138,11 +137,11 @@ class TestControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn404_whenTestNotFoundForDownload() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        UUID id = UUID.fromString("11100000-0000-0000-0000-000000000001");
+        String id = idObfuscator.encode(101L);
 
         performRequest(HttpMethod.GET, "/tests/download/{id}", null, id)
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error.message").value("File not found"));
+                .andExpect(jsonPath("$.error.message").value("Test not found"));
     }
 
     @Test
@@ -164,16 +163,16 @@ class TestControllerTest extends AbstractIntegrationTest {
                 )
                 .andExpect(status().isCreated());
 
-        String publicId = JsonPath.read(
+        String hashId = JsonPath.read(
                 resultActions.andReturn().getResponse().getContentAsString(),
                 "$.data"
         );
 
-        UUID id = UUID.fromString(publicId);
+        long internalId = idObfuscator.decode(hashId);
 
         pl.edu.medicore.application.test.Test test = em.createQuery(
-                "SELECT a FROM Test a WHERE a.publicId = :publicId",
-                pl.edu.medicore.application.test.Test.class).setParameter("publicId", id).getSingleResult();
+                "SELECT a FROM Test a WHERE a.id = :id",
+                pl.edu.medicore.application.test.Test.class).setParameter("id", internalId).getSingleResult();
 
         assertNotNull(test);
         assertEquals(LocalDate.of(2026, 1, 10), test.getDate());

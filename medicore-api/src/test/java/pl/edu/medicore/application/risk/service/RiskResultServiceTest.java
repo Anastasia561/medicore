@@ -17,11 +17,11 @@ import pl.edu.medicore.application.risk.RiskResult;
 import pl.edu.medicore.application.risk.RiskResultMapper;
 import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
 import pl.edu.medicore.application.test.TestService;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,19 +40,21 @@ class RiskResultServiceTest {
     @Mock
     private RiskCalculatorService riskCalculatorService;
     @Mock
-    private PatientService patientService;
-    @Mock
-    private TestService testService;
-    @Mock
     private RiskResultRepository riskResultRepository;
     @Mock
     private RiskResultMapper riskResultMapper;
+    @Mock
+    private PatientService patientService;
+    @Mock
+    private TestService testService;
     @InjectMocks
     private RiskResultServiceImpl riskService;
 
     @Test
     void shouldCalculate3RiskForTest_whenLabResultsExist() {
         long testId = 1L;
+        HashId hashId = new HashId(testId);
+
         Patient patient = new Patient();
         patient.setGender(Gender.MALE);
         patient.setPregnant(false);
@@ -81,7 +83,7 @@ class RiskResultServiceTest {
 
         List<LabResult> labResults = List.of(hgbResult, hctResult, rbcResult);
 
-        when(labResultService.getLabResultsByTestId(testId)).thenReturn(labResults);
+        when(labResultService.getLabResultsByTestId(hashId)).thenReturn(labResults);
         when(riskCalculatorService
                 .calculateAnemiaRiskPercentage(20.6, 30.6, 10.6, Gender.MALE, false))
                 .thenReturn(20.5);
@@ -93,20 +95,21 @@ class RiskResultServiceTest {
         when(riskCalculatorService
                 .calculateCKDRisk(any(), any(), any(), any(), any()))
                 .thenReturn(null);
-        riskService.calculateRiskForTest(testId);
+        riskService.calculateRiskForTest(hashId);
 
-        verify(labResultService).getLabResultsByTestId(testId);
+        verify(labResultService).getLabResultsByTestId(hashId);
         verify(riskResultRepository, times(3)).save(any());
     }
 
     @Test
     void shouldThrowIllegalStateException_whenLabResultsEmptyForTest() {
         long testId = 1L;
+        HashId hashId = new HashId(testId);
 
-        when(labResultService.getLabResultsByTestId(testId)).thenReturn(Collections.emptyList());
+        when(labResultService.getLabResultsByTestId(hashId)).thenReturn(Collections.emptyList());
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
-                () -> riskService.calculateRiskForTest(testId));
+                () -> riskService.calculateRiskForTest(hashId));
         assertEquals("No lab results found for test", ex.getMessage());
 
         verify(riskResultRepository, never()).save(any());
@@ -114,25 +117,25 @@ class RiskResultServiceTest {
 
     @Test
     void shouldReturnLatestRisksByPatientId_whenResultsExist() {
-        UUID patientId = UUID.randomUUID();
+        long patientId = 1L;
+        HashId patientHash = new HashId(patientId);
 
         RiskResult entity1 = new RiskResult();
         RiskResult entity2 = new RiskResult();
 
-        RiskResultResponseDto dto1 = new RiskResultResponseDto(1, Disease.ANEMIA, RiskGroup.LOW,
+        RiskResultResponseDto dto1 = new RiskResultResponseDto(HashId.of(1L), Disease.ANEMIA, RiskGroup.LOW,
                 20.5, LocalDate.of(2025, 1, 1),
                 LocalDate.of(2025, 1, 1));
-        RiskResultResponseDto dto2 = new RiskResultResponseDto(1, Disease.DIABETES, RiskGroup.LOW,
+        RiskResultResponseDto dto2 = new RiskResultResponseDto(HashId.of(1L), Disease.DIABETES, RiskGroup.LOW,
                 20.5, LocalDate.of(2023, 1, 1),
                 LocalDate.of(2025, 1, 1));
 
-        when(patientService.getByPublicId(patientId)).thenReturn(new Patient());
         when(riskResultRepository.getLatestByPatientPublicId(patientId)).thenReturn(List.of(entity1, entity2));
 
         when(riskResultMapper.toDto(entity1)).thenReturn(dto1);
         when(riskResultMapper.toDto(entity2)).thenReturn(dto2);
 
-        List<RiskResultResponseDto> result = riskService.getLatestByPatientId(patientId);
+        List<RiskResultResponseDto> result = riskService.getLatestByPatientId(patientHash);
 
         assertEquals(2, result.size());
         assertEquals(dto1, result.get(0));
@@ -145,12 +148,12 @@ class RiskResultServiceTest {
 
     @Test
     void shouldReturnEmptyList_whenNoRiskResultsFoundForPatient() {
-        UUID patientId = UUID.randomUUID();
+        long patientId = 1L;
+        HashId patientHash = new HashId(patientId);
 
-        when(patientService.getByPublicId(patientId)).thenReturn(new Patient());
         when(riskResultRepository.getLatestByPatientPublicId(patientId)).thenReturn(Collections.emptyList());
 
-        List<RiskResultResponseDto> result = riskService.getLatestByPatientId(patientId);
+        List<RiskResultResponseDto> result = riskService.getLatestByPatientId(patientHash);
 
         assertTrue(result.isEmpty());
         verify(riskResultMapper, never()).toDto(any());
@@ -158,7 +161,9 @@ class RiskResultServiceTest {
 
     @Test
     void shouldCalculate3RiskForPatient_whenLabResultsExist() {
-        UUID patientId = UUID.randomUUID();
+        long patientId = 1L;
+        HashId patientHash = new HashId(patientId);
+
         Patient patient = new Patient();
         patient.setGender(Gender.MALE);
         patient.setPregnant(false);
@@ -187,7 +192,7 @@ class RiskResultServiceTest {
 
         List<LabResult> labResults = List.of(hgbResult, hctResult, rbcResult);
 
-        when(labResultService.getLabResultsByPatientId(patientId)).thenReturn(labResults);
+        when(labResultService.getLabResultsByPatientId(patientHash)).thenReturn(labResults);
         when(riskCalculatorService
                 .calculateAnemiaRiskPercentage(20.6, 30.6, 10.6, Gender.MALE, false))
                 .thenReturn(20.5);
@@ -199,17 +204,19 @@ class RiskResultServiceTest {
         when(riskCalculatorService
                 .calculateCKDRisk(any(), any(), any(), any(), any()))
                 .thenReturn(null);
-        riskService.calculateRiskForPatient(patientId);
+        riskService.calculateRiskForPatient(patientHash);
 
-        verify(labResultService).getLabResultsByPatientId(patientId);
+        verify(labResultService).getLabResultsByPatientId(patientHash);
         verify(riskResultRepository, times(3)).save(any());
     }
 
     @Test
     void shouldNotSaveRiskResults_whenLabResultsNotFoundForPatient() {
-        UUID patientId = UUID.randomUUID();
-        when(labResultService.getLabResultsByPatientId(patientId)).thenReturn(Collections.emptyList());
-        riskService.calculateRiskForPatient(patientId);
+        long patientId = 1L;
+        HashId patientHash = new HashId(patientId);
+
+        when(labResultService.getLabResultsByPatientId(patientHash)).thenReturn(Collections.emptyList());
+        riskService.calculateRiskForPatient(patientHash);
 
         verifyNoInteractions(riskResultRepository, riskCalculatorService);
     }

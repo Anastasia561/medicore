@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
+import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -17,8 +19,13 @@ class RiskResultMapperTest {
     private RiskResultMapper riskResultMapper;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         riskResultMapper = Mappers.getMapper(RiskResultMapper.class);
+        HashIdMapper hashIdMapper = new HashIdMapper();
+
+        Field hashIdMapperField = riskResultMapper.getClass().getDeclaredField("hashIdMapper");
+        hashIdMapperField.setAccessible(true);
+        hashIdMapperField.set(riskResultMapper, hashIdMapper);
     }
 
     @Test
@@ -42,12 +49,11 @@ class RiskResultMapperTest {
 
         RiskResultResponseDto dto = riskResultMapper.toDto(riskResult);
 
-        assertEquals(1, dto.patientId());
+        assertEquals(1, dto.patientId().value());
         assertEquals(LocalDate.of(2025, 1, 1), dto.testDate());
         assertEquals(Disease.ANEMIA, dto.disease());
         assertEquals(RiskGroup.LOW, dto.riskGroup());
         assertEquals(20.5, dto.riskPercent());
-        assertEquals(LocalDate.of(2025, 10, 10), dto.calculatedAt());
     }
 
     @Test

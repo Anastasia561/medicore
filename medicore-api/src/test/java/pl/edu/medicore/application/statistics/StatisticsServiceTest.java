@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.medicore.application.appointment.Status;
+import pl.edu.medicore.application.appointment.AppointmentStatus;
 import pl.edu.medicore.application.appointment.AppointmentService;
 import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.doctor.DoctorService;
@@ -14,9 +14,9 @@ import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
 import pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
+import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,8 +46,8 @@ class StatisticsServiceTest {
         );
 
         List<ConsultationStatisticsDto> monthlyStats = List.of(
-                new ConsultationStatisticsDto(1, Status.COMPLETED, 40),
-                new ConsultationStatisticsDto(2, Status.CANCELLED, 60)
+                new ConsultationStatisticsDto(1, AppointmentStatus.COMPLETED, 40),
+                new ConsultationStatisticsDto(2, AppointmentStatus.CANCELLED, 60)
         );
 
         when(patientService.getTotalCount()).thenReturn(patients);
@@ -77,11 +77,11 @@ class StatisticsServiceTest {
         long patients = 100;
         long todayAppointments = 12;
 
-        UUID doctorId = UUID.randomUUID();
+        HashId doctorId = new HashId(1L);
 
         List<ConsultationStatisticsDto> monthlyStats = List.of(
-                new ConsultationStatisticsDto(1, Status.COMPLETED, 40),
-                new ConsultationStatisticsDto(2, Status.CANCELLED, 60)
+                new ConsultationStatisticsDto(1, AppointmentStatus.COMPLETED, 40),
+                new ConsultationStatisticsDto(2, AppointmentStatus.CANCELLED, 60)
         );
 
         when(appointmentService.getDistinctPatientsByDoctorId(doctorId)).thenReturn(patients);
