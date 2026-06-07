@@ -68,7 +68,7 @@ const DoctorList = () => {
                 ) : doctors.length > 0 ? (
                     doctors.map(doc => (
                         <DataCard
-                            key={doc.publicId}
+                            key={doc.id}
                             name={doc.firstName + " " + doc.lastName}
                             details={[
                                 {label: 'Email', value: doc.email},
@@ -82,10 +82,12 @@ const DoctorList = () => {
                                         <button className="btn btn-outline-success btn-sm text-center">Book</button>}
                                     {auth?.role === 'ROLE_ADMIN' &&
                                         <button
-                                            className="btn btn-outline-success btn-sm text-center">Appointments</button>}
+                                            className="btn btn-outline-success btn-sm text-center"
+                                            onClick={() => navigate('/appointments')}
+                                        >Appointments</button>}
                                     <button
                                         className="btn btn-outline-primary btn-sm text-center"
-                                        onClick={() => navigate(`/doctors/${doc.publicId}/schedule`, {
+                                        onClick={() => navigate(`/doctors/${doc.id}/schedule`, {
                                             state: {doctorName: `${doc.firstName} ${doc.lastName}`}
                                         })}
                                     >

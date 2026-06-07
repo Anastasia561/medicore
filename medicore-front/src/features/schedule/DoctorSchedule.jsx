@@ -41,8 +41,7 @@ const DoctorSchedule = () => {
 
             <div className="schedule-grid">
                 {data.map(day => (
-                    <ScheduleDayCard key={day.publicId} day={day} onDelete={handleDelete}
-                                     onUpdate={() => handleUpdate(day)}/>
+                    <ScheduleDayCard key={day.id} day={day} onDelete={handleDelete} onUpdate={handleUpdate}/>
                 ))}
             </div>
 

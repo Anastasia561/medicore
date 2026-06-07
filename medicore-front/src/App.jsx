@@ -12,6 +12,7 @@ import PatientList from "./features/listing/components/PatientList.jsx";
 import DoctorList from "./features/listing/components/DoctorList.jsx";
 import DoctorSchedule from "./features/schedule/DoctorSchedule.jsx";
 import Providers from "./context/Providers.jsx";
+import AppointmentListing from "./features/appointments/components/AppointmentListing.jsx";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
                             <Route path="home" element={<Home/>}/>
                             <Route path="profile" element={<Profile/>}/>
                             <Route path="/doctors/:doctorId/schedule" element={<DoctorSchedule/>}/>
+                            <Route path="/appointments" element={<AppointmentListing/>}/>
                         </Route>
 
                         <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT"]}/>}>

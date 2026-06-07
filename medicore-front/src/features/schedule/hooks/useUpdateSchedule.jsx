@@ -8,8 +8,8 @@ export const useUpdateSchedule = (doctorId, {setGeneralError, setFormError} = {}
     const navigate = useNavigate();
 
     return useMutation({
-        mutationFn: async ({publicId, startTime, endTime}) => {
-            const response = await axiosPrivate.put(`/consultations/${publicId}`, {
+        mutationFn: async ({id, startTime, endTime}) => {
+            const response = await axiosPrivate.put(`/consultations/${id}`, {
                 startTime,
                 endTime
             });

@@ -39,7 +39,7 @@ const ConsultationForm = ({onSubmit, onCancel, doctorId, initialData}) => {
     const submitHandler = (data) => {
         if (isUpdate) {
             updateSchedule({
-                publicId: initialData.publicId,
+                id: initialData.id,
                 startTime: data.startTime,
                 endTime: data.endTime
             }, {
@@ -109,7 +109,7 @@ const ConsultationForm = ({onSubmit, onCancel, doctorId, initialData}) => {
             <div className="d-flex gap-2 justify-content-end mt-3">
                 <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancel</button>
                 <button type="submit" className="btn btn-primary">
-                    {initialData?.publicId ? "Update Hours" : "Save Hours"}
+                    {initialData?.id ? "Update Hours" : "Save Hours"}
                 </button>
             </div>
         </form>
