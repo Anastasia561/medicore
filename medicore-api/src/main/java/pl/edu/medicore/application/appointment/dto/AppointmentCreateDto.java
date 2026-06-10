@@ -16,6 +16,6 @@ public record AppointmentCreateDto(
         LocalDate date,
 
         @NotNull(message = "Time must not be null")
-        LocalTime time
+        LocalTime startTime
 ) {
 }

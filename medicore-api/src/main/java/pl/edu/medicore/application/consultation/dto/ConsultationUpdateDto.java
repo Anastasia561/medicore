@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 public record ConsultationUpdateDto(
-        @NotNull(message = "Start time is required")
+        @NotNull(message = "Start startTime is required")
         LocalTime startTime,
-        @NotNull(message = "End time is required")
+        @NotNull(message = "End startTime is required")
         LocalTime endTime
 ) {
 }

@@ -139,7 +139,7 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
 
         performRequest(HttpMethod.POST, "/consultations", dto)
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.message").value("End time must be after start time"));
+                .andExpect(jsonPath("$.error.message").value("End startTime must be after start startTime"));
     }
 
     @Test

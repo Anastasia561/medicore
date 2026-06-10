@@ -24,52 +24,83 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AppointmentControllerTest extends AbstractIntegrationTest {
 
     @Test
-    void shouldGetAppointmentPageForPatient_whenInputIsValid() throws Exception {
+    void shouldGetAppointmentsForPatient_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = idObfuscator.encode(1L);
 
-        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", null, id)
+        performRequest(HttpMethod.GET, "/appointments?startDate=2026-01-02&endDate=2026-06-02", null)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content.length()").value(2))
-                .andExpect(jsonPath("$.data.content[0].firstName").value("John"))
-                .andExpect(jsonPath("$.data.content[0].lastName").value("Doe"))
-                .andExpect(jsonPath("$.data.content[0].phoneNumber").value("+123456789"));
+                .andExpect(jsonPath("$.data[0].firstName").value("Hannah"))
+                .andExpect(jsonPath("$.data[0].lastName").value("Brown"))
+                .andExpect(jsonPath("$.data[0].specialization").value("PEDIATRICIAN"))
+                .andExpect(jsonPath("$.data[0].status").value("COMPLETED"))
+                .andExpect(jsonPath("$.data[0].startTime").value("09:00:00"))
+                .andExpect(jsonPath("$.data[0].endTime").value("10:00:00"))
+                .andExpect(jsonPath("$.data[0].date").value("2026-01-06"));
     }
 
     @Test
-    void shouldGetAppointmentPageForDoctor_whenInputIsValid() throws Exception {
+    void shouldGetAppointmentsForDoctor_whenInputIsValid() throws Exception {
+        obtainRoleBasedToken(Role.DOCTOR);
+
+        performRequest(HttpMethod.GET, "/appointments?startDate=2026-01-02&endDate=2026-06-02", null)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].firstName").value("John"))
+                .andExpect(jsonPath("$.data[0].lastName").value("Doe"))
+                .andExpect(jsonPath("$.data[0].phoneNumber").value("+123456789"))
+                .andExpect(jsonPath("$.data[0].status").value("SCHEDULED"))
+                .andExpect(jsonPath("$.data[0].startTime").value("12:00:00"))
+                .andExpect(jsonPath("$.data[0].endTime").value("13:00:00"))
+                .andExpect(jsonPath("$.data[0].date").value("2026-02-06"));
+    }
+
+    @Test
+    void shouldGetAppointmentsForPatientByAdmin_whenInputIsValid() throws Exception {
+        obtainRoleBasedToken(Role.ADMIN);
+        String id = idObfuscator.encode(1L);
+
+        performRequest(HttpMethod.GET, "/appointments/user/{id}?startDate=2026-01-02&endDate=2026-06-02", null, id)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].firstName").value("Hannah"))
+                .andExpect(jsonPath("$.data[0].lastName").value("Brown"))
+                .andExpect(jsonPath("$.data[0].specialization").value("PEDIATRICIAN"))
+                .andExpect(jsonPath("$.data[0].status").value("COMPLETED"))
+                .andExpect(jsonPath("$.data[0].startTime").value("09:00:00"))
+                .andExpect(jsonPath("$.data[0].endTime").value("10:00:00"))
+                .andExpect(jsonPath("$.data[0].date").value("2026-01-06"));
+    }
+
+    @Test
+    void shouldGetAppointmentsForDoctorByAdmin_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.ADMIN);
         String id = idObfuscator.encode(6L);
 
-        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10", null, id)
+        performRequest(HttpMethod.GET, "/appointments/user/{id}?startDate=2026-01-02&endDate=2026-06-02", null, id)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content.length()").value(2))
-                .andExpect(jsonPath("$.data.content[0].date").value("2026-02-06"))
-                .andExpect(jsonPath("$.data.content[0].firstName").value("Rafael"))
-                .andExpect(jsonPath("$.data.content[0].lastName").value("Garcia"))
-                .andExpect(jsonPath("$.data.content[0].specialization").value("CARDIOLOGIST"))
-                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED"))
-                .andExpect(jsonPath("$.data.content[0].time").value("12:00:00"));
+                .andExpect(jsonPath("$.data[0].firstName").value("John"))
+                .andExpect(jsonPath("$.data[0].lastName").value("Doe"))
+                .andExpect(jsonPath("$.data[0].phoneNumber").value("+123456789"))
+                .andExpect(jsonPath("$.data[0].status").value("SCHEDULED"))
+                .andExpect(jsonPath("$.data[0].startTime").value("12:00:00"))
+                .andExpect(jsonPath("$.data[0].endTime").value("13:00:00"))
+                .andExpect(jsonPath("$.data[0].date").value("2026-02-06"));
     }
 
     @Test
-    void shouldGetAppointmentPageForPatientWithStatusFiltering_whenInputIsValid() throws Exception {
-        obtainRoleBasedToken(Role.PATIENT);
-        String id = idObfuscator.encode(1L);
+    void shouldGetAppointmentPageForDoctorWithStatusFiltering_whenInputIsValid() throws Exception {
+        obtainRoleBasedToken(Role.DOCTOR);
 
-        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10&endDate=2026-03-10&status=SCHEDULED",
-                null, id)
+        performRequest(HttpMethod.GET, "/appointments?startDate=2026-01-10&endDate=2026-03-10&status=SCHEDULED",
+                null)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content.length()").value(1))
-                .andExpect(jsonPath("$.data.content[0].date").value("2026-02-06"))
-                .andExpect(jsonPath("$.data.content[0].firstName").value("John"))
-                .andExpect(jsonPath("$.data.content[0].lastName").value("Doe"))
-                .andExpect(jsonPath("$.data.content[0].phoneNumber").value("+123456789"))
-                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED"))
-                .andExpect(jsonPath("$.data.content[0].time").value("12:00:00"));
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].date").value("2026-02-06"))
+                .andExpect(jsonPath("$.data[0].firstName").value("John"))
+                .andExpect(jsonPath("$.data[0].lastName").value("Doe"))
+                .andExpect(jsonPath("$.data[0].phoneNumber").value("+123456789"))
+                .andExpect(jsonPath("$.data[0].status").value("SCHEDULED"))
+                .andExpect(jsonPath("$.data[0].startTime").value("12:00:00"))
+                .andExpect(jsonPath("$.data[0].endTime").value("13:00:00"));
     }
 
     @Test
@@ -85,7 +116,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
         obtainRoleBasedToken(Role.ADMIN);
         String id = idObfuscator.encode(1L);
 
-        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-01-10", null, id)
+        performRequest(HttpMethod.GET, "/appointments/user/{id}?startDate=2026-01-10", null, id)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.message").value("Validation failed"))
                 .andExpect(jsonPath("$.error.validationErrors").isArray())
@@ -97,7 +128,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
         obtainRoleBasedToken(Role.PATIENT);
         String id = idObfuscator.encode(7L);
 
-        performRequest(HttpMethod.GET, "/appointments?userId={id}&startDate=2026-03-10&endDate=2026-01-10", null,
+        performRequest(HttpMethod.GET, "/appointments?startDate=2026-03-10&endDate=2026-01-10", null,
                 id)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.message").value("End date must be after start date"));
@@ -205,7 +236,7 @@ class AppointmentControllerTest extends AbstractIntegrationTest {
 
         performRequest(HttpMethod.POST, "/appointments", dto)
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.message").value("Selected time slot is not available"));
+                .andExpect(jsonPath("$.error.message").value("Selected startTime slot is not available"));
     }
 
     @Test

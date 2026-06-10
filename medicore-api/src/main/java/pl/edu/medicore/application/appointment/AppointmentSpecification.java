@@ -8,10 +8,10 @@ import java.time.LocalDate;
 
 class AppointmentSpecification {
 
-    public static Specification<Appointment> withFilter(AppointmentFilterDto filter) {
+    public static Specification<Appointment> withFilter(long userId, AppointmentFilterDto filter) {
 
         Specification<Appointment> spec =
-                Specification.where(hasUser(filter.userId().value()))
+                Specification.where(hasUser(userId))
                         .and(hasDateBetween(filter.startDate(), filter.endDate()));
 
         if (filter.status() != null) {

@@ -126,14 +126,14 @@ class ConsultationServiceImpl implements ConsultationService {
 
     private void validateTime(LocalTime start, LocalTime end) {
         if (start.isAfter(end)) {
-            throw new IllegalArgumentException("End time must be after start time");
+            throw new IllegalArgumentException("End startTime must be after start startTime");
         }
         if (end.isAfter(consultationProperties.getEnd())) {
-            throw new IllegalArgumentException("End time must be in valid range");
+            throw new IllegalArgumentException("End startTime must be in valid range");
         }
 
         if (start.isBefore(consultationProperties.getStart())) {
-            throw new IllegalArgumentException("Start time must be in valid range");
+            throw new IllegalArgumentException("Start startTime must be in valid range");
         }
     }
 }

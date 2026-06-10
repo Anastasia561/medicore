@@ -2,7 +2,10 @@ package pl.edu.medicore.application.appointment;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForDoctorDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForPatientDto;
@@ -10,6 +13,7 @@ import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.email.dto.AppointmentNotificationEmailDto;
 import pl.edu.medicore.application.patient.Patient;
+import pl.edu.medicore.common.config.properties.SchedulingProperties;
 import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.encryption.HashIdMapper;
 
@@ -21,14 +25,20 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class AppointmentMapperTest {
     private AppointmentMapper appointmentMapper;
+
+    @Mock
+    private SchedulingProperties schedulingProperties;
 
     @BeforeEach
     void setUp() throws NoSuchFieldException, IllegalAccessException {
         appointmentMapper = Mappers.getMapper(AppointmentMapper.class);
         HashIdMapper hashIdMapper = new HashIdMapper();
+        appointmentMapper.schedulingProperties = schedulingProperties;
 
         Field hashIdMapperField = appointmentMapper.getClass().getDeclaredField("hashIdMapper");
         hashIdMapperField.setAccessible(true);
@@ -44,7 +54,7 @@ class AppointmentMapperTest {
         patient.setPhoneNumber("1234567890");
 
         appointment.setDate(LocalDate.of(2026, 10, 12));
-        appointment.setTime(LocalTime.of(20, 10));
+        appointment.setStartTime(LocalTime.of(20, 10));
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointment.setPatient(patient);
 
@@ -53,7 +63,7 @@ class AppointmentMapperTest {
         assertEquals("Doe", result.getLastName());
         assertEquals("1234567890", result.getPhoneNumber());
         assertEquals(LocalDate.of(2026, 10, 12), result.getDate());
-        assertEquals(LocalTime.of(20, 10), result.getTime());
+        assertEquals(LocalTime.of(20, 10), result.getStartTime());
         assertEquals(AppointmentStatus.COMPLETED, result.getStatus());
     }
 
@@ -66,7 +76,7 @@ class AppointmentMapperTest {
         doctor.setSpecialization(Specialization.DERMATOLOGIST);
 
         appointment.setDate(LocalDate.of(2026, 10, 12));
-        appointment.setTime(LocalTime.of(20, 10));
+        appointment.setStartTime(LocalTime.of(20, 10));
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointment.setDoctor(doctor);
 
@@ -75,7 +85,7 @@ class AppointmentMapperTest {
         assertEquals("Doe", result.getLastName());
         assertEquals(AppointmentStatus.COMPLETED, result.getStatus());
         assertEquals(LocalDate.of(2026, 10, 12), result.getDate());
-        assertEquals(LocalTime.of(20, 10), result.getTime());
+        assertEquals(LocalTime.of(20, 10), result.getStartTime());
         assertEquals(Specialization.DERMATOLOGIST, result.getSpecialization());
     }
 
@@ -90,12 +100,15 @@ class AppointmentMapperTest {
         Patient patient = new Patient();
         patient.setId(2L);
 
+        when(schedulingProperties.getSlotDurationMinutes()).thenReturn(60);
+
         Appointment result = appointmentMapper.toEntity(dto, doctor, patient);
         assertEquals(1L, result.getDoctor().getId());
         assertEquals(2L, result.getPatient().getId());
         assertEquals(AppointmentStatus.SCHEDULED, result.getStatus());
         assertEquals(LocalDate.of(2026, 10, 12), result.getDate());
-        assertEquals(LocalTime.of(20, 10), result.getTime());
+        assertEquals(LocalTime.of(20, 10), result.getStartTime());
+        assertEquals(LocalTime.of(21, 10), result.getEndTime());
     }
 
     @Test
@@ -111,7 +124,7 @@ class AppointmentMapperTest {
 
         Appointment appointment = new Appointment();
         appointment.setDate(LocalDate.of(2026, 10, 12));
-        appointment.setTime(LocalTime.of(20, 10));
+        appointment.setStartTime(LocalTime.of(20, 10));
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
 

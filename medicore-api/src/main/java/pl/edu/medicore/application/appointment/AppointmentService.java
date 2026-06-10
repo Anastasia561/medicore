@@ -1,7 +1,5 @@
 package pl.edu.medicore.application.appointment;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentInfoDto;
@@ -15,7 +13,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface AppointmentService {
-    Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable);
+    List<? extends AppointmentInfoDto> getAppointmentsInRange(HashId userId, AppointmentFilterDto filter);
 
     void cancel(HashId id);
 

@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,7 +22,7 @@ import pl.edu.medicore.application.auth.CustomUserDetails;
 import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
-import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping("/appointments")
@@ -34,12 +32,21 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @Operation(summary = "Get page of appointments in date range with filtering")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
-    @GetMapping
-    public ResponseWrapper<Page<AppointmentInfoDto>> getAppointmentsInDateRange(
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user/{userId}")
+    public ResponseWrapper<List<? extends AppointmentInfoDto>> getAppointmentsInDateRangeForAdmin(
             @Valid AppointmentFilterDto filter,
-            Pageable pageable) {
-        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(filter, pageable));
+            @PathVariable HashId userId) {
+        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(userId, filter));
+    }
+
+    @Operation(summary = "Get page of appointments in date range with filtering")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
+    @GetMapping
+    public ResponseWrapper<List<? extends AppointmentInfoDto>> getAppointmentsInDateRange(
+            @Valid AppointmentFilterDto filter,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseWrapper.ok(appointmentService.getAppointmentsInRange(user.getId(), filter));
     }
 
     @Operation(summary = "Cancel appointment")

@@ -172,7 +172,7 @@ class ConsultationServiceTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> consultationService.create(dto));
 
-        assertEquals("End time must be after start time", ex.getMessage());
+        assertEquals("End startTime must be after start startTime", ex.getMessage());
         verifyNoInteractions(eventPublisher, consultationMapper);
     }
 
@@ -193,7 +193,7 @@ class ConsultationServiceTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> consultationService.create(dto));
 
-        assertEquals("End time must be in valid range", ex.getMessage());
+        assertEquals("End startTime must be in valid range", ex.getMessage());
         verifyNoInteractions(eventPublisher, consultationMapper);
     }
 
@@ -215,7 +215,7 @@ class ConsultationServiceTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> consultationService.create(dto));
 
-        assertEquals("Start time must be in valid range", ex.getMessage());
+        assertEquals("Start startTime must be in valid range", ex.getMessage());
         verifyNoInteractions(eventPublisher, consultationMapper);
     }
 

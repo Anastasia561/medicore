@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-class HashidToHashIdConverter implements Converter<String, HashId> {
+public class HashidToHashIdConverter implements Converter<String, HashId> {
     private final IdObfuscatorService idObfuscator;
 
     @Override

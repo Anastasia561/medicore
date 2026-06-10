@@ -4,8 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
@@ -46,17 +45,19 @@ class AppointmentServiceImpl implements AppointmentService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public Page<AppointmentInfoDto> getAppointmentsInRange(AppointmentFilterDto filter, Pageable pageable) {
-        Role role = personService.getById(filter.userId()).getRole();
+    public List<? extends AppointmentInfoDto> getAppointmentsInRange(HashId userId, AppointmentFilterDto filter) {
+        Role role = personService.getById(userId).getRole();
 
         if (filter.endDate().isBefore(filter.startDate()))
             throw new IllegalArgumentException("End date must be after start date");
 
-        Page<Appointment> all = appointmentRepository
-                .findAll(AppointmentSpecification.withFilter(filter), pageable);
+        Sort sorting = Sort.by(Sort.Direction.ASC, "date", "startTime");
 
-        return role == Role.DOCTOR ? all.map(appointmentMapper::toPatientDto)
-                : all.map(appointmentMapper::toDoctorDto);
+        List<Appointment> all = appointmentRepository
+                .findAll(AppointmentSpecification.withFilter(userId.value(), filter), sorting);
+
+        return role == Role.PATIENT ? all.stream().map(appointmentMapper::toPatientDto).toList()
+                : all.stream().map(appointmentMapper::toDoctorDto).toList();
     }
 
     @Override
@@ -79,14 +80,15 @@ class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public HashId create(HashId patientId, AppointmentCreateDto dto) {
         List<LocalTime> availableTimes = getAvailableTimes(dto.doctorId(), dto.date());
-        if (availableTimes.isEmpty() || !availableTimes.contains(dto.time())) {
-            throw new IllegalStateException("Selected time slot is not available");
+        if (availableTimes.isEmpty() || !availableTimes.contains(dto.startTime())) {
+            throw new IllegalStateException("Selected startTime slot is not available");
         }
 
         Doctor doctor = doctorService.getById(dto.doctorId());
         Patient patient = patientService.getById(patientId);
 
         Appointment entity = appointmentMapper.toEntity(dto, doctor, patient);
+
         AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(entity);
         eventPublisher.publishEvent(new SendEmailEvent<>(entity.getPatient().getEmail(),
                 EmailType.APPOINTMENT_SCHEDULED, emailDto));

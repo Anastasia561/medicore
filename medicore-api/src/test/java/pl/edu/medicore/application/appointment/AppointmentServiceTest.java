@@ -7,10 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
@@ -47,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -80,60 +76,61 @@ class AppointmentServiceTest {
 
     @Test
     void shouldGetAppointmentsInRangeForPatient_whenInputIsValid() {
-        HashId hashId = HashId.of(1L);
-        AppointmentFilterDto filter = new AppointmentFilterDto(hashId, LocalDate.now(), LocalDate.now().plusDays(1),
-                AppointmentStatus.COMPLETED, Specialization.CARDIOLOGIST);
-        Pageable pageable = PageRequest.of(0, 10);
+        HashId userId = HashId.of(1L);
 
-        Person p = new Person();
-        p.setRole(Role.DOCTOR);
-        when(personService.getById(hashId)).thenReturn(p);
+        AppointmentFilterDto filter = new AppointmentFilterDto(LocalDate.now(), LocalDate.now().plusDays(1),
+                AppointmentStatus.COMPLETED, Specialization.CARDIOLOGIST);
+
+        Person patient = new Person();
+        patient.setRole(Role.PATIENT);
 
         Appointment appointment = new Appointment();
-        Page<Appointment> appointmentsPage = new PageImpl<>(List.of(appointment));
-        when(appointmentRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(appointmentsPage);
-
         AppointmentForPatientDto patientDto = new AppointmentForPatientDto();
+
+        when(personService.getById(userId)).thenReturn(patient);
+        when(appointmentRepository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of(appointment));
         when(appointmentMapper.toPatientDto(appointment)).thenReturn(patientDto);
 
-        Page<AppointmentInfoDto> result = appointmentService.getAppointmentsInRange(filter, pageable);
+        List<? extends AppointmentInfoDto> result = appointmentService.getAppointmentsInRange(userId, filter);
 
-        assertEquals(1, result.getTotalElements());
-        assertEquals(patientDto, result.getContent().getFirst());
+        assertEquals(1, result.size());
+        assertEquals(patientDto, result.getFirst());
         verify(appointmentMapper, times(1)).toPatientDto(appointment);
         verify(appointmentMapper, never()).toDoctorDto(any());
+        verify(appointmentRepository, times(1)).findAll(any(Specification.class), any(Sort.class));
     }
 
     @Test
     void shouldGetAppointmentsInRangeForDoctor_whenInputIsValid() {
-        HashId hashId = HashId.of(1L);
-        AppointmentFilterDto filter = new AppointmentFilterDto(hashId, LocalDate.now(), LocalDate.now().plusDays(1),
-                AppointmentStatus.SCHEDULED, Specialization.CARDIOLOGIST);
-        Pageable pageable = PageRequest.of(0, 10);
+        HashId userId = HashId.of(1L);
 
-        Person p = new Person();
-        p.setRole(Role.PATIENT);
-        when(personService.getById(hashId)).thenReturn(p);
+        AppointmentFilterDto filter = new AppointmentFilterDto(LocalDate.now(), LocalDate.now().plusDays(1),
+                AppointmentStatus.SCHEDULED, Specialization.CARDIOLOGIST);
+
+        Person doctor = new Person();
+        doctor.setRole(Role.DOCTOR);
 
         Appointment appointment = new Appointment();
-        Page<Appointment> appointmentsPage = new PageImpl<>(List.of(appointment));
-        when(appointmentRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(appointmentsPage);
-
         AppointmentForDoctorDto doctorDto = new AppointmentForDoctorDto();
+
+        when(personService.getById(userId)).thenReturn(doctor);
+        when(appointmentRepository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of(appointment));
         when(appointmentMapper.toDoctorDto(appointment)).thenReturn(doctorDto);
 
-        Page<AppointmentInfoDto> result = appointmentService.getAppointmentsInRange(filter, pageable);
+        List<? extends AppointmentInfoDto> result = appointmentService.getAppointmentsInRange(userId, filter);
 
-        assertEquals(1, result.getTotalElements());
-        assertEquals(doctorDto, result.getContent().getFirst());
+        assertEquals(1, result.size());
+        assertEquals(doctorDto, result.getFirst());
+
         verify(appointmentMapper, times(1)).toDoctorDto(appointment);
         verify(appointmentMapper, never()).toPatientDto(any());
+        verify(appointmentRepository, times(1)).findAll(any(Specification.class), any(Sort.class));
     }
 
     @Test
     void shouldThrowIllegalArgumentException_whenInvalidDateRange() {
         HashId hashId = HashId.of(1L);
-        AppointmentFilterDto filter = new AppointmentFilterDto(hashId, LocalDate.now(), LocalDate.now().minusDays(1),
+        AppointmentFilterDto filter = new AppointmentFilterDto(LocalDate.now(), LocalDate.now().minusDays(1),
                 AppointmentStatus.SCHEDULED, Specialization.CARDIOLOGIST);
 
         Person p = new Person();
@@ -141,7 +138,7 @@ class AppointmentServiceTest {
         when(personService.getById(hashId)).thenReturn(p);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> appointmentService.getAppointmentsInRange(filter, PageRequest.of(0, 10)));
+                () -> appointmentService.getAppointmentsInRange(hashId, filter));
 
         assertEquals("End date must be after start date", exception.getMessage());
     }
@@ -195,13 +192,13 @@ class AppointmentServiceTest {
         long patientId = 1L;
 
         LocalDate date = LocalDate.now().plusDays(1);
-        LocalTime time = LocalTime.of(10, 0);
+        LocalTime startTime = LocalTime.of(10, 0);
 
-        AppointmentCreateDto dto = new AppointmentCreateDto(hashId, date, time);
+        AppointmentCreateDto dto = new AppointmentCreateDto(hashId, date, startTime);
 
         AppointmentService spyService = spy(appointmentService);
 
-        doReturn(List.of(time))
+        doReturn(List.of(startTime))
                 .when(spyService)
                 .getAvailableTimes(hashId, date);
 
@@ -246,7 +243,7 @@ class AppointmentServiceTest {
         IllegalStateException exception = assertThrows(IllegalStateException.class,
                 () -> spyService.create(patientId, dto));
 
-        assertEquals("Selected time slot is not available", exception.getMessage());
+        assertEquals("Selected startTime slot is not available", exception.getMessage());
         verifyNoInteractions(appointmentRepository, eventPublisher);
     }
 

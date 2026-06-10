@@ -11,9 +11,9 @@ public record ConsultationCreateDto(
         HashId doctorId,
         @NotNull(message = "Day is required")
         Workday day,
-        @NotNull(message = "Start time is required")
+        @NotNull(message = "Start startTime is required")
         LocalTime startTime,
-        @NotNull(message = "End time is required")
+        @NotNull(message = "End startTime is required")
         LocalTime endTime
 ) {
 }

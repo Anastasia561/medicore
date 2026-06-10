@@ -13,7 +13,8 @@ import java.time.LocalTime;
 public abstract class AppointmentInfoDto {
     private HashId id;
     private LocalDate date;
-    private LocalTime time;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private AppointmentStatus status;
     private String firstName;
     private String lastName;

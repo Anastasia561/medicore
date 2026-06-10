@@ -12,7 +12,7 @@ import java.util.List;
 
 interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
     @Query("""
-            SELECT a.time
+            SELECT a.startTime
             FROM Appointment a
             WHERE a.doctor.id = :doctorId
             AND a.date = :date

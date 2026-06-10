@@ -77,86 +77,53 @@ VALUES (6, 10, '2015-06-01', 'CARDIOLOGIST'),
 
 
 -- APPOINTMENT
-INSERT INTO appointment (date, time, status, patient_id, doctor_id)
-VALUES ('2026-04-06', '15:00:00', 'SCHEDULED', 1, 6),
-
-       ('2026-03-02', '11:00:00', 'SCHEDULED', 2, 7),
-
-       ('2026-02-06', '09:00:00', 'COMPLETED', 3, 8),
-
-       ('2026-03-05', '11:00:00', 'CANCELLED', 4, 9),
-
-       ('2026-02-07', '13:00:00', 'CANCELLED', 5, 10),
-
-       ('2026-05-02', '13:00:00', 'SCHEDULED', 1, 6),
-
-       ('2026-06-05', '11:00:00', 'CANCELLED', 1, 6),
-
-       ('2026-02-06', '12:00:00', 'SCHEDULED', 1, 6),
-
-       ('2026-01-06', '09:00:00', 'COMPLETED', 1, 9),
-
-       ('2026-03-08', '09:30:00', 'COMPLETED', 2, 6),
-
-       ('2026-04-06', '09:00:00', 'COMPLETED', 4, 6),
-
-       ('2026-02-01', '09:30:00', 'COMPLETED', 1, 10);
+INSERT INTO appointment (date, start_time, end_time, status, patient_id, doctor_id)
+VALUES ('2026-04-06', '15:00:00', '16:00:00', 'SCHEDULED', 1, 6),
+       ('2026-03-02', '11:00:00', '12:00:00', 'SCHEDULED', 2, 7),
+       ('2026-02-06', '09:00:00', '10:00:00', 'COMPLETED', 3, 8),
+       ('2026-03-05', '11:00:00', '12:00:00', 'CANCELLED', 4, 9),
+       ('2026-02-07', '13:00:00', '14:00:00', 'CANCELLED', 5, 10),
+       ('2026-05-02', '13:00:00', '14:00:00', 'SCHEDULED', 1, 6),
+       ('2026-06-05', '11:00:00', '12:00:00', 'CANCELLED', 1, 6),
+       ('2026-02-06', '12:00:00', '13:00:00', 'SCHEDULED', 1, 6),
+       ('2026-01-06', '09:00:00', '10:00:00', 'COMPLETED', 1, 9),
+       ('2026-03-08', '09:30:00', '10:30:00', 'COMPLETED', 2, 6),
+       ('2026-04-06', '09:00:00', '10:00:00', 'COMPLETED', 4, 6),
+       ('2026-02-01', '09:30:00', '10:30:00', 'COMPLETED', 1, 10);
 
 
 -- MEDICAL RECORD
 INSERT INTO record (diagnosis, summary, appointment_id)
 VALUES ('Hypertension', 'Patient with elevated blood pressure', 3),
-
        ('Migraine', 'Recurring headache attacks', 9),
-
        ('Flu', 'High fever and coughing', 10),
-
        ('Diabetes', 'High blood sugar levels', 11),
-
        ('High cholesterol', 'Elevated LDL levels', 12);
 
 -- PRESCRIPTION
 INSERT INTO prescription (medicine, dosage, start_date, end_date, frequency, record_id)
 VALUES ('Aspirin', '1 tablet', '2025-04-01', '2025-04-10', 'DAILY', 1),
-
        ('Ibuprofen', '2 capsules', '2025-04-05', '2025-04-15', 'DAILY', 1),
-
        ('Amoxicillin', '50 mg', '2025-04-08', NULL, 'WEEKLY', 3),
-
        ('Metformin', '100 mg', '2025-04-01', '2025-05-01', 'MONTHLY', 2),
-
        ('Atorvastatin', '10 drops', '2025-04-12', NULL, 'NEEDED', 4);
 
 -- CONSULTATION
 INSERT INTO consultation (day, start_work_time, end_work_time, doctor_id)
 VALUES ('MONDAY', '08:00:00', '12:00:00', 6),
-
        ('TUESDAY', '09:00:00', '13:00:00', 6),
-
        ('WEDNESDAY', '10:00:00', '14:00:00', 6),
-
        ('THURSDAY', '08:30:00', '12:30:00', 6),
-
        ('FRIDAY', '10:00:00', '17:00:00', 6),
-
        ('MONDAY', '08:00:00', '12:00:00', 7),
-
        ('TUESDAY', '08:00:00', '13:00:00', 8),
-
        ('WEDNESDAY', '10:00:00', '14:00:00', 7),
-
        ('THURSDAY', '08:30:00', '12:30:00', 8),
-
        ('FRIDAY', '11:00:00', '19:00:00', 7),
-
        ('MONDAY', '08:00:00', '12:00:00', 9),
-
        ('TUESDAY', '09:00:00', '13:00:00', 9),
-
        ('WEDNESDAY', '10:00:00', '14:00:00', 10),
-
        ('THURSDAY', '08:30:00', '12:30:00', 10),
-
        ('FRIDAY', '10:00:00', '16:00:00', 10);
 
 -- TEST

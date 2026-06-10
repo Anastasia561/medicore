@@ -83,7 +83,8 @@ CREATE TABLE appointment
 (
     id            BIGSERIAL PRIMARY KEY,
     date          date                  NOT NULL,
-    time          time                  NOT NULL,
+    start_time    time                  NOT NULL,
+    end_time      time                  NOT NULL,
     patient_id    BIGINT                NOT NULL,
     doctor_id     BIGINT                NOT NULL,
     status        varchar(30)           NOT NULL,
