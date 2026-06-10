@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {useAppointments} from '../hooks/useAppointments';
+import {useAppointments} from '../hooks/useAppointments.jsx';
 import {useLocation, useParams} from "react-router-dom";
 import {
     getMonday,
@@ -13,7 +13,7 @@ const AppointmentDashboard = () => {
     const {userId} = useParams();
     const {state} = useLocation();
 
-    const displayName = state?.doctorName || "Doctor";
+    const displayName = state?.userName || "user";
 
     const [startDate, setStartDate] = useState(getMonday(new Date()));
     const [statusFilter, setStatusFilter] = useState("ALL");
@@ -57,7 +57,11 @@ const AppointmentDashboard = () => {
 
     return (
         <div className="container-fluid p-4 bg-light min-vh-100">
-            <h2 className="mb-4">Appointments for {displayName}</h2>
+            <h2 className="mb-4">
+                {userId
+                    ? `Appointments for ${displayName}`
+                    : "My Appointments"}
+            </h2>
 
             <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
 
@@ -139,6 +143,10 @@ const AppointmentDashboard = () => {
                                                     <div className="text-muted extra-small mb-2"
                                                          style={{fontSize: '0.8rem'}}>
                                                         {app.phoneNumber}
+                                                    </div>
+                                                    <div className="text-muted extra-small mb-2"
+                                                         style={{fontSize: '0.8rem'}}>
+                                                        {app.specialization}
                                                     </div>
                                                     <span
                                                         className={`badge bg-white bg-opacity-75 ${getStatusTextClass(app.status)}`}>

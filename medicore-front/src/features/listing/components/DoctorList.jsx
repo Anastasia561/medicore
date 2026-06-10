@@ -89,7 +89,7 @@ const DoctorList = () => {
                                         <button
                                             className="btn btn-outline-success btn-sm text-center"
                                             onClick={() => navigate(`/appointments/${doc.id}`, {
-                                                    state: {doctorName: `${doc.firstName} ${doc.lastName}`}
+                                                    state: {userName: `${doc.firstName} ${doc.lastName}`}
                                                 }
                                             )}
                                         >Appointments</button>}

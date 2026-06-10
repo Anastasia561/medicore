@@ -42,6 +42,9 @@ function App() {
                             <Route path="patients" element={<PatientList/>}/>
                         </Route>
 
+                        <Route element={<RequireAuth allowedRoles={["ROLE_PATIENT", "ROLE_DOCTOR"]}/>}>
+                            <Route path="/appointments" element={<AppointmentListing/>}/>
+                        </Route>
                     </Route>
                 </Route>
 

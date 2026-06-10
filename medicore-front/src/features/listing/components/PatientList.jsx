@@ -4,8 +4,10 @@ import {useState} from "react";
 import {usePatients} from "../hooks/usePatients.jsx";
 import Pagination from "../../../components/Pagination.jsx";
 import SearchInput from "../../../components/SearchInput.jsx";
+import {useNavigate} from "react-router-dom";
 
 const PatientList = () => {
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const pageSize = 3;
@@ -49,7 +51,11 @@ const PatientList = () => {
                                 }
                             ]}
                             renderActions={() => (
-                                <button className="btn btn-outline-success btn-sm">Appointments</button>
+                                <button className="btn btn-outline-success btn-sm"
+                                        onClick={() => navigate(`/appointments/${patient.id}`, {
+                                                state: {userName: `${patient.firstName} ${patient.lastName}`}
+                                            }
+                                        )}>Appointments</button>
                             )}
                         />
                     ))
