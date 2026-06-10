@@ -64,7 +64,12 @@ const DoctorList = () => {
 
             <div className="row row-cols-1 g-4 mt-2">
                 {isLoading ? (
-                    <div className="text-center p-5">Searching...</div>
+                    <div className="container p-4 text-center mt-5">
+                        <div className="spinner-border text-primary" role="status"/>
+                        <div className="mt-3 text-muted">
+                            Loading doctors...
+                        </div>
+                    </div>
                 ) : doctors.length > 0 ? (
                     doctors.map(doc => (
                         <DataCard
@@ -83,7 +88,10 @@ const DoctorList = () => {
                                     {auth?.role === 'ROLE_ADMIN' &&
                                         <button
                                             className="btn btn-outline-success btn-sm text-center"
-                                            onClick={() => navigate('/appointments')}
+                                            onClick={() => navigate(`/appointments/${doc.id}`, {
+                                                    state: {doctorName: `${doc.firstName} ${doc.lastName}`}
+                                                }
+                                            )}
                                         >Appointments</button>}
                                     <button
                                         className="btn btn-outline-primary btn-sm text-center"

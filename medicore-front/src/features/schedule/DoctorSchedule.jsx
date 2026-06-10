@@ -33,7 +33,16 @@ const DoctorSchedule = () => {
         setSelectedSchedule(day);
     };
 
-    if (isLoading) return <p>Loading...</p>;
+    if (isLoading) {
+        return (
+            <div className="container p-4 text-center mt-5">
+                <div className="spinner-border text-primary" role="status"/>
+                <div className="mt-3 text-muted">
+                    Loading schedule...
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="schedule-container">

@@ -29,7 +29,12 @@ const PatientList = () => {
         >
             <div className="row row-cols-1 g-4 mt-2">
                 {isLoading ? (
-                    <div className="text-center p-5">Searching...</div>
+                    <div className="container p-4 text-center mt-5">
+                        <div className="spinner-border text-primary" role="status"/>
+                        <div className="mt-3 text-muted">
+                            Loading patients...
+                        </div>
+                    </div>
                 ) : patients.length > 0 ? (
                     patients.map(patient => (
                         <DataCard
