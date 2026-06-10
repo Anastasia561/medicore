@@ -31,7 +31,7 @@ function App() {
                             <Route path="home" element={<Home/>}/>
                             <Route path="profile" element={<Profile/>}/>
                             <Route path="/doctors/:doctorId/schedule" element={<DoctorSchedule/>}/>
-                            <Route path="/appointments" element={<AppointmentListing/>}/>
+                            <Route path="/appointments/:userId" element={<AppointmentListing/>}/>
                         </Route>
 
                         <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT"]}/>}>
