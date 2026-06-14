@@ -79,7 +79,7 @@ class AppointmentServiceTest {
         HashId userId = HashId.of(1L);
 
         AppointmentFilterDto filter = new AppointmentFilterDto(LocalDate.now(), LocalDate.now().plusDays(1),
-                AppointmentStatus.COMPLETED, Specialization.CARDIOLOGIST);
+                AppointmentStatus.COMPLETED);
 
         Person patient = new Person();
         patient.setRole(Role.PATIENT);
@@ -105,7 +105,7 @@ class AppointmentServiceTest {
         HashId userId = HashId.of(1L);
 
         AppointmentFilterDto filter = new AppointmentFilterDto(LocalDate.now(), LocalDate.now().plusDays(1),
-                AppointmentStatus.SCHEDULED, Specialization.CARDIOLOGIST);
+                AppointmentStatus.SCHEDULED);
 
         Person doctor = new Person();
         doctor.setRole(Role.DOCTOR);
@@ -131,7 +131,7 @@ class AppointmentServiceTest {
     void shouldThrowIllegalArgumentException_whenInvalidDateRange() {
         HashId hashId = HashId.of(1L);
         AppointmentFilterDto filter = new AppointmentFilterDto(LocalDate.now(), LocalDate.now().minusDays(1),
-                AppointmentStatus.SCHEDULED, Specialization.CARDIOLOGIST);
+                AppointmentStatus.SCHEDULED);
 
         Person p = new Person();
         p.setRole(Role.DOCTOR);
@@ -189,7 +189,6 @@ class AppointmentServiceTest {
     @Test
     void shouldCreateAppointment_whenInputIsValid() {
         HashId hashId = HashId.of(1L);
-        long patientId = 1L;
 
         LocalDate date = LocalDate.now().plusDays(1);
         LocalTime startTime = LocalTime.of(10, 0);
@@ -265,12 +264,14 @@ class AppointmentServiceTest {
 
         doctor.setConsultations(Set.of(consultation));
 
-        List<LocalTime> scheduledTimes = List.of(LocalTime.of(9, 0));
+        List<Appointment> scheduledAppointments = List.of(
+                createMockAppointment(LocalTime.of(9, 0), LocalTime.of(9, 30))
+        );
 
         when(doctorService.getById(hashId)).thenReturn(doctor);
         when(schedulingProperties.getSlotDurationMinutes()).thenReturn(30);
-        when(appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date))
-                .thenReturn(scheduledTimes);
+        when(appointmentRepository.getScheduledAppointments(doctorId, date))
+                .thenReturn(scheduledAppointments);
 
         List<LocalTime> result = appointmentService.getAvailableTimes(hashId, date);
 
@@ -280,7 +281,7 @@ class AppointmentServiceTest {
         assertFalse(result.contains(LocalTime.of(9, 0)));
 
         verify(doctorService).getById(hashId);
-        verify(appointmentRepository).getScheduledTimesForDoctorAndDate(doctorId, date);
+        verify(appointmentRepository).getScheduledAppointments(doctorId, date);
     }
 
     @Test
@@ -303,7 +304,7 @@ class AppointmentServiceTest {
 
         when(doctorService.getById(hashId)).thenReturn(doctor);
         when(schedulingProperties.getSlotDurationMinutes()).thenReturn(30);
-        when(appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date))
+        when(appointmentRepository.getScheduledAppointments(doctorId, date))
                 .thenReturn(new ArrayList<>());
 
         List<LocalTime> result = appointmentService.getAvailableTimes(hashId, date);
@@ -314,7 +315,7 @@ class AppointmentServiceTest {
         assertTrue(result.contains(LocalTime.of(9, 0)));
 
         verify(doctorService).getById(hashId);
-        verify(appointmentRepository).getScheduledTimesForDoctorAndDate(doctorId, date);
+        verify(appointmentRepository).getScheduledAppointments(doctorId, date);
     }
 
     @Test
@@ -335,10 +336,15 @@ class AppointmentServiceTest {
 
         doctor.setConsultations(Set.of(consultation));
 
+        List<Appointment> scheduledAppointments = List.of(
+                createMockAppointment(LocalTime.of(9, 0), LocalTime.of(9, 30)),
+                createMockAppointment(LocalTime.of(9, 30), LocalTime.of(10, 0))
+        );
+
         when(doctorService.getById(hashId)).thenReturn(doctor);
         when(schedulingProperties.getSlotDurationMinutes()).thenReturn(30);
-        when(appointmentRepository.getScheduledTimesForDoctorAndDate(doctorId, date))
-                .thenReturn(List.of(LocalTime.of(9, 0), LocalTime.of(9, 30)));
+        when(appointmentRepository.getScheduledAppointments(doctorId, date))
+                .thenReturn(scheduledAppointments);
 
         List<LocalTime> result = appointmentService.getAvailableTimes(hashId, date);
 
@@ -346,7 +352,7 @@ class AppointmentServiceTest {
         assertTrue(result.isEmpty());
 
         verify(doctorService).getById(hashId);
-        verify(appointmentRepository).getScheduledTimesForDoctorAndDate(doctorId, date);
+        verify(appointmentRepository).getScheduledAppointments(doctorId, date);
     }
 
     @Test
@@ -545,5 +551,12 @@ class AppointmentServiceTest {
         assertEquals("To date must be after from date", exception.getMessage());
 
         verifyNoInteractions(appointmentRepository, eventPublisher);
+    }
+
+    private Appointment createMockAppointment(LocalTime start, LocalTime end) {
+        Appointment appointment = new Appointment();
+        appointment.setStartTime(start);
+        appointment.setEndTime(end);
+        return appointment;
     }
 }

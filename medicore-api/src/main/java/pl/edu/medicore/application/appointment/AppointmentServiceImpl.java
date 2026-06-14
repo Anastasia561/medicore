@@ -100,7 +100,6 @@ class AppointmentServiceImpl implements AppointmentService {
     @Override
     public List<LocalTime> getAvailableTimes(HashId doctorId, LocalDate date) {
         Doctor doctor = doctorService.getById(doctorId);
-
         Workday workday = validateWorkday(date);
 
         Consultation consultation = doctor.getConsultations()
@@ -112,19 +111,30 @@ class AppointmentServiceImpl implements AppointmentService {
         LocalTime startTime = consultation.getStartTime();
         LocalTime endTime = consultation.getEndTime();
 
-        List<LocalTime> scheduledTimes = appointmentRepository
-                .getScheduledTimesForDoctorAndDate(doctorId.value(), date);
+        List<Appointment> appointments = appointmentRepository
+                .getScheduledAppointments(doctorId.value(), date);
 
-        List<LocalTime> allSlots = new ArrayList<>();
-        LocalTime current = startTime;
+        List<LocalTime> availableSlots = new ArrayList<>();
+        LocalTime currentSlotStart = startTime;
+        int slotDuration = schedulingProperties.getSlotDurationMinutes();
 
-        while (current.isBefore(endTime)) {
-            allSlots.add(current);
-            current = current.plusMinutes(schedulingProperties.getSlotDurationMinutes());
+        while (currentSlotStart.isBefore(endTime)) {
+            LocalTime currentSlotEnd = currentSlotStart.plusMinutes(slotDuration);
+
+            if (currentSlotEnd.isAfter(endTime)) {
+                break;
+            }
+
+            boolean isOverlapping = isSlotOccupied(currentSlotStart, currentSlotEnd, appointments);
+
+            if (!isOverlapping) {
+                availableSlots.add(currentSlotStart);
+            }
+
+            currentSlotStart = currentSlotEnd;
         }
-        allSlots.removeAll(scheduledTimes);
 
-        return allSlots;
+        return availableSlots;
     }
 
     @Override
@@ -169,23 +179,32 @@ class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional
     public void sendReminderAboutAppointmentsBetween(LocalDateTime from, LocalDateTime to) {
-        if (to.isBefore(from))
+        if (to.isBefore(from)) {
             throw new IllegalArgumentException("To date must be after from date");
+        }
 
         List<Appointment> appointments = appointmentRepository.getAppointmentsBetween(from, to);
+        if (appointments.isEmpty()) {
+            return;
+        }
 
         for (Appointment app : appointments) {
-            app.setReminderSent(true);
             AppointmentNotificationEmailDto emailDto = appointmentMapper.toEmailDto(app);
-            eventPublisher.publishEvent(new SendEmailEvent<>(app.getPatient().getEmail(),
-                    EmailType.UPCOMING_REMINDER, emailDto));
+            eventPublisher.publishEvent(new SendEmailEvent<>(
+                    app.getPatient().getEmail(),
+                    EmailType.UPCOMING_REMINDER,
+                    emailDto
+            ));
+            app.setReminderSent(true);
         }
     }
 
     @Override
     public List<HashId> findIdsForCancellation(HashId doctorId, Workday dayOfWeek, LocalTime start, LocalTime end) {
-        return appointmentRepository.findIdsForCancellation(doctorId.value(), dayOfWeek.name(), start, end)
-                .stream().map(HashId::of).toList();
+        List<Long> rawIds = appointmentRepository.findIdsForCancellation(doctorId.value(), dayOfWeek.name(),
+                start, end);
+
+        return rawIds.stream().map(HashId::of).toList();
     }
 
     private Workday validateWorkday(LocalDate date) {
@@ -194,5 +213,14 @@ class AppointmentServiceImpl implements AppointmentService {
             throw new DoctorNotAvailableException("Doctor is not available on weekends");
         }
         return Workday.valueOf(date.getDayOfWeek().name());
+    }
+
+    private boolean isSlotOccupied(LocalTime slotStart, LocalTime slotEnd, List<Appointment> appointments) {
+        for (Appointment app : appointments) {
+            if (slotStart.isBefore(app.getEndTime()) && slotEnd.isAfter(app.getStartTime())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

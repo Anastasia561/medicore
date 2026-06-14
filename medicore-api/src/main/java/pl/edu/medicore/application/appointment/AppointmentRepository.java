@@ -12,13 +12,13 @@ import java.util.List;
 
 interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
     @Query("""
-            SELECT a.startTime
+            SELECT a
             FROM Appointment a
             WHERE a.doctor.id = :doctorId
             AND a.date = :date
             AND a.status = 'SCHEDULED'
             """)
-    List<LocalTime> getScheduledTimesForDoctorAndDate(long doctorId, LocalDate date);
+    List<Appointment> getScheduledAppointments(long doctorId, LocalDate date);
 
     long countByDate(LocalDate date);
 
@@ -62,23 +62,24 @@ interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpe
             """)
     List<Appointment> findAllByStatusAndDate(AppointmentStatus status, LocalDate date);
 
-    @Query(value = """
-                SELECT *
-                FROM appointment a
-                WHERE a.status = 'SCHEDULED'
-                AND (a.date + a.time) BETWEEN :from AND :to
-                AND a.reminder_sent = false
-            """, nativeQuery = true)
+    @Query("""
+            SELECT a
+            FROM Appointment a
+            WHERE a.status = 'SCHEDULED'
+            AND a.reminderSent = false
+            AND CAST(CONCAT(a.date, ' ', a.startTime) AS localdatetime) BETWEEN :from AND :to
+            """)
     List<Appointment> getAppointmentsBetween(LocalDateTime from, LocalDateTime to);
 
-    @Query(value = """ 
-            SELECT id FROM appointment
-            WHERE doctor_id = :doctorId
-            AND status = 'SCHEDULED'
-            AND date >= CURRENT_DATE
-            AND TRIM(TO_CHAR(date, 'DAY')) = :dayOfWeek
-            AND time >= :start AND time < :end
-            """,
-            nativeQuery = true)
+    @Query(value = """
+            SELECT a.id
+            FROM appointment a
+            WHERE a.doctor_id = :doctorId
+            AND a.status = 'SCHEDULED'
+            AND a.date >= CURRENT_DATE
+            AND TRIM(TO_CHAR(a.date, 'DAY')) = :dayOfWeek
+            AND a.start_time < :end
+            AND a.end_time > :start
+            """, nativeQuery = true)
     List<Long> findIdsForCancellation(long doctorId, String dayOfWeek, LocalTime start, LocalTime end);
 }

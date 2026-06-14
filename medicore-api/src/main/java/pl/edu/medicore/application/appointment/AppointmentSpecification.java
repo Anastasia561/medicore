@@ -2,7 +2,6 @@ package pl.edu.medicore.application.appointment;
 
 import org.springframework.data.jpa.domain.Specification;
 import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
-import pl.edu.medicore.application.doctor.Specialization;
 
 import java.time.LocalDate;
 
@@ -17,11 +16,6 @@ class AppointmentSpecification {
         if (filter.status() != null) {
             spec = spec.and(hasStatus(filter.status()));
         }
-
-        if (filter.specialization() != null) {
-            spec = spec.and(hasSpecialization(filter.specialization()));
-        }
-
         return spec;
     }
 
@@ -41,10 +35,5 @@ class AppointmentSpecification {
     private static Specification<Appointment> hasStatus(AppointmentStatus status) {
         return (root, query, cb) ->
                 cb.equal(root.get("status"), status);
-    }
-
-    private static Specification<Appointment> hasSpecialization(Specialization specialization) {
-        return (root, query, cb) ->
-                cb.equal(root.get("doctor").get("specialization"), specialization);
     }
 }

@@ -31,7 +31,7 @@ import java.util.List;
 public class AppointmentController {
     private final AppointmentService appointmentService;
 
-    @Operation(summary = "Get page of appointments in date range with filtering")
+    @Operation(summary = "Get page of appointments as admin in date range with filtering")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseWrapper<List<? extends AppointmentInfoDto>> getAppointmentsInDateRangeForAdmin(
