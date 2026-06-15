@@ -8,15 +8,21 @@ import {
     getStatusTextClass,
     getDaysArray
 } from "../utils/appointmentUtils.js"
+import useAuth from "../../../hooks/useAuth.jsx";
 
 const AppointmentDashboard = () => {
     const {userId} = useParams();
     const {state} = useLocation();
+    const {auth} = useAuth();
 
+    const isDoctor = auth?.role === "ROLE_DOCTOR";
+    const isNotAdmin = auth?.role !== "ROLE_ADMIN";
     const displayName = state?.userName || "user";
 
     const [startDate, setStartDate] = useState(getMonday(new Date()));
     const [statusFilter, setStatusFilter] = useState("ALL");
+
+    const [expandedAppIds, setExpandedAppIds] = useState({});
 
     const currentDays = getDaysArray(startDate);
     const endDate = currentDays[4];
@@ -31,6 +37,13 @@ const AppointmentDashboard = () => {
         const currentStart = new Date(startDate);
         currentStart.setDate(currentStart.getDate() + 7);
         setStartDate(getMonday(currentStart));
+    };
+
+    const toggleExpand = (appId) => {
+        setExpandedAppIds(prev => ({
+            ...prev,
+            [appId]: !prev[appId]
+        }));
     };
 
     const {data: appointments = [], isLoading, isError} = useAppointments({
@@ -129,31 +142,89 @@ const AppointmentDashboard = () => {
                                                 No appointments
                                             </div>
                                         ) : (
-                                            dayAppointments.map((app) => (
-                                                <div
-                                                    key={app.id}
-                                                    className={`p-3 rounded-2 border-start border-4 ${getStatusAlertClass(app.status)}`}
-                                                >
-                                                    <div className="fw-bold text-dark small mb-1">
-                                                        {app.startTime?.substring(0, 5) || "N/A"} - {app.endTime?.substring(0, 5) || "N/A"}
+                                            dayAppointments.map((app) => {
+                                                const isExpanded = !!expandedAppIds[app.id];
+
+                                                return (
+                                                    <div
+                                                        key={app.id}
+                                                        onClick={() => toggleExpand(app.id)}
+                                                        className={`p-3 rounded-2 border-start border-4 ${getStatusAlertClass(app.status)}`}
+                                                        style={{cursor: 'pointer'}}
+                                                    >
+                                                        {!isExpanded ? (
+                                                            <div
+                                                                className="d-flex flex-column align-items-start gap-1 w-100">
+                                                                <div className="fw-bold text-dark small">
+                                                                    {app.startTime?.substring(0, 5) || "N/A"} - {app.endTime?.substring(0, 5) || "N/A"}
+                                                                </div>
+                                                                <span
+                                                                    className={`badge bg-white bg-opacity-75 ${getStatusTextClass(app.status)}`}>
+                                                                    {app.status}
+                                                                </span>
+                                                            </div>
+                                                        ) : (
+                                                            <div onClick={(e) => e.stopPropagation()}>
+                                                                <div className="fw-bold text-dark small mb-1">
+                                                                    {app.startTime?.substring(0, 5) || "N/A"} - {app.endTime?.substring(0, 5) || "N/A"}
+                                                                </div>
+                                                                <div className="text-dark small fw-medium">
+                                                                    {app.firstName} {app.lastName}
+                                                                </div>
+                                                                <div className="text-muted extra-small mb-2"
+                                                                     style={{fontSize: '0.8rem'}}>
+                                                                    {app.phoneNumber}
+                                                                </div>
+                                                                <div className="text-muted extra-small mb-2"
+                                                                     style={{fontSize: '0.8rem'}}>
+                                                                    {app.specialization}
+                                                                </div>
+                                                                <span
+                                                                    className={`badge bg-white bg-opacity-75 ${getStatusTextClass(app.status)}`}>
+                                                                    {app.status}
+                                                                </span>
+
+                                                                {app.status === 'SCHEDULED' && (
+                                                                    <div
+                                                                        className="d-flex justify-content-center gap-1 mt-3 w-100">
+
+                                                                        <div
+                                                                            className={isDoctor ? "flex-fill" : "w-50"}>
+                                                                            <button
+                                                                                className="btn btn-outline-danger btn-sm w-100 px-1 py-1 fw-medium"
+                                                                                onClick={() => console.log(`Cancel app: ${app.id}`)}
+                                                                                title="Cancel"
+                                                                            >
+                                                                                ✕
+                                                                            </button>
+                                                                        </div>
+
+                                                                        {isDoctor && (
+                                                                            <div className="flex-fill">
+                                                                                <button
+                                                                                    className="btn btn-outline-info btn-sm w-100 px-1 py-1 fw-medium"
+                                                                                    onClick={() => console.log(`Complete app: ${app.id}`)}
+                                                                                    title="Complete"
+                                                                                >
+                                                                                    ✓
+                                                                                </button>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                )}
+                                                                {app.status === 'COMPLETED' && isNotAdmin && (
+                                                                    <button
+                                                                        className="btn btn-outline-success btn-sm mt-3 w-100 px-1 py-1 fw-medium"
+                                                                        onClick={() => console.log(`Record app: ${app.id}`)}
+                                                                    >
+                                                                        Record
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    <div className="text-dark small fw-medium">
-                                                        {app.firstName} {app.lastName}
-                                                    </div>
-                                                    <div className="text-muted extra-small mb-2"
-                                                         style={{fontSize: '0.8rem'}}>
-                                                        {app.phoneNumber}
-                                                    </div>
-                                                    <div className="text-muted extra-small mb-2"
-                                                         style={{fontSize: '0.8rem'}}>
-                                                        {app.specialization}
-                                                    </div>
-                                                    <span
-                                                        className={`badge bg-white bg-opacity-75 ${getStatusTextClass(app.status)}`}>
-                                                        {app.status}
-                                                    </span>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         )}
                                     </div>
                                 </div>
