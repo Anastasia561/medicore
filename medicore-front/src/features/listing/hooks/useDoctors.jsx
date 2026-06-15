@@ -1,5 +1,5 @@
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate.jsx";
-import {useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 
 export const useDoctors = (page = 0, size = 5, query = "", specialization = "") => {
     const axiosPrivate = useAxiosPrivate();
@@ -14,6 +14,6 @@ export const useDoctors = (page = 0, size = 5, query = "", specialization = "") 
             if (res.data.error) throw new Error(res.data.error);
             return res.data.data;
         },
-        keepPreviousData: true,
+        placeholderData: keepPreviousData
     });
 };

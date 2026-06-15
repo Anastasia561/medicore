@@ -68,10 +68,7 @@ const DoctorSchedule = () => {
                         <ConsultationForm
                             doctorId={doctorId}
                             initialData={selectedSchedule}
-                            onSubmit={() => {
-                                setIsModalOpen(false);
-                                setSelectedSchedule(null);
-                            }}
+                            onSubmit={handleCloseModal}
                             onCancel={handleCloseModal}
                         />
                     </div>

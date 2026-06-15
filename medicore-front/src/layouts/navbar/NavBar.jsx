@@ -1,7 +1,7 @@
 import {NavLink, useNavigate} from "react-router-dom";
 import "./NavBar.css";
 import logo from "../../assets/logo.png";
-import useLogout from "../../features/auth/hooks/useLogout.jsx";
+import {useLogout} from "../../features/auth/hooks/useLogout.jsx";
 import useAuth from "../../hooks/useAuth.jsx";
 
 const NavBar = () => {

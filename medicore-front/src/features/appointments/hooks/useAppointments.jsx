@@ -1,5 +1,5 @@
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate.jsx";
-import {useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 
 export const useAppointments = ({userId = null, startDate, endDate, status = ""}) => {
 
@@ -9,7 +9,6 @@ export const useAppointments = ({userId = null, startDate, endDate, status = ""}
         queryKey: ["appointments", userId, startDate, endDate, status],
 
         queryFn: async () => {
-
             const url = userId ? `/appointments/user/${userId}` : `/appointments`;
 
             const res = await axiosPrivate.get(url, {
@@ -20,13 +19,9 @@ export const useAppointments = ({userId = null, startDate, endDate, status = ""}
                 }
             });
 
-            if (res.data.error) {
-                throw new Error(res.data.error);
-            }
-
+            if (res.data.error) throw new Error(res.data.error);
             return res.data.data;
         },
-
-        keepPreviousData: true
+        placeholderData: keepPreviousData
     });
 };

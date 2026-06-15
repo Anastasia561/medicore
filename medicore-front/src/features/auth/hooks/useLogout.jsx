@@ -1,21 +1,20 @@
-import axios from "../../../api/axios.js";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth.jsx";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate.jsx";
 
-const useLogout = () => {
+export const useLogout = () => {
+    const axiosPrivate = useAxiosPrivate();
     const {setAuth} = useAuth();
+    const queryClient = useQueryClient();
 
-    return async () => {
-        try {
-            await axios.post("/auth/logout", {}, {
-                withCredentials: true
-            });
+    return useMutation({
+        mutationFn: async () => {
+            return await axiosPrivate.post("/auth/logout");
+        },
 
-        } catch (err) {
-            console.error(err);
-        } finally {
+        onSettled: () => {
             setAuth(null);
+            queryClient.clear();
         }
-    };
+    });
 };
-
-export default useLogout;

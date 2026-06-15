@@ -8,8 +8,9 @@ export const useSchedule = (doctorId) => {
         queryKey: ["doctor-schedule", doctorId],
         queryFn: async () => {
             const res = await axiosPrivate.get(`/consultations/doctor/${doctorId}`);
+            if (res.data.error) throw new Error(res.data.error);
             return res.data.data;
         },
-        enabled: !!doctorId
+        staleTime: 1000 * 60 * 5
     });
 };

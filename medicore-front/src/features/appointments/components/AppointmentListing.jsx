@@ -10,7 +10,7 @@ import {
 } from "../utils/appointmentUtils.js"
 import useAuth from "../../../hooks/useAuth.jsx";
 
-const AppointmentDashboard = () => {
+const AppointmentListing = () => {
     const {userId} = useParams();
     const {state} = useLocation();
     const {auth} = useAuth();
@@ -237,4 +237,4 @@ const AppointmentDashboard = () => {
     );
 };
 
-export default AppointmentDashboard;
+export default AppointmentListing;
