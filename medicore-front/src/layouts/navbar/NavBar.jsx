@@ -5,7 +5,7 @@ import {useLogout} from "../../features/auth/hooks/useLogout.jsx";
 import useAuth from "../../hooks/useAuth.jsx";
 
 const NavBar = () => {
-    const logout = useLogout();
+    const { mutateAsync: logout } = useLogout();
     const navigate = useNavigate();
     const {auth} = useAuth();
 

@@ -9,6 +9,8 @@ import {
     getDaysArray
 } from "../utils/appointmentUtils.js"
 import useAuth from "../../../hooks/useAuth.jsx";
+import {useCancelAppointment} from "../hooks/useCancelAppointment.jsx";
+import ConfirmModal from "../../../components/ConfirmModal.jsx";
 
 const AppointmentListing = () => {
     const {userId} = useParams();
@@ -21,6 +23,7 @@ const AppointmentListing = () => {
 
     const [startDate, setStartDate] = useState(getMonday(new Date()));
     const [statusFilter, setStatusFilter] = useState("ALL");
+    const [confirmId, setConfirmId] = useState(null);
 
     const [expandedAppIds, setExpandedAppIds] = useState({});
 
@@ -54,6 +57,8 @@ const AppointmentListing = () => {
     });
 
     const groupedAppointments = groupAppointmentsByDate(appointments);
+
+    const {mutate: cancelAppointment} = useCancelAppointment();
 
     if (isLoading) {
         return (
@@ -192,7 +197,10 @@ const AppointmentListing = () => {
                                                                             className={isDoctor ? "flex-fill" : "w-50"}>
                                                                             <button
                                                                                 className="btn btn-outline-danger btn-sm w-100 px-1 py-1 fw-medium"
-                                                                                onClick={() => console.log(`Cancel app: ${app.id}`)}
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setConfirmId(app.id);
+                                                                                }}
                                                                                 title="Cancel"
                                                                             >
                                                                                 ✕
@@ -233,6 +241,19 @@ const AppointmentListing = () => {
                     );
                 })}
             </div>
+
+            {confirmId && (
+                <ConfirmModal
+                    title="Cancel appointment?"
+                    message="This action cannot be undone."
+                    cancelText="No, keep it"
+                    onCancel={() => setConfirmId(null)}
+                    onConfirm={() => {
+                        cancelAppointment(confirmId);
+                        setConfirmId(null);
+                    }}
+                />
+            )}
         </div>
     );
 };
