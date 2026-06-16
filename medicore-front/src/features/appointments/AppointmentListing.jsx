@@ -1,21 +1,22 @@
 import {useState} from 'react';
-import {useAppointments} from '../hooks/useAppointments.jsx';
-import {useLocation, useParams} from "react-router-dom";
+import {useAppointments} from './hooks/useAppointments.jsx';
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {
     getMonday,
     groupAppointmentsByDate,
     getStatusAlertClass,
     getStatusTextClass,
     getDaysArray
-} from "../utils/appointmentUtils.js"
-import useAuth from "../../../hooks/useAuth.jsx";
-import {useCancelAppointment} from "../hooks/useCancelAppointment.jsx";
-import ConfirmModal from "../../../components/ConfirmModal.jsx";
+} from "./utils/appointmentUtils.js"
+import useAuth from "../../hooks/useAuth.jsx";
+import {useCancelAppointment} from "./hooks/useCancelAppointment.jsx";
+import ConfirmModal from "../../components/ConfirmModal.jsx";
 
 const AppointmentListing = () => {
     const {userId} = useParams();
     const {state} = useLocation();
     const {auth} = useAuth();
+    const navigate = useNavigate();
 
     const isDoctor = auth?.role === "ROLE_DOCTOR";
     const isNotAdmin = auth?.role !== "ROLE_ADMIN";
@@ -223,7 +224,7 @@ const AppointmentListing = () => {
                                                                 {app.status === 'COMPLETED' && isNotAdmin && (
                                                                     <button
                                                                         className="btn btn-outline-success btn-sm mt-3 w-100 px-1 py-1 fw-medium"
-                                                                        onClick={() => console.log(`Record app: ${app.id}`)}
+                                                                        onClick={() => navigate(`/records/${app.id}`)}
                                                                     >
                                                                         Record
                                                                     </button>

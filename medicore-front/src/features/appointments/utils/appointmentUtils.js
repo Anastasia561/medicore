@@ -5,7 +5,7 @@ const formatDateString = (dateObj) => {
 export const getStatusAlertClass = (status) => {
     if (status === 'CANCELLED') return 'bg-danger-subtle border-danger';
     if (status === 'COMPLETED') return 'bg-success-subtle border-success';
-    return 'bg-info-subtle border-info'; // SCHEDULED / default
+    return 'bg-info-subtle border-info';
 };
 
 export const getStatusTextClass = (status) => {

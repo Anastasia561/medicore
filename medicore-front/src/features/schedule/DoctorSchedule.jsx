@@ -9,7 +9,7 @@ import {useDeleteSchedule} from "./hooks/useDeleteSchedule.jsx";
 
 const DoctorSchedule = () => {
     const {doctorId} = useParams();
-    const {data, isLoading} = useSchedule(doctorId);
+    const {data, isLoading, isError} = useSchedule(doctorId);
     const {state} = useLocation();
     const {auth} = useAuth();
     const [selectedSchedule, setSelectedSchedule] = useState(null);
@@ -43,6 +43,8 @@ const DoctorSchedule = () => {
             </div>
         );
     }
+
+    if (isError) return <p>Failed to load schedule</p>;
 
     return (
         <div className="schedule-container">
