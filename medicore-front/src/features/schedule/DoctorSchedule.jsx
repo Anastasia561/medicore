@@ -6,6 +6,7 @@ import useAuth from "../../hooks/useAuth.jsx";
 import {useState} from "react";
 import ConsultationForm from "./components/ConsultationForm.jsx";
 import {useDeleteSchedule} from "./hooks/useDeleteSchedule.jsx";
+import ConfirmModal from "../../components/ConfirmModal.jsx";
 
 const DoctorSchedule = () => {
     const {doctorId} = useParams();
@@ -14,14 +15,13 @@ const DoctorSchedule = () => {
     const {auth} = useAuth();
     const [selectedSchedule, setSelectedSchedule] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [confirmId, setConfirmId] = useState(null);
 
     const displayName = state?.doctorName || data?.doctorName || "Doctor";
     const {mutate: deleteConsultation} = useDeleteSchedule(doctorId);
 
     const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this consultation?")) {
-            deleteConsultation(id);
-        }
+        setConfirmId(id);
     };
 
     const handleCloseModal = () => {
@@ -64,17 +64,28 @@ const DoctorSchedule = () => {
             )}
 
             {(isModalOpen || selectedSchedule) && (
-                <div className="modal-overlay">
-                    <div className="modal-content-custom">
-                        <h3>{selectedSchedule ? "Edit Hours" : "Add New Hours"}</h3>
-                        <ConsultationForm
-                            doctorId={doctorId}
-                            initialData={selectedSchedule}
-                            onSubmit={handleCloseModal}
-                            onCancel={handleCloseModal}
-                        />
-                    </div>
+                <div className="modal-content-custom">
+                    <h3>{selectedSchedule ? "Edit Hours" : "Add New Hours"}</h3>
+                    <ConsultationForm
+                        doctorId={doctorId}
+                        initialData={selectedSchedule}
+                        onSubmit={handleCloseModal}
+                        onCancel={handleCloseModal}
+                    />
                 </div>
+            )}
+
+            {confirmId && (
+                <ConfirmModal
+                    title="Delete consulation hours?"
+                    message="This action cannot be undone."
+                    cancelText="No, keep it"
+                    onCancel={() => setConfirmId(null)}
+                    onConfirm={() => {
+                        deleteConsultation(confirmId)
+                        setConfirmId(null);
+                    }}
+                />
             )}
         </div>
     );
