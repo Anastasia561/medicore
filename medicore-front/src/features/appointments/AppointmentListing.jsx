@@ -218,7 +218,7 @@ const AppointmentListing = () => {
                                                                 {app.status === 'COMPLETED' && isNotAdmin && (
                                                                     <button
                                                                         className="btn btn-outline-success btn-sm mt-3 w-100 px-1 py-1 fw-medium"
-                                                                        onClick={() => navigate(`/records/${app.id}`)}
+                                                                        onClick={() => navigate(`/records/${app.recordId}`)}
                                                                     >
                                                                         Record
                                                                     </button>

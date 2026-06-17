@@ -3,8 +3,8 @@ import {useMedicalRecord} from "../hooks/useMedicalRecord.jsx";
 import {formatDateStandard} from "../../../utils/dateUtils.js";
 
 const MedicalRecord = () => {
-    const {appId} = useParams();
-    const {data, isLoading, isError} = useMedicalRecord(appId);
+    const {id} = useParams();
+    const {data, isLoading, isError} = useMedicalRecord(id);
 
     if (isLoading) {
         return (
