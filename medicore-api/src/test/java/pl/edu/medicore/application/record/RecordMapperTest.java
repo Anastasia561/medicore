@@ -12,7 +12,9 @@ import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordForDoctorPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordForPatientPreviewDto;
 import pl.edu.medicore.common.encryption.HashId;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,8 +25,13 @@ class RecordMapperTest {
     private RecordMapper recordMapper;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         recordMapper = Mappers.getMapper(RecordMapper.class);
+        HashIdMapper hashIdMapper = new HashIdMapper();
+
+        Field hashIdMapperField = recordMapper.getClass().getDeclaredField("hashIdMapper");
+        hashIdMapperField.setAccessible(true);
+        hashIdMapperField.set(recordMapper, hashIdMapper);
     }
 
     @Test

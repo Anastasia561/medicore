@@ -37,13 +37,13 @@ class PrescriptionServiceTest {
         Record record = new Record();
         Prescription prescription = new Prescription();
         prescription.setId(10L);
-        when(recordService.getById(dto.recordId())).thenReturn(record);
+        when(recordService.getRecordById(dto.recordId())).thenReturn(record);
         when(prescriptionMapper.toEntity(dto, record)).thenReturn(prescription);
         when(prescriptionRepository.save(prescription)).thenReturn(prescription);
 
         prescriptionService.create(dto);
 
-        verify(recordService).getById(dto.recordId());
+        verify(recordService).getRecordById(dto.recordId());
         verify(prescriptionMapper).toEntity(dto, record);
         verify(prescriptionRepository).save(prescription);
     }

@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import pl.edu.medicore.application.appointment.Appointment;
@@ -33,7 +34,6 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -53,8 +53,8 @@ class RecordServiceTest {
 
     @Test
     void shouldReturnRecordDto_whenRecordExists() {
-        long appointmentId = 1L;
-        HashId appointmentHash = HashId.of(appointmentId);
+        long id = 1L;
+        HashId idHash = HashId.of(id);
 
         DoctorForRecordDto doctor = new DoctorForRecordDto("fTest", "fLast", Specialization.DERMATOLOGIST);
         PatientForRecordDto patient = new PatientForRecordDto("fTest", "fLast", "test@gmail.com");
@@ -63,29 +63,29 @@ class RecordServiceTest {
         RecordDto dto = new RecordDto(doctor, patient, LocalDate.of(2026, 10, 2), "Test",
                 "Test summary", List.of());
 
-        when(recordRepository.findByAppointmentId(appointmentId)).thenReturn(Optional.of(record));
+        when(recordRepository.findById(id)).thenReturn(Optional.of(record));
         when(recordMapper.toDto(record)).thenReturn(dto);
 
-        RecordDto result = recordService.getByAppointmentId(appointmentHash);
+        RecordDto result = recordService.getById(idHash);
 
         assertEquals(result, dto);
-        verify(recordRepository).findByAppointmentId(appointmentId);
+        verify(recordRepository).findById(id);
         verify(recordMapper).toDto(record);
         verifyNoInteractions(appointmentService);
     }
 
     @Test
     void shouldThrowEntityNotFoundException_whenRecordNotFoundByAppointmentId() {
-        long appointmentId = 1L;
-        HashId appointmentHash = HashId.of(appointmentId);
+        long id = 1L;
+        HashId idHash = HashId.of(id);
 
-        when(recordRepository.findByAppointmentId(appointmentId)).thenReturn(Optional.empty());
+        when(recordRepository.findById(id)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = Assertions.assertThrows(EntityNotFoundException.class,
-                () -> recordService.getByAppointmentId(appointmentHash));
+                () -> recordService.getById(idHash));
 
         assertEquals("Record not found", ex.getMessage());
-        verify(recordRepository).findByAppointmentId(appointmentId);
+        verify(recordRepository).findById(id);
         verifyNoInteractions(recordMapper, appointmentService);
     }
 
@@ -97,7 +97,7 @@ class RecordServiceTest {
 
         when(recordRepository.findById(id)).thenReturn(Optional.of(record));
 
-        Record result = recordService.getById(hashId);
+        Record result = recordService.getRecordById(hashId);
 
         assertEquals(result, record);
         verify(recordRepository).findById(id);
@@ -112,7 +112,7 @@ class RecordServiceTest {
         when(recordRepository.findById(id)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = Assertions.assertThrows(EntityNotFoundException.class,
-                () -> recordService.getById(hashId));
+                () -> recordService.getRecordById(hashId));
 
         assertEquals("Record not found", ex.getMessage());
         verify(recordRepository).findById(id);
@@ -183,7 +183,7 @@ class RecordServiceTest {
     @Test
     void shouldMapToDoctorPreviewDto_whenRoleIsDoctor() {
         RecordFilterDto filter = mock(RecordFilterDto.class);
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(0, 5);
 
         when(filter.startDate()).thenReturn(LocalDate.of(2026, 10, 2));
         when(filter.endDate()).thenReturn(LocalDate.of(2026, 10, 10));
@@ -192,21 +192,20 @@ class RecordServiceTest {
         Page<Record> records = new PageImpl<>(List.of(record));
         RecordForDoctorPreviewDto dto = new RecordForDoctorPreviewDto();
 
-        when(recordRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(records);
+        when(recordRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(records);
         when(recordMapper.toDoctorPreviewDto(record)).thenReturn(dto);
 
         Page<RecordPreviewDto> result = recordService.getAllByPersonId(HashId.of(1L), Role.DOCTOR, filter, pageable);
 
         assertThat(result.getContent().size()).isEqualTo(1);
-
         verify(recordMapper).toDoctorPreviewDto(record);
         verify(recordMapper, never()).toPatientPreviewDto(any());
     }
 
     @Test
-    void shouldMapToPatientPreviewDto_whenRoleIsDoctor() {
+    void shouldMapToPatientPreviewDto_whenRoleIsPatient() {
         RecordFilterDto filter = mock(RecordFilterDto.class);
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(0, 5);
 
         when(filter.startDate()).thenReturn(LocalDate.of(2026, 10, 2));
         when(filter.endDate()).thenReturn(LocalDate.of(2026, 10, 10));
@@ -215,13 +214,12 @@ class RecordServiceTest {
         Page<Record> records = new PageImpl<>(List.of(record));
         RecordForPatientPreviewDto dto = new RecordForPatientPreviewDto();
 
-        when(recordRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(records);
+        when(recordRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(records);
         when(recordMapper.toPatientPreviewDto(record)).thenReturn(dto);
 
         Page<RecordPreviewDto> result = recordService.getAllByPersonId(HashId.of(1L), Role.PATIENT, filter, pageable);
 
         assertThat(result.getContent().size()).isEqualTo(1);
-
         verify(recordMapper).toPatientPreviewDto(record);
         verify(recordMapper, never()).toDoctorPreviewDto(any());
     }

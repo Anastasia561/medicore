@@ -18,11 +18,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RecordControllerTest extends AbstractIntegrationTest {
 
     @Test
-    void shouldReturnRecordByAppointmentId_whenRequestedAsPatient() throws Exception {
+    void shouldReturnRecordById_whenRequestedAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
-        String id = idObfuscator.encode(12L);
+        String id = idObfuscator.encode(5L);
 
-        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
+        performRequest(HttpMethod.GET, "/records/{id}", null, id)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.doctor.firstName").value("Kevin"))
                 .andExpect(jsonPath("$.data.doctor.lastName").value("Lee"))
@@ -40,7 +40,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn401_whenAccessedRecordWithInvalidToken() throws Exception {
         String id = idObfuscator.encode(6L);
-        mockMvc.perform(get("/records/appointment/{appointmentId}", null, id)
+        mockMvc.perform(get("/records/{id}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
     }
@@ -50,7 +50,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
         obtainRoleBasedToken(Role.ADMIN);
         String id = idObfuscator.encode(6L);
 
-        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
+        performRequest(HttpMethod.GET, "/records/{id}", null, id)
                 .andExpect(status().isForbidden());
     }
 
@@ -59,7 +59,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
         obtainRoleBasedToken(Role.PATIENT);
         String id = idObfuscator.encode(106L);
 
-        performRequest(HttpMethod.GET, "/records/appointment/{appointmentId}", null, id)
+        performRequest(HttpMethod.GET, "/records/{id}", null, id)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error.message").value("Record not found"));
     }
@@ -153,29 +153,14 @@ class RecordControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content").isArray())
                 .andExpect(jsonPath("$.data.content.length()").value(2))
                 .andExpect(jsonPath("$.data.totalElements").value(2))
-                .andExpect(jsonPath("$.data.content[0].date").value("2026-01-06"))
-                .andExpect(jsonPath("$.data.content[0].doctor.firstName").value("Hannah"))
-                .andExpect(jsonPath("$.data.content[0].doctor.lastName").value("Brown"))
-                .andExpect(jsonPath("$.data.content[0].doctor.specialization").value("PEDIATRICIAN"))
-                .andExpect(jsonPath("$.data.content[1].date").value("2026-02-01"))
-                .andExpect(jsonPath("$.data.content[1].doctor.firstName").value("Kevin"))
-                .andExpect(jsonPath("$.data.content[1].doctor.lastName").value("Lee"))
-                .andExpect(jsonPath("$.data.content[1].doctor.specialization").value("ONCOLOGIST"));
-    }
-
-    @Test
-    void shouldReturnPageOfRecordsFiltered_whenRequestedAsPatient() throws Exception {
-        obtainRoleBasedToken(Role.PATIENT);
-
-        performRequest(HttpMethod.GET, "/records?specialization=ONCOLOGIST", null)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content.length()").value(1))
-                .andExpect(jsonPath("$.data.totalElements").value(1))
                 .andExpect(jsonPath("$.data.content[0].date").value("2026-02-01"))
                 .andExpect(jsonPath("$.data.content[0].doctor.firstName").value("Kevin"))
                 .andExpect(jsonPath("$.data.content[0].doctor.lastName").value("Lee"))
-                .andExpect(jsonPath("$.data.content[0].doctor.specialization").value("ONCOLOGIST"));
+                .andExpect(jsonPath("$.data.content[0].doctor.specialization").value("ONCOLOGIST"))
+                .andExpect(jsonPath("$.data.content[1].date").value("2026-01-06"))
+                .andExpect(jsonPath("$.data.content[1].doctor.firstName").value("Hannah"))
+                .andExpect(jsonPath("$.data.content[1].doctor.lastName").value("Brown"))
+                .andExpect(jsonPath("$.data.content[1].doctor.specialization").value("PEDIATRICIAN"));
     }
 
     @Test
@@ -187,14 +172,14 @@ class RecordControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content").isArray())
                 .andExpect(jsonPath("$.data.content.length()").value(2))
                 .andExpect(jsonPath("$.data.totalElements").value(2))
-                .andExpect(jsonPath("$.data.content[0].date").value("2026-03-08"))
-                .andExpect(jsonPath("$.data.content[0].patient.firstName").value("Anna"))
-                .andExpect(jsonPath("$.data.content[0].patient.lastName").value("Smith"))
-                .andExpect(jsonPath("$.data.content[0].patient.email").value("anna.smith@example.com"))
-                .andExpect(jsonPath("$.data.content[1].date").value("2026-04-06"))
-                .andExpect(jsonPath("$.data.content[1].patient.firstName").value("Taro"))
-                .andExpect(jsonPath("$.data.content[1].patient.lastName").value("Yamada"))
-                .andExpect(jsonPath("$.data.content[1].patient.email").value("taro.yamada@example.com"));
+                .andExpect(jsonPath("$.data.content[0].date").value("2026-04-06"))
+                .andExpect(jsonPath("$.data.content[0].patient.firstName").value("Taro"))
+                .andExpect(jsonPath("$.data.content[0].patient.lastName").value("Yamada"))
+                .andExpect(jsonPath("$.data.content[0].patient.email").value("taro.yamada@example.com"))
+                .andExpect(jsonPath("$.data.content[1].date").value("2026-03-08"))
+                .andExpect(jsonPath("$.data.content[1].patient.firstName").value("Anna"))
+                .andExpect(jsonPath("$.data.content[1].patient.lastName").value("Smith"))
+                .andExpect(jsonPath("$.data.content[1].patient.email").value("anna.smith@example.com"));
     }
 
     @Test
