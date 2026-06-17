@@ -7,7 +7,8 @@ import {
     getStatusAlertClass,
     getStatusTextClass,
     getDaysArray
-} from "./utils/appointmentUtils.js"
+} from "../../utils/appointmentUtils.js"
+import {formatDateHeader} from "../../utils/dateUtils.js"
 import useAuth from "../../hooks/useAuth.jsx";
 import {useCancelAppointment} from "./hooks/useCancelAppointment.jsx";
 import ConfirmModal from "../../components/ConfirmModal.jsx";
@@ -127,19 +128,12 @@ const AppointmentListing = () => {
                 {currentDays.map((day) => {
                     const dayAppointments = groupedAppointments[day] || [];
 
-                    const formattedHeader = new Date(day).toLocaleDateString('en-US', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                        timeZone: 'UTC'
-                    });
-
                     return (
                         <div key={day} className="col">
                             <div className="card h-100 shadow-sm border-light" style={{minHeight: '450px'}}>
                                 <div className="card-body p-3">
                                     <h3 className="card-title h5 text-dark pb-2 mb-3 border-bottom border-2 border-light fw-semibold">
-                                        {formattedHeader}
+                                        {formatDateHeader(day)}
                                     </h3>
 
                                     <div className="d-flex flex-column gap-2">

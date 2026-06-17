@@ -1,6 +1,7 @@
 import Field from "./Field.jsx";
 import IconField from "./IconField.jsx";
 import AddressField from "./AddressField.jsx";
+import {formatDateStandard} from "../../..//utils/dateUtils.js";
 
 const PatientFields = ({user}) => (
     <>
@@ -8,7 +9,8 @@ const PatientFields = ({user}) => (
         <Field label="Last Name" value={user.lastName}/>
         <IconField label="Email" value={user.email} iconClass="bi bi-envelope text-primary"/>
         <IconField label="Phone number" value={user.phoneNumber} iconClass="fas fa-phone text-success"/>
-        <IconField label="Birthdate" value={user.birthDate} iconClass="fas fa-calendar-alt text-primary"/>
+        <IconField label="Birthdate" value={formatDateStandard(user.birthDate)}
+                   iconClass="fas fa-calendar-alt text-primary"/>
         <AddressField
             address={user.address} isEditing={false}
         />

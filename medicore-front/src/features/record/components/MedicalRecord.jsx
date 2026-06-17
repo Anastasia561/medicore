@@ -1,5 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useMedicalRecord} from "../hooks/useMedicalRecord.jsx";
+import {formatDateStandard} from "../../../utils/dateUtils.js";
 
 const MedicalRecord = () => {
     const {appId} = useParams();
@@ -15,15 +16,6 @@ const MedicalRecord = () => {
     }
 
     if (isError) return <p>Failed to load medical record</p>;
-
-    const formatDate = (dateValue) => {
-        if (!dateValue) return "N/A";
-        return new Date(dateValue).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    };
 
     const {doctor, patient, date, diagnosis, summary, prescriptions = []} = data;
 
@@ -71,7 +63,7 @@ const MedicalRecord = () => {
                         <h3 className="h5 text-dark fw-bold mb-3">Appointment Info</h3>
                         <div className="ps-2">
                             <p className="mb-0 text-dark">
-                                <span className="fw-bold">Date:</span> {formatDate(date)}
+                                <span className="fw-bold">Date:</span> {formatDateStandard(date)}
                             </p>
                         </div>
                     </div>
@@ -115,7 +107,7 @@ const MedicalRecord = () => {
                                                 <td className="small text-secondary">{p.dosage}</td>
                                                 <td className="small text-secondary">{p.frequency}</td>
                                                 <td className="small text-secondary">
-                                                    {formatDate(p.startDate)} - {formatDate(p.endDate)}
+                                                    {formatDateStandard(p.startDate)} - {formatDateStandard(p.endDate)}
                                                 </td>
                                             </tr>
                                         ))}

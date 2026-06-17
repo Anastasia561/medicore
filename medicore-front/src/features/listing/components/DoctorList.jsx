@@ -7,6 +7,7 @@ import {useState} from "react";
 import {Link} from "react-router-dom";
 import SearchInput from "../../../components/SearchInput.jsx";
 import {useNavigate} from "react-router-dom";
+import {formatDateStandard} from "../../../utils/dateUtils.js";
 
 const DoctorList = () => {
     const {auth} = useAuth();
@@ -79,7 +80,7 @@ const DoctorList = () => {
                                 {label: 'Email', value: doc.email},
                                 {label: 'Experience', value: `${doc.experience} years`},
                                 {label: 'Specialization', value: doc.specialization},
-                                {label: 'Employment date', value: doc.employmentDate}
+                                {label: 'Employment date', value: formatDateStandard(doc.employmentDate)}
                             ]}
                             renderActions={() => (
                                 <>
