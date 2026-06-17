@@ -3,7 +3,9 @@ package pl.edu.medicore.application.record;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.application.appointment.Appointment;
@@ -24,8 +26,8 @@ class RecordServiceImpl implements RecordService {
     private final AppointmentService appointmentService;
 
     @Override
-    public RecordDto getByAppointmentId(HashId id) {
-        return recordRepository.findByAppointmentId(id.value())
+    public RecordDto getById(HashId id) {
+        return recordRepository.findById(id.value())
                 .map(recordMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Record not found"));
     }
@@ -36,8 +38,17 @@ class RecordServiceImpl implements RecordService {
                 && filter.startDate().isAfter(filter.endDate()))
             throw new IllegalArgumentException("Start date should be before end date");
 
-        Page<Record> all = recordRepository.findAll(RecordSpecification
-                .withFilter(id.value(), role, filter), pageable);
+        Pageable sortedPageable = pageable;
+        if (pageable.getSort().isUnsorted()) {
+            sortedPageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Direction.DESC, "appointment.date")
+            );
+        }
+
+        Page<Record> all = recordRepository.findAll(RecordSpecification.withFilter(id.value(), role, filter),
+                sortedPageable);
 
         return role == Role.DOCTOR ? all.map(recordMapper::toDoctorPreviewDto)
                 : all.map(recordMapper::toPatientPreviewDto);
@@ -57,7 +68,7 @@ class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Record getById(HashId id) {
+    public Record getRecordById(HashId id) {
         return recordRepository.findById(id.value())
                 .orElseThrow(() -> new EntityNotFoundException("Record not found"));
     }

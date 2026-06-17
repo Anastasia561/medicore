@@ -8,10 +8,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.patient.Patient;
+import pl.edu.medicore.application.record.Record;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -35,4 +37,6 @@ public class Appointment {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
+    @OneToOne(mappedBy = "appointment")
+    private Record record;
 }

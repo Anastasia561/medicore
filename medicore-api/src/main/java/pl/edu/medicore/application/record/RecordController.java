@@ -31,11 +31,11 @@ import pl.edu.medicore.common.wrapper.ResponseWrapper;
 public class RecordController {
     private final RecordService recordService;
 
-    @Operation(summary = "Find medical record by appointment id")
+    @Operation(summary = "Find medical record by id")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
-    @GetMapping("/appointment/{appointmentId}")
-    public ResponseWrapper<RecordDto> getByAppointmentId(@PathVariable HashId appointmentId) {
-        return ResponseWrapper.ok(recordService.getByAppointmentId(appointmentId));
+    @GetMapping("/{id}")
+    public ResponseWrapper<RecordDto> getById(@PathVariable HashId id) {
+        return ResponseWrapper.ok(recordService.getById(id));
     }
 
     @Operation(summary = "Get page of medical records with filtering")

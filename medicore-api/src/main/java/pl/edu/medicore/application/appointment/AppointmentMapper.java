@@ -22,11 +22,13 @@ public abstract class AppointmentMapper {
     @Mapping(source = "patient.firstName", target = "firstName")
     @Mapping(source = "patient.lastName", target = "lastName")
     @Mapping(source = "patient.phoneNumber", target = "phoneNumber")
+    @Mapping(source = "record.id", target = "recordId")
     public abstract AppointmentForDoctorDto toDoctorDto(Appointment appointment);
 
     @Mapping(source = "doctor.firstName", target = "firstName")
     @Mapping(source = "doctor.lastName", target = "lastName")
     @Mapping(source = "doctor.specialization", target = "specialization")
+    @Mapping(source = "record.id", target = "recordId")
     public abstract AppointmentForPatientDto toPatientDto(Appointment appointment);
 
     @Mapping(target = "id", ignore = true)

@@ -7,8 +7,9 @@ import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordForDoctorPreviewDto;
 import pl.edu.medicore.application.record.dto.RecordForPatientPreviewDto;
+import pl.edu.medicore.common.encryption.HashIdMapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {HashIdMapper.class})
 public interface RecordMapper {
 
     @Mapping(source = "appointment.doctor", target = "doctor")

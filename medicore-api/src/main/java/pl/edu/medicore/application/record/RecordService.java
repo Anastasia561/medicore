@@ -10,12 +10,13 @@ import pl.edu.medicore.application.record.dto.RecordPreviewDto;
 import pl.edu.medicore.common.encryption.HashId;
 
 public interface RecordService {
-    RecordDto getByAppointmentId(HashId id);
 
     Page<RecordPreviewDto> getAllByPersonId(HashId id, Role role, RecordFilterDto filter, Pageable pageable);
 
     HashId create(RecordCreateDto dto);
 
-    Record getById(HashId id);
+    Record getRecordById(HashId id);
+
+    RecordDto getById(HashId id);
 }
 

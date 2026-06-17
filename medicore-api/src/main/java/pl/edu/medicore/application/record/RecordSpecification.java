@@ -16,12 +16,8 @@ public class RecordSpecification {
             spec = spec.and(dateBetween(filter.startDate(), filter.endDate()));
         }
 
-        if (filter.specialization() != null && !filter.specialization().isBlank()) {
-            spec = spec.and(hasDoctorSpecialization(filter.specialization()));
-        }
-
         if (filter.email() != null && !filter.email().isBlank()) {
-            spec = spec.and(hasEmailPart(filter.email(), role));
+            spec = spec.and(hasEmailPart(filter.email().trim(), role));
         }
 
         return spec;
@@ -52,13 +48,6 @@ public class RecordSpecification {
             } else {
                 return null;
             }
-        };
-    }
-
-    private static Specification<Record> hasDoctorSpecialization(String specialization) {
-        return (root, query, cb) -> {
-            var appointmentJoin = root.join("appointment");
-            return cb.equal(appointmentJoin.get("doctor").get("specialization"), specialization);
         };
     }
 

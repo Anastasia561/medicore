@@ -7,8 +7,6 @@ import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
 import pl.edu.medicore.application.record.RecordService;
 import pl.edu.medicore.common.encryption.HashId;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 class PrescriptionServiceImpl implements PrescriptionService {
@@ -22,7 +20,7 @@ class PrescriptionServiceImpl implements PrescriptionService {
         if (dto.endDate() != null && dto.startDate().isAfter(dto.endDate())) {
             throw new IllegalArgumentException("End date must be after start date");
         }
-        Prescription prescription = prescriptionMapper.toEntity(dto, recordService.getById(dto.recordId()));
+        Prescription prescription = prescriptionMapper.toEntity(dto, recordService.getRecordById(dto.recordId()));
         Prescription saved = prescriptionRepository.save(prescription);
         return HashId.of(saved.getId());
     }

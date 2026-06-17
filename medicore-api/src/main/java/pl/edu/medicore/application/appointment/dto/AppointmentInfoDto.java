@@ -18,4 +18,5 @@ public abstract class AppointmentInfoDto {
     private AppointmentStatus status;
     private String firstName;
     private String lastName;
+    private HashId recordId;
 }
