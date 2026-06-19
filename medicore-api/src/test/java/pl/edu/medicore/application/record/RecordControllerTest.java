@@ -9,6 +9,8 @@ import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.common.encryption.HashId;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -68,7 +70,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
     void shouldReturn403_whenCreateRecordAsPatient() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
 
-        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary",
+                List.of());
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isForbidden());
@@ -76,7 +79,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401_whenCreateConsultationWithInvalidToken() throws Exception {
-        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary",
+                List.of());
 
         mockMvc.perform(post("/records", dto)
                         .header("Authorization", "Bearer invalid-token"))
@@ -86,7 +90,7 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenValidationErrorsInCreateDto() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        RecordCreateDto dto = new RecordCreateDto(null, "", null);
+        RecordCreateDto dto = new RecordCreateDto(null, "", null, List.of());
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isBadRequest())
@@ -98,7 +102,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenAppointmentAlreadyCompleted() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
-        RecordCreateDto dto = new RecordCreateDto(HashId.of(3L), "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(3L), "test diagnosis", "test summary",
+                List.of());
 
         performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isBadRequest())
@@ -109,7 +114,8 @@ class RecordControllerTest extends AbstractIntegrationTest {
     void shouldCreateRecord_whenInputIsValid() throws Exception {
         obtainRoleBasedToken(Role.DOCTOR);
 
-        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "test diagnosis", "test summary",
+                List.of());
 
         ResultActions resultActions = performRequest(HttpMethod.POST, "/records", dto)
                 .andExpect(status().isCreated());

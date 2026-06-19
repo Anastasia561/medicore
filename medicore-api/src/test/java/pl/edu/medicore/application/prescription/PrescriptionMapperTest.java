@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
 import pl.edu.medicore.application.record.Record;
-import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 
@@ -22,7 +21,7 @@ class PrescriptionMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        PrescriptionCreateDto dto = new PrescriptionCreateDto(HashId.of(1L), "Test medicine",
+        PrescriptionCreateDto dto = new PrescriptionCreateDto("Test medicine",
                 "10g", LocalDate.of(2026, 10, 10),
                 LocalDate.of(2026, 12, 2), "daily");
 

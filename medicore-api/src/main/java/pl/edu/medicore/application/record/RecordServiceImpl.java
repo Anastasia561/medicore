@@ -12,11 +12,15 @@ import pl.edu.medicore.application.appointment.Appointment;
 import pl.edu.medicore.application.appointment.AppointmentStatus;
 import pl.edu.medicore.application.appointment.AppointmentService;
 import pl.edu.medicore.application.person.Role;
+import pl.edu.medicore.application.prescription.Prescription;
+import pl.edu.medicore.application.prescription.PrescriptionMapper;
 import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordFilterDto;
 import pl.edu.medicore.application.record.dto.RecordPreviewDto;
 import pl.edu.medicore.common.encryption.HashId;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ class RecordServiceImpl implements RecordService {
     private final RecordRepository recordRepository;
     private final RecordMapper recordMapper;
     private final AppointmentService appointmentService;
+    private final PrescriptionMapper prescriptionMapper;
 
     @Override
     public RecordDto getById(HashId id) {
@@ -61,8 +66,18 @@ class RecordServiceImpl implements RecordService {
         if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
             throw new IllegalStateException("Appointment is already completed");
         }
+
         appointment.setStatus(AppointmentStatus.COMPLETED);
         Record record = recordMapper.toEntity(dto, appointment);
+
+        if (dto.prescriptions() != null) {
+            List<Prescription> prescriptions = dto.prescriptions()
+                    .stream()
+                    .map(p -> prescriptionMapper.toEntity(p, record))
+                    .toList();
+            record.setPrescriptions(prescriptions);
+        }
+
         Record saved = recordRepository.save(record);
         return HashId.of(saved.getId());
     }

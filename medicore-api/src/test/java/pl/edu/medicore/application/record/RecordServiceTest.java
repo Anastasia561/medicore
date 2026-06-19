@@ -19,6 +19,9 @@ import pl.edu.medicore.application.doctor.dto.DoctorForRecordDto;
 import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.patient.dto.PatientForRecordDto;
 import pl.edu.medicore.application.person.Role;
+import pl.edu.medicore.application.prescription.Prescription;
+import pl.edu.medicore.application.prescription.PrescriptionMapper;
+import pl.edu.medicore.application.prescription.dto.PrescriptionCreateDto;
 import pl.edu.medicore.application.record.dto.RecordCreateDto;
 import pl.edu.medicore.application.record.dto.RecordDto;
 import pl.edu.medicore.application.record.dto.RecordFilterDto;
@@ -48,6 +51,8 @@ class RecordServiceTest {
     private RecordMapper recordMapper;
     @Mock
     private AppointmentService appointmentService;
+    @Mock
+    private PrescriptionMapper prescriptionMapper;
     @InjectMocks
     private RecordServiceImpl recordService;
 
@@ -123,8 +128,12 @@ class RecordServiceTest {
     void shouldCreateRecord_whenAppointmentNotCompleted() {
         long appointmentId = 1L;
         HashId appointmentHash = HashId.of(appointmentId);
+        PrescriptionCreateDto prescriptionDto = new PrescriptionCreateDto("medicine", "dosage",
+                LocalDate.of(2027, 10, 2), null, "freq");
+        Prescription prescription = new Prescription();
 
-        RecordCreateDto dto = new RecordCreateDto(appointmentHash, "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(appointmentHash, "test diagnosis", "test summary",
+                List.of(prescriptionDto));
 
         Appointment appointment = new Appointment();
         appointment.setStatus(AppointmentStatus.SCHEDULED);
@@ -132,6 +141,7 @@ class RecordServiceTest {
         Record record = new Record();
         record.setId(10L);
 
+        when(prescriptionMapper.toEntity(prescriptionDto, record)).thenReturn(prescription);
         when(appointmentService.getById(appointmentHash)).thenReturn(appointment);
         when(recordMapper.toEntity(dto, appointment)).thenReturn(record);
         when(recordRepository.save(record)).thenReturn(record);
@@ -140,6 +150,7 @@ class RecordServiceTest {
 
         assertThat(appointment.getStatus()).isEqualTo(AppointmentStatus.COMPLETED);
 
+        verify(prescriptionMapper).toEntity(prescriptionDto, record);
         verify(appointmentService).getById(appointmentHash);
         verify(recordMapper).toEntity(dto, appointment);
         verify(recordRepository).save(record);
@@ -150,7 +161,8 @@ class RecordServiceTest {
         long appointmentId = 1L;
         HashId appointmentHash = HashId.of(appointmentId);
 
-        RecordCreateDto dto = new RecordCreateDto(appointmentHash, "test diagnosis", "test summary");
+        RecordCreateDto dto = new RecordCreateDto(appointmentHash, "test diagnosis", "test summary",
+                List.of());
 
         Appointment appointment = new Appointment();
         appointment.setStatus(AppointmentStatus.COMPLETED);

@@ -98,7 +98,7 @@ class RecordMapperTest {
     @Test
     void shouldMapToEntity_whenInputIsValid() {
         RecordCreateDto dto = new RecordCreateDto(HashId.of(1L), "Test diagnosis",
-                "Test summary");
+                "Test summary", List.of());
         Appointment appointment = new Appointment();
 
         Record entity = recordMapper.toEntity(dto, appointment);
