@@ -18,6 +18,7 @@ const MedicalRecordForm = () => {
         formState: {errors, isSubmitting}
     } = useForm({
         resolver: yupResolver(recordCreateSchema),
+        mode: "onSubmit",
         defaultValues: {
             diagnosis: "",
             summary: "",
@@ -55,9 +56,7 @@ const MedicalRecordForm = () => {
         <div className="container-fluid p-4 bg-light min-vh-100 d-flex justify-content-center">
             <div className="w-100" style={{maxWidth: '900px'}}>
 
-                <h2 className="mb-4 text-dark fw-semibold ps-2" style={{color: '#1a2b49'}}>
-                    Create Medical Record
-                </h2>
+                <h2>Create Medical Record</h2>
 
                 <form onSubmit={handleSubmit(onSubmitForm)} className="card shadow-sm border-0 rounded-3 p-4 bg-white">
 
