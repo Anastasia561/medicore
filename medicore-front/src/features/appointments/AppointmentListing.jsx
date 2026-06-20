@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useAppointments} from './hooks/useAppointments.jsx';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {
@@ -18,15 +18,15 @@ const AppointmentListing = () => {
     const {state} = useLocation();
     const {auth} = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const isDoctor = auth?.role === "ROLE_DOCTOR";
     const isNotAdmin = auth?.role !== "ROLE_ADMIN";
     const displayName = state?.userName || "user";
 
-    const [startDate, setStartDate] = useState(getMonday(new Date()));
-    const [statusFilter, setStatusFilter] = useState("ALL");
+    const [startDate, setStartDate] = useState(location.state?.startDate || getMonday(new Date()));
+    const [statusFilter, setStatusFilter] = useState(location.state?.statusFilter || "ALL");
     const [confirmId, setConfirmId] = useState(null);
-
     const [expandedAppIds, setExpandedAppIds] = useState({});
 
     const currentDays = getDaysArray(startDate);
@@ -61,6 +61,13 @@ const AppointmentListing = () => {
     const groupedAppointments = groupAppointmentsByDate(appointments);
 
     const {mutate: cancelAppointment} = useCancelAppointment();
+
+    useEffect(() => {
+        navigate('', {
+            replace: true,
+            state: {...location.state, startDate, statusFilter}
+        });
+    }, [startDate, statusFilter, navigate]);
 
     if (isLoading) {
         return (

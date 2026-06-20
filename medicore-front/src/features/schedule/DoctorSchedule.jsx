@@ -17,8 +17,12 @@ const DoctorSchedule = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [confirmId, setConfirmId] = useState(null);
 
-    const displayName = state?.doctorName || data?.doctorName || "Doctor";
+    const displayName = state?.doctorName || data?.doctorName;
     const {mutate: deleteConsultation} = useDeleteSchedule(doctorId);
+
+    const titleText = displayName
+        ? `${displayName}'s Weekly Schedule`
+        : "My Weekly Schedule";
 
     const handleDelete = (id) => {
         setConfirmId(id);
@@ -48,7 +52,7 @@ const DoctorSchedule = () => {
 
     return (
         <div className="schedule-container">
-            <h2>{displayName}'s Weekly Schedule</h2>
+            <h2>{titleText}</h2>
 
             <div className="schedule-grid">
                 {data.map(day => (

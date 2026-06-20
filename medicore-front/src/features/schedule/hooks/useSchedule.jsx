@@ -5,9 +5,13 @@ export const useSchedule = (doctorId) => {
     const axiosPrivate = useAxiosPrivate();
 
     return useQuery({
-        queryKey: ["doctor-schedule", doctorId],
+        queryKey: ["doctor-schedule", doctorId || "mine"],
         queryFn: async () => {
-            const res = await axiosPrivate.get(`/consultations/doctor/${doctorId}`);
+            const url = doctorId
+                ? `/consultations/doctor/${doctorId}`
+                : "/consultations";
+
+            const res = await axiosPrivate.get(url);
             if (res.data.error) throw new Error(res.data.error);
             return res.data.data;
         },

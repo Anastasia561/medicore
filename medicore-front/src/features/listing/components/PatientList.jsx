@@ -5,12 +5,15 @@ import {usePatients} from "../hooks/usePatients.jsx";
 import Pagination from "../../../components/Pagination.jsx";
 import SearchInput from "../../../components/SearchInput.jsx";
 import {useNavigate} from "react-router-dom";
+import useAuth from "../../../hooks/useAuth.jsx";
 
 const PatientList = () => {
     const navigate = useNavigate();
+    const {auth} = useAuth();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const pageSize = 3;
+    const isAdmin = auth?.role === "ROLE_ADMIN";
 
     const handleSearch = (value) => {
         setSearchTerm(value);
@@ -51,11 +54,15 @@ const PatientList = () => {
                                 }
                             ]}
                             renderActions={() => (
-                                <button className="btn btn-outline-success btn-sm"
+                                isAdmin && (
+                                    <button
+                                        className="btn btn-outline-success btn-sm"
                                         onClick={() => navigate(`/appointments/${patient.id}`, {
-                                                state: {userName: `${patient.firstName} ${patient.lastName}`}
-                                            }
-                                        )}>Appointments</button>
+                                            state: {userName: `${patient.firstName} ${patient.lastName}`}
+                                        })}>
+                                        Appointments
+                                    </button>
+                                )
                             )}
                         />
                     ))

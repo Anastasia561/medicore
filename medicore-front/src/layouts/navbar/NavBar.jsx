@@ -5,7 +5,7 @@ import {useLogout} from "../../features/auth/hooks/useLogout.jsx";
 import useAuth from "../../hooks/useAuth.jsx";
 
 const NavBar = () => {
-    const { mutateAsync: logout } = useLogout();
+    const {mutateAsync: logout} = useLogout();
     const navigate = useNavigate();
     const {auth} = useAuth();
 
@@ -18,7 +18,7 @@ const NavBar = () => {
         {to: "/records", label: "Records", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
         {to: "/hh", label: "Lab results", roles: ["ROLE_PATIENT"]},
         {to: "/hh", label: "Risks", roles: ["ROLE_PATIENT"]},
-        {to: "/hh", label: "Schedule", roles: ["ROLE_DOCTOR"]}
+        {to: "/schedule", label: "Schedule", roles: ["ROLE_DOCTOR"]}
     ];
 
     const handleLogout = async () => {
