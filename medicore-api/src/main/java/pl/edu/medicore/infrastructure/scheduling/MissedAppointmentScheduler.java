@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class MissedAppointmentScheduler {
     private final AppointmentService appointmentService;
 
-    @Scheduled(cron = "0 26 14 * * *", zone = "Europe/Warsaw")
+    @Scheduled(cron = "0 0 20 * * *", zone = "Europe/Warsaw")
     @Transactional
     public void markTodayMissedAppointments() {
         LocalDate today = LocalDate.now();
