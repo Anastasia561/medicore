@@ -213,7 +213,7 @@ const AppointmentListing = () => {
                                                                             <div className="flex-fill">
                                                                                 <button
                                                                                     className="btn btn-outline-info btn-sm w-100 px-1 py-1 fw-medium"
-                                                                                    onClick={() => console.log(`Complete app: ${app.id}`)}
+                                                                                    onClick={() => navigate(`/appointments/complete/${app.id}`)}
                                                                                     title="Complete"
                                                                                 >
                                                                                     ✓

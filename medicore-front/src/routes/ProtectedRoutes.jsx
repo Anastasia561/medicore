@@ -11,6 +11,7 @@ import PatientList from '../features/listing/components/PatientList';
 import DoctorSchedule from "../features/schedule/DoctorSchedule";
 import MedicalRecord from "../features/record/components/MedicalRecord.jsx";
 import RecordListing from "../features/record/RecordListing.jsx";
+import MedicalRecordForm from "../features/record/components/MedicalRecordForm.jsx";
 
 export const ProtectedRoutes = (
     <Route path="/" element={<PersistLogin/>}>
@@ -39,6 +40,7 @@ export const ProtectedRoutes = (
 
             <Route element={<RequireAuth allowedRoles={["ROLE_DOCTOR"]}/>}>
                 <Route path="schedule" element={<DoctorSchedule/>}/>
+                <Route path="appointments/complete/:appId" element={<MedicalRecordForm/>}/>
             </Route>
 
         </Route>
