@@ -1,6 +1,6 @@
 import {Route} from 'react-router-dom';
 import Layout from '../layouts/Layout';
-import Login from '../pages/Login';
+import Login from '../features/auth/Login.jsx';
 import Unauthorized from '../pages/Unauthorized';
 
 export const PublicRoutes = (

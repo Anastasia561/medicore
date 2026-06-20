@@ -35,6 +35,11 @@ export const recordCreateSchema = yup.object().shape({
                 .string()
                 .nullable()
                 .transform((value) => (value === "" ? null : value))
+                .test("is-after", "End date must be after start date", function (value) {
+                    const {startDate} = this.parent;
+                    if (!startDate || !value) return true;
+                    return new Date(value) >= new Date(startDate);
+                }),
         })
     )
 });

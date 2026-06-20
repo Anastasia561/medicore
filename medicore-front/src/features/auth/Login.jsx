@@ -1,9 +1,9 @@
 import {useState} from 'react';
-import useAuth from '../hooks/useAuth.jsx';
+import useAuth from '../../hooks/useAuth.jsx';
 import {useNavigate} from 'react-router-dom';
-import logo from '../assets/logo.png';
-import {useLogin} from "../features/auth/hooks/useLogin.jsx";
-import * as yup from 'yup';
+import logo from '../../assets/logo.png';
+import {useLogin} from "./hooks/useLogin.jsx";
+import {loginSchema} from "./validation/loginSchema.js";
 import {useForm} from 'react-hook-form';
 import {yupResolver} from "@hookform/resolvers/yup/src/index.ts";
 
@@ -14,16 +14,11 @@ const Login = () => {
 
     const [generalError, setGeneralError] = useState('');
 
-    const schema = yup.object().shape({
-        username: yup.string().email().required('Username is required'),
-        password: yup.string().required('Password is required'),
-    })
-
     const {
         register, handleSubmit,
         setError, formState: {errors}
     } = useForm({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(loginSchema),
     })
 
     const loginMutation = useLogin({

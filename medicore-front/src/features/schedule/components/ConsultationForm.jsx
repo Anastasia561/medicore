@@ -1,31 +1,20 @@
-import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useState} from "react";
 import {useCreateSchedule} from "../hooks/useCreateSchedule.jsx";
 import {useUpdateSchedule} from "../hooks/useUpdateSchedule.jsx";
+import {scheduleSchema} from "../validation/ScheduleSchema.js";
 
 const ConsultationForm = ({onSubmit, onCancel, doctorId, initialData}) => {
 
     const isUpdate = !!initialData;
     const [generalError, setGeneralError] = useState('');
 
-    const schema = yup.object().shape({
-        day: yup.string().required("Please select a day"),
-        startTime: yup.string().required("Start time is required"),
-        endTime: yup.string()
-            .required("End time is required")
-            .test("is-after", "End time must be after start time", function (value) {
-                const {startTime} = this.parent;
-                return !startTime || !value || value > startTime;
-            }),
-    });
-
     const {
         register, handleSubmit, setError
         , formState: {errors}
     } = useForm({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(scheduleSchema),
         defaultValues: initialData || {
             day: 'MONDAY',
             startTime: '08:00',
