@@ -85,7 +85,10 @@ const DoctorList = () => {
                             renderActions={() => (
                                 <>
                                     {auth?.role === 'ROLE_PATIENT' &&
-                                        <button className="btn btn-outline-success btn-sm text-center">Book</button>}
+                                        <button className="btn btn-outline-success btn-sm text-center"
+                                                onClick={() => navigate(`/appointments/book/${doc.id}`
+                                                )}
+                                        >Book</button>}
                                     {auth?.role === 'ROLE_ADMIN' &&
                                         <button
                                             className="btn btn-outline-success btn-sm text-center"

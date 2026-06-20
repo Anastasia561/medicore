@@ -12,6 +12,7 @@ import DoctorSchedule from "../features/schedule/DoctorSchedule";
 import MedicalRecord from "../features/record/components/MedicalRecord.jsx";
 import RecordListing from "../features/record/RecordListing.jsx";
 import MedicalRecordForm from "../features/record/components/MedicalRecordForm.jsx";
+import AppointmentBookingForm from "../features/appointments/AppointmentBookingForm.jsx";
 
 export const ProtectedRoutes = (
     <Route path="/" element={<PersistLogin/>}>
@@ -41,6 +42,11 @@ export const ProtectedRoutes = (
             <Route element={<RequireAuth allowedRoles={["ROLE_DOCTOR"]}/>}>
                 <Route path="schedule" element={<DoctorSchedule/>}/>
                 <Route path="appointments/complete/:appId" element={<MedicalRecordForm/>}/>
+            </Route>
+
+
+            <Route element={<RequireAuth allowedRoles={["ROLE_PATIENT"]}/>}>
+                <Route path="appointments/book/:doctorId" element={<AppointmentBookingForm/>}/>
             </Route>
 
         </Route>
