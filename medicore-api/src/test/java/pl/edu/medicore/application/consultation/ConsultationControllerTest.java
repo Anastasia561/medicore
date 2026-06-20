@@ -40,11 +40,58 @@ class ConsultationControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldReturn401_whenAccessedConsultationsForDoctorWithInvalidToken() throws Exception {
+    void shouldReturn401_whenAccessedConsultationsWithInvalidToken() throws Exception {
         String id = idObfuscator.encode(6L);
         mockMvc.perform(get("/consultations/doctor/{id}", null, id)
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldReturn403_whenAccessedConsultationsAsDoctor() throws Exception {
+        obtainRoleBasedToken(Role.DOCTOR);
+        String doctorId = idObfuscator.encode(6L);
+
+        performRequest(HttpMethod.GET, "/consultations/doctor/{id}", null, doctorId)
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldReturn404_whenDoctorNotFoundForConsultation() throws Exception {
+        obtainRoleBasedToken(Role.ADMIN);
+        String doctorId = idObfuscator.encode(105L);
+
+        performRequest(HttpMethod.GET, "/consultations/doctor/{id}", null, doctorId)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.message").value("Doctor not found"));
+    }
+
+    @Test
+    void shouldGetAllDoctorConsultations_whenConsultationsExistForDoctor() throws Exception {
+        obtainRoleBasedToken(Role.DOCTOR);
+
+        performRequest(HttpMethod.GET, "/consultations", null)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(5))
+                .andExpect(jsonPath("$.data[0].day").value("MONDAY"))
+                .andExpect(jsonPath("$.data[0].startTime").value("08:00:00"))
+                .andExpect(jsonPath("$.data[0].endTime").value("12:00:00"));
+    }
+
+    @Test
+    void shouldReturn401_whenAccessedConsultationsForDoctorWithInvalidToken() throws Exception {
+        mockMvc.perform(get("/consultations}")
+                        .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldReturn403_whenAccessedConsultationsForDoctorAsAdmin() throws Exception {
+        obtainRoleBasedToken(Role.ADMIN);
+
+        performRequest(HttpMethod.GET, "/consultations", null)
+                .andExpect(status().isForbidden());
     }
 
     @Test
