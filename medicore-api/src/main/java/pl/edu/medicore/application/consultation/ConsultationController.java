@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import pl.edu.medicore.application.auth.CustomUserDetails;
 import pl.edu.medicore.application.consultation.dto.ConsultationCreateDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationDto;
 import pl.edu.medicore.application.consultation.dto.ConsultationUpdateDto;
@@ -31,10 +33,18 @@ public class ConsultationController {
     private final ConsultationService consultationService;
 
     @Operation(summary = "Get all doctor consultations")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
     @GetMapping("/doctor/{doctorId}")
-    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(@PathVariable HashId doctorId) {
+    public ResponseWrapper<List<ConsultationDto>> getAll(@PathVariable HashId doctorId) {
         return ResponseWrapper.ok(consultationService.findByDoctorId(doctorId));
+    }
+
+    @Operation(summary = "Get all doctor consultations for doctor")
+    @PreAuthorize("hasRole('DOCTOR')")
+    @GetMapping
+    public ResponseWrapper<List<ConsultationDto>> getAllForDoctor(
+            @AuthenticationPrincipal CustomUserDetails details) {
+        return ResponseWrapper.ok(consultationService.findByDoctorId(details.getId()));
     }
 
     @Operation(summary = "Create consultation")
