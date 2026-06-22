@@ -48,6 +48,9 @@ public class RiskResult {
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
+    @Column(name = "missing_fields")
+    private String missingFields;
+
     @CreationTimestamp
     @Column(name = "calculated_at", nullable = false)
     private Instant calculatedAt;

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.medicore.application.doctor.dto.DoctorFilterDto;
@@ -31,6 +32,7 @@ class DoctorServiceImpl implements DoctorService {
     private final DoctorMapper doctorMapper;
     private final VerificationTokenService verificationTokenService;
     private final UrlBuilder urlBuilder;
+    private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
@@ -83,6 +85,7 @@ class DoctorServiceImpl implements DoctorService {
             throw new IllegalArgumentException("Passwords don't match");
 
         Doctor entity = doctorMapper.toEntity(dto);
+        entity.setPassword(passwordEncoder.encode(dto.password()));
 
         ConfirmationEmailDto emailDto = doctorMapper.toEmailDto(entity);
         eventPublisher.publishEvent(new SendEmailEvent<>(dto.email(), EmailType.REGISTRATION_CONFIRMATION, emailDto));

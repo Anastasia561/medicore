@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.common.validation.annotation.MinAge;
 
@@ -51,6 +51,6 @@ public record PatientProfileUpdateDto(
 
         @NotNull(message = "Address is required")
         @Valid
-        PatientAddressDto address
+        AddressDto address
 ) {
 }

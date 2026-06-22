@@ -12,6 +12,7 @@ public record RiskResultResponseDto(
         RiskGroup riskGroup,
         double riskPercent,
         LocalDate testDate,
-        LocalDate calculatedAt
+        LocalDate calculatedAt,
+        String missingFields
 ) {
 }

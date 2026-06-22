@@ -18,8 +18,6 @@ import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
 import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/profiles")
 @Tag(name = "Profiles", description = "Endpoints for managing user profiles")

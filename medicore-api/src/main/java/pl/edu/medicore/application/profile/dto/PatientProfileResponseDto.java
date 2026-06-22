@@ -2,14 +2,12 @@ package pl.edu.medicore.application.profile.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
-
-import java.time.LocalDate;
+import pl.edu.medicore.application.patient.PregnancyStatus;
 
 @Getter
 @Setter
 public class PatientProfileResponseDto extends ProfileResponseDto {
-    private LocalDate birthDate;
-    private String phoneNumber;
-    private PatientAddressDto address;
+    private double weight;
+    private double height;
+    private PregnancyStatus pregnancyStatus;
 }

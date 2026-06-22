@@ -8,6 +8,7 @@ import pl.edu.medicore.application.labresult.Parameter;
 import pl.edu.medicore.application.labresult.LabResultService;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.patient.PatientService;
+import pl.edu.medicore.application.patient.PregnancyStatus;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.risk.dto.RiskResultResponseDto;
 import pl.edu.medicore.application.risk.RiskResultMapper;
@@ -20,6 +21,7 @@ import pl.edu.medicore.common.encryption.HashId;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,17 +64,59 @@ class RiskResultServiceImpl implements RiskResultService {
                 .toList();
     }
 
+
+    private List<String> determineMissingFields(Patient patient, List<LabResult> labResults, Disease disease) {
+        List<String> missing = new ArrayList<>();
+
+        if (patient.getGender() == null || patient.getGender() == Gender.OTHER) missing.add("gender");
+        if (patient.getPregnancyStatus() == PregnancyStatus.UNKNOWN) missing.add("pregnancyStatus");
+
+        switch (disease) {
+            case DIABETES -> {
+                if (patient.getWeight() == null || patient.getWeight() <= 0) missing.add("weight");
+                if (patient.getHeight() == null || patient.getHeight() <= 0) missing.add("height");
+                if (extractParameterValue(labResults, Parameter.GLUCOSE) == null) missing.add("glucoseTestResult");
+            }
+            case CKD -> {
+                if (patient.getWeight() == null || patient.getWeight() <= 0) missing.add("weight");
+                if (patient.getHeight() == null || patient.getHeight() <= 0) missing.add("height");
+                if (extractParameterValue(labResults, Parameter.CREATININE) == null)
+                    missing.add("creatinineTestResult");
+            }
+            case ANEMIA -> {
+                if (patient.getPregnancyStatus() == null || patient.getPregnancyStatus() == PregnancyStatus.UNKNOWN) {
+                    missing.add("pregnancyStatus");
+                }
+                if (extractParameterValue(labResults, Parameter.HGB) == null) missing.add("hgbTestResult");
+                if (extractParameterValue(labResults, Parameter.HCT) == null) missing.add("hctTestResult");
+                if (extractParameterValue(labResults, Parameter.RBC) == null) missing.add("rbcTestResult");
+            }
+        }
+        return missing;
+    }
+
     private void save(List<LabResult> labResults) {
         Patient patient = labResults.getFirst().getTest().getPatient();
         Test test = labResults.getFirst().getTest();
 
         for (Disease disease : Disease.values()) {
             RiskResult riskResult = new RiskResult();
-            Double risk = calculateRisk(labResults, disease);
-            riskResult.setRiskGroup(estimateRiskGroup(risk));
+
+            List<String> missing = determineMissingFields(patient, labResults, disease);
+
+            if (missing.isEmpty()) {
+                Double risk = calculateRisk(labResults, disease);
+                riskResult.setRiskPercent(risk);
+                riskResult.setRiskGroup(estimateRiskGroup(risk));
+                riskResult.setMissingFields(null);
+            } else {
+                riskResult.setRiskPercent(null);
+                riskResult.setRiskGroup(RiskGroup.UNKNOWN);
+                riskResult.setMissingFields(String.join(",", missing));
+            }
+
             riskResult.setPatient(patient);
             riskResult.setTest(test);
-            riskResult.setRiskPercent(risk);
             riskResult.setDisease(disease);
             riskResultRepository.save(riskResult);
         }
@@ -89,13 +133,14 @@ class RiskResultServiceImpl implements RiskResultService {
     private Double calculateAnemiaRisk(List<LabResult> labResults) {
         Patient patient = labResults.getFirst().getTest().getPatient();
         Gender gender = patient.getGender();
-        boolean pregnant = patient.isPregnant();
+        PregnancyStatus pregnancyStatus = patient.getPregnancyStatus();
+
 
         Double hgb = extractParameterValue(labResults, Parameter.HGB);
         Double hct = extractParameterValue(labResults, Parameter.HCT);
         Double rbc = extractParameterValue(labResults, Parameter.RBC);
 
-        return riskCalculatorService.calculateAnemiaRiskPercentage(hgb, hct, rbc, gender, pregnant);
+        return riskCalculatorService.calculateAnemiaRiskPercentage(hgb, hct, rbc, gender, pregnancyStatus);
     }
 
     private Double calculateDiabetesRisk(List<LabResult> labResults) {

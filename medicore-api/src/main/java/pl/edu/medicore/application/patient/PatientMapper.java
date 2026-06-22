@@ -8,14 +8,13 @@ import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
 import pl.edu.medicore.common.encryption.HashIdMapper;
 
-@Mapper(componentModel = "spring", uses = {AddressMapper.class, HashIdMapper.class})
+@Mapper(componentModel = "spring", uses = {HashIdMapper.class, AddressMapper.class})
 public interface PatientMapper {
     PatientResponseDto toPatientResponseDto(Patient patient);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", constant = "PATIENT")
     @Mapping(target = "status", constant = "UNVERIFIED")
-    @Mapping(target = "address", source = "address")
     Patient toEntity(PatientRegisterDto dto);
 
     ConfirmationEmailDto toEmailDto(Patient patient);

@@ -10,7 +10,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
+import pl.edu.medicore.application.patient.PregnancyStatus;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.common.validation.annotation.MinAge;
 import pl.edu.medicore.common.validation.annotation.Password;
@@ -52,7 +53,7 @@ public record PatientRegisterDto(
         Double height,
 
         @NotNull(message = "Pregnancy status is required")
-        boolean pregnant,
+        PregnancyStatus pregnancyStatus,
 
         @MinAge(18)
         @NotNull(message = "Birth date is required")
@@ -68,11 +69,20 @@ public record PatientRegisterDto(
 
         @NotNull(message = "Address is required")
         @Valid
-        PatientAddressDto address
+        AddressDto address
 ) {
-    @AssertTrue(message = "Only female patients can be marked as pregnant")
+    @AssertTrue(message = "Male patients must be marked as NOT_APPLICABLE")
     public boolean isPregnancyValid() {
-        if (gender == null) return true;
-        return !pregnant || gender == Gender.FEMALE;
+        if (gender == null || pregnancyStatus == null) return true;
+
+        if (gender == Gender.MALE) {
+            return pregnancyStatus == PregnancyStatus.NOT_APPLICABLE;
+        }
+
+        if (pregnancyStatus == PregnancyStatus.PREGNANT) {
+            return gender == Gender.FEMALE;
+        }
+
+        return true;
     }
 }

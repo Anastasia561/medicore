@@ -1,5 +1,6 @@
 package pl.edu.medicore.application.person;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,8 +10,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import pl.edu.medicore.application.address.Address;
+
+import java.time.LocalDate;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -34,4 +40,11 @@ public class Person {
     private UserStatus status;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
+    @Column(name = "phone_number", length = 20, nullable = false)
+    private String phoneNumber;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "address_id")
+    private Address address;
 }

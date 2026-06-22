@@ -2,6 +2,7 @@ package pl.edu.medicore.application.risk.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.edu.medicore.application.patient.PregnancyStatus;
 import pl.edu.medicore.application.person.Gender;
 
 @Service
@@ -9,11 +10,12 @@ import pl.edu.medicore.application.person.Gender;
 class RiskCalculatorServiceImpl implements RiskCalculatorService {
 
     @Override
-    public Double calculateAnemiaRiskPercentage(Double hgb, Double hct, Double rbc, Gender gender, Boolean pregnant) {
-        if (hgb == null || hct == null || rbc == null || gender == null) return null;
+    public Double calculateAnemiaRiskPercentage(Double hgb, Double hct, Double rbc, Gender gender, PregnancyStatus pregnancyStatus) {
+        if (hgb == null || hct == null || rbc == null || gender == null || pregnancyStatus == null) return null;
+        if (gender == Gender.OTHER || pregnancyStatus == PregnancyStatus.UNKNOWN) return null;
 
-        double hbCutoff = getHgbCutoff(gender, pregnant);
-        double hctCutoff = getHctCutoff(gender, pregnant);
+        double hbCutoff = getHgbCutoff(gender, pregnancyStatus);
+        double hctCutoff = getHctCutoff(gender, pregnancyStatus);
         double rbcCutoff = getRbcCutoff(gender);
 
         double hbDeficit = Math.max(0, 1 - hgb / hbCutoff);
@@ -27,6 +29,8 @@ class RiskCalculatorServiceImpl implements RiskCalculatorService {
     @Override
     public Double calculateDiabetesRisk(Double weight, Double height, Double fpg, Gender gender, Integer age) {
         if (weight == null || height == null || fpg == null || gender == null || age == null) return null;
+        if (gender == Gender.OTHER) return null;
+
         double bmi = weight / (height * height);
 
         double baseRisk;
@@ -48,6 +52,7 @@ class RiskCalculatorServiceImpl implements RiskCalculatorService {
     @Override
     public Double calculateCKDRisk(Double scr, Double weight, Double height, Gender gender, Integer age) {
         if (scr == null || height == null || gender == null || age == null) return null;
+        if (gender == Gender.OTHER) return null;
 
         double gfr = calculateGFR(scr, gender, age);
         double bmi = weight / (height * height);
@@ -97,20 +102,20 @@ class RiskCalculatorServiceImpl implements RiskCalculatorService {
         return Math.round(riskPercentage * 100.0) / 100.0;
     }
 
-    private double getHgbCutoff(Gender gender, Boolean pregnant) {
+    private double getHgbCutoff(Gender gender, PregnancyStatus pregnancyStatus) {
         if (gender == Gender.MALE) return 130;
         if (gender == Gender.FEMALE) {
-            if (pregnant) return 110;
+            if (pregnancyStatus == PregnancyStatus.PREGNANT) return 110;
             return 120;
         }
 
         throw new IllegalArgumentException("Cannot determine HGB cutoff for given patient");
     }
 
-    private double getHctCutoff(Gender gender, Boolean pregnant) {
+    private double getHctCutoff(Gender gender, PregnancyStatus pregnancyStatus) {
         if (gender == Gender.MALE) return 41;
         if (gender == Gender.FEMALE) {
-            if (pregnant) return 33;
+            if (pregnancyStatus == PregnancyStatus.PREGNANT) return 33;
             return 36;
         }
 

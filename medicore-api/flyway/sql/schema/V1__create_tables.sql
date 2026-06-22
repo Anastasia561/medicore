@@ -29,14 +29,19 @@ CREATE TABLE address
 -- Table: person
 CREATE TABLE person
 (
-    id         BIGSERIAL PRIMARY KEY,
-    password   varchar(255) NOT NULL,
-    first_name varchar(20)  NOT NULL,
-    last_name  varchar(20)  NOT NULL,
-    email      varchar(60)  NOT NULL UNIQUE,
-    role       varchar(20)  NOT NULL,
-    status     varchar(40)  NOT NULL,
-    gender     VARCHAR(20)  NOT NULL
+    id           BIGSERIAL PRIMARY KEY,
+    password     varchar(255) NOT NULL,
+    first_name   varchar(20)  NOT NULL,
+    last_name    varchar(20)  NOT NULL,
+    email        varchar(60)  NOT NULL UNIQUE,
+    role         varchar(20)  NOT NULL,
+    status       varchar(40)  NOT NULL,
+    gender       VARCHAR(20)  NOT NULL,
+    birth_date   date         NOT NULL,
+    phone_number varchar(20)  NOT NULL,
+    address_id   BIGINT       NOT NULL,
+    CONSTRAINT patient_address
+        FOREIGN KEY (address_id) REFERENCES address (id)
 );
 
 -- Table: doctor (inherits ID from person)
@@ -53,17 +58,12 @@ CREATE TABLE doctor
 -- Table: patient (inherits ID from person)
 CREATE TABLE patient
 (
-    id           BIGINT PRIMARY KEY,
-    birth_date   date             NOT NULL,
-    phone_number varchar(20)      NOT NULL,
-    weight       DOUBLE PRECISION NOT NULL,
-    height       DOUBLE PRECISION NOT NULL,
-    pregnant     BOOLEAN          NOT NULL DEFAULT FALSE,
-    address_id   BIGINT           NOT NULL,
+    id               BIGINT PRIMARY KEY,
+    weight           DOUBLE PRECISION,
+    height           DOUBLE PRECISION,
+    pregnancy_status varchar(30) NOT NULL,
     CONSTRAINT patient_person
-        FOREIGN KEY (id) REFERENCES person (id),
-    CONSTRAINT patient_address
-        FOREIGN KEY (address_id) REFERENCES address (id)
+        FOREIGN KEY (id) REFERENCES person (id)
 );
 
 -- Table: consultation
@@ -173,17 +173,16 @@ CREATE TABLE lab_result
 -- Table: risk_result
 CREATE TABLE risk_result
 (
-    id            BIGSERIAL    NOT NULL PRIMARY KEY,
-    disease       VARCHAR(100) NOT NULL,
-    risk_group    VARCHAR(50)  NOT NULL,
-    risk_percent  DOUBLE PRECISION,
-    calculated_at TIMESTAMP    NOT NULL,
-    patient_id    BIGINT       NOT NULL,
-    test_id       BIGINT       NOT NULL,
-
-    CONSTRAINT risk_result_patient_fk
-        FOREIGN KEY (patient_id)
-            REFERENCES patient (id),
+    id             BIGSERIAL    NOT NULL PRIMARY KEY,
+    disease        VARCHAR(100) NOT NULL,
+    risk_group     VARCHAR(50)  NOT NULL,
+    risk_percent   DOUBLE PRECISION,
+    calculated_at  TIMESTAMP    NOT NULL,
+    patient_id     BIGINT       NOT NULL,
+    test_id        BIGINT       NOT NULL,
+    missing_fields varchar(250),
+    CONSTRAINT risk_result_patient_fk FOREIGN KEY (patient_id)
+        REFERENCES patient (id),
 
     CONSTRAINT risk_result_test_fk
         FOREIGN KEY (test_id)
