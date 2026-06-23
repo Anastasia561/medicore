@@ -57,7 +57,7 @@ class AppointmentServiceImpl implements AppointmentService {
                 .findAll(AppointmentSpecification.withFilter(userId.value(), filter), sorting);
 
         return role == Role.PATIENT ? all.stream().map(appointmentMapper::toPatientDto).toList()
-                : all.stream().map(appointmentMapper::toDoctorDto).toList();
+                : all.stream().map(appointmentMapper::toInfoDto).toList();
     }
 
     @Override

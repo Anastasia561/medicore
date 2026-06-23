@@ -10,7 +10,7 @@ import java.time.LocalTime;
 
 @Getter
 @Setter
-public abstract class AppointmentInfoDto {
+public class AppointmentInfoDto {
     private HashId id;
     private LocalDate date;
     private LocalTime startTime;
@@ -18,5 +18,6 @@ public abstract class AppointmentInfoDto {
     private AppointmentStatus status;
     private String firstName;
     private String lastName;
+    private String phoneNumber;
     private HashId recordId;
 }

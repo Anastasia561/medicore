@@ -6,8 +6,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
-import pl.edu.medicore.application.appointment.dto.AppointmentForDoctorDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForPatientDto;
+import pl.edu.medicore.application.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.email.dto.AppointmentNotificationEmailDto;
 import pl.edu.medicore.application.patient.Patient;
@@ -23,10 +23,11 @@ public abstract class AppointmentMapper {
     @Mapping(source = "patient.lastName", target = "lastName")
     @Mapping(source = "patient.phoneNumber", target = "phoneNumber")
     @Mapping(source = "record.id", target = "recordId")
-    public abstract AppointmentForDoctorDto toDoctorDto(Appointment appointment);
+    public abstract AppointmentInfoDto toInfoDto(Appointment appointment);
 
     @Mapping(source = "doctor.firstName", target = "firstName")
     @Mapping(source = "doctor.lastName", target = "lastName")
+    @Mapping(source = "doctor.phoneNumber", target = "phoneNumber")
     @Mapping(source = "doctor.specialization", target = "specialization")
     @Mapping(source = "record.id", target = "recordId")
     public abstract AppointmentForPatientDto toPatientDto(Appointment appointment);

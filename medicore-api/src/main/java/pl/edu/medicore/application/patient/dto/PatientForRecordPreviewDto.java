@@ -1,8 +1,8 @@
 package pl.edu.medicore.application.patient.dto;
 
-public record PatientForRecordDto(
+public record PatientForRecordPreviewDto(
         String firstName,
         String lastName,
-        String email
+        String phoneNumber
 ) {
 }

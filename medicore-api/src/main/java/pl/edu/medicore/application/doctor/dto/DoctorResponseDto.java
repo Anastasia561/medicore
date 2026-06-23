@@ -10,6 +10,7 @@ public record DoctorResponseDto(
         String firstName,
         String lastName,
         String email,
+        String phoneNumber,
         Specialization specialization,
         Integer experience,
         LocalDate employmentDate
