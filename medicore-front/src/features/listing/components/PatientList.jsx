@@ -54,13 +54,18 @@ const PatientList = () => {
                                 }
                             ]}
                             renderActions={() => (
-                                isAdmin && (
+                                isAdmin ? (
                                     <button
                                         className="btn btn-outline-success btn-sm"
                                         onClick={() => navigate(`/appointments/${patient.id}`, {
                                             state: {userName: `${patient.firstName} ${patient.lastName}`}
                                         })}>
                                         Appointments
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="btn btn-outline-primary btn-sm">
+                                        Medical profile
                                     </button>
                                 )
                             )}

@@ -1,7 +1,6 @@
 import "./Profile.css";
 import DoctorFields from "./components/DoctorFields.jsx";
-import PatientFields from "./components/PatientFields.jsx";
-import AdminFields from "./components/AdminFields.jsx";
+import GeneralInfoFields from "./components/GeneralInfoFields.jsx";
 import useAuth from "../../hooks/useAuth.jsx";
 import {useProfile} from "./hooks/useProfile.jsx";
 
@@ -10,8 +9,8 @@ const Profile = () => {
     const {data: user, isLoading, isError} = useProfile();
     const roleMap = {
         ROLE_DOCTOR: DoctorFields,
-        ROLE_PATIENT: PatientFields,
-        ROLE_ADMIN: AdminFields,
+        ROLE_PATIENT: GeneralInfoFields,
+        ROLE_ADMIN: GeneralInfoFields,
     };
 
     if (isLoading) {

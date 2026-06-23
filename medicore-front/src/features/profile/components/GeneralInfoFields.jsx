@@ -1,20 +1,21 @@
 import Field from "./Field.jsx";
 import IconField from "./IconField.jsx";
+import {formatDateStandard} from "../../../utils/dateUtils.js";
 import AddressField from "./AddressField.jsx";
-import {formatDateStandard} from "../../..//utils/dateUtils.js";
 
-const PatientFields = ({user}) => (
+const GeneralInfoFields = ({user}) => (
     <>
         <Field label="First Name" value={user.firstName}/>
         <Field label="Last Name" value={user.lastName}/>
-        <IconField label="Email" value={user.email} iconClass="bi bi-envelope text-primary"/>
-        <IconField label="Phone number" value={user.phoneNumber} iconClass="fas fa-phone text-success"/>
+        <Field label="Gender" value={user.gender}/>
         <IconField label="Birthdate" value={formatDateStandard(user.birthDate)}
                    iconClass="fas fa-calendar-alt text-primary"/>
+        <IconField label="Email" value={user.email} iconClass="bi bi-envelope text-primary"/>
+        <IconField label="Phone number" value={user.phoneNumber} iconClass="fas fa-phone text-success"/>
         <AddressField
             address={user.address} isEditing={false}
         />
     </>
 );
 
-export default PatientFields;
+export default GeneralInfoFields;

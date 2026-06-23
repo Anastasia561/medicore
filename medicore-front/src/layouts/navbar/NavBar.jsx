@@ -17,7 +17,7 @@ const NavBar = () => {
         {to: "/appointments", label: "Appointments", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
         {to: "/records", label: "Records", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
         {to: "/hh", label: "Lab results", roles: ["ROLE_PATIENT"]},
-        {to: "/hh", label: "Risks", roles: ["ROLE_PATIENT"]},
+        {to: "/hh", label: "Medical profile", roles: ["ROLE_PATIENT"]},
         {to: "/schedule", label: "Schedule", roles: ["ROLE_DOCTOR"]}
     ];
 
