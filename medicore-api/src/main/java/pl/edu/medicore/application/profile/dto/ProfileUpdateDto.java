@@ -1,7 +1,16 @@
 package pl.edu.medicore.application.profile.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import pl.edu.medicore.application.address.dto.AddressDto;
+import pl.edu.medicore.application.person.Gender;
+import pl.edu.medicore.common.validation.annotation.MinAge;
+
+import java.time.LocalDate;
 
 public record ProfileUpdateDto(
         @NotBlank(message = "First name is required")
@@ -10,6 +19,25 @@ public record ProfileUpdateDto(
 
         @NotBlank(message = "Last name is required")
         @Size(max = 20, message = "Last name must be at most 20 characters")
-        String lastName
+        String lastName,
+
+        @NotNull(message = "Gender is required")
+        Gender gender,
+
+        @MinAge(18)
+        @NotNull(message = "Birth date is required")
+        @Past(message = "Birth date must be in the past")
+        LocalDate birthDate,
+
+        @NotBlank(message = "Phone number is required")
+        @Pattern(
+                regexp = "\\+?[0-9]{7,15}",
+                message = "Phone number must be valid and contain 7-15 digits"
+        )
+        String phoneNumber,
+
+        @NotNull(message = "Address is required")
+        @Valid
+        AddressDto address
 ) {
 }

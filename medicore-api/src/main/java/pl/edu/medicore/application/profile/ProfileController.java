@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.auth.CustomUserDetails;
-import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
 import pl.edu.medicore.common.encryption.HashId;
@@ -32,19 +31,11 @@ public class ProfileController {
         return ResponseWrapper.ok(profileService.getProfileById(userDetails.getId(), userDetails.getRole()));
     }
 
-    @Operation(summary = "Update profile info for admin or doctor")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+    @Operation(summary = "Update general profile info")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @PutMapping
     public ResponseWrapper<HashId> updateProfile(@Valid @RequestBody ProfileUpdateDto dto,
                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseWrapper.ok(profileService.updateProfile(dto, userDetails.getId()));
-    }
-
-    @Operation(summary = "Update patient profile info")
-    @PreAuthorize("hasRole('PATIENT')")
-    @PutMapping("/patient")
-    public ResponseWrapper<HashId> updatePatientProfile(@Valid @RequestBody PatientProfileUpdateDto dto,
-                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseWrapper.ok(profileService.updatePatientProfile(dto, userDetails.getId()));
+        return ResponseWrapper.ok(profileService.updateProfile(dto, userDetails.getId(), userDetails.getRole()));
     }
 }

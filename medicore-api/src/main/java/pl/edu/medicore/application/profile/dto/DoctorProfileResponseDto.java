@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class DoctorProfileResponseDto extends ProfileResponseDto {
-    private int experience;
     private LocalDate employmentDate;
     private Specialization specialization;
 }
