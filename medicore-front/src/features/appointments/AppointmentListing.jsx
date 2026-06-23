@@ -180,11 +180,11 @@ const AppointmentListing = () => {
                                                                 </div>
                                                                 <div className="text-muted extra-small mb-2"
                                                                      style={{fontSize: '0.8rem'}}>
-                                                                    {app.phoneNumber}
+                                                                    {app.specialization}
                                                                 </div>
                                                                 <div className="text-muted extra-small mb-2"
                                                                      style={{fontSize: '0.8rem'}}>
-                                                                    {app.specialization}
+                                                                    {app.phoneNumber}
                                                                 </div>
                                                                 <span
                                                                     className={`badge bg-white bg-opacity-75 ${getStatusTextClass(app.status)}`}>

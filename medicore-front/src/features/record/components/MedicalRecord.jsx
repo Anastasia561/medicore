@@ -2,9 +2,21 @@ import {useParams} from "react-router-dom";
 import {useMedicalRecord} from "../hooks/useMedicalRecord.jsx";
 import {formatDateStandard} from "../../../utils/dateUtils.js";
 
+const PREGNANCY_STATUS_MAP = {
+    PREGNANT: 'Pregnant',
+    NOT_PREGNANT: 'Not Pregnant',
+    NOT_APPLICABLE: 'Not Applicable',
+    UNKNOWN: 'Not Specified'
+};
+
+const formatPregnancyStatus = (status) => {
+    return PREGNANCY_STATUS_MAP[status] || 'N/A';
+};
+
 const MedicalRecord = () => {
     const {id} = useParams();
     const {data, isLoading, isError} = useMedicalRecord(id);
+
 
     if (isLoading) {
         return (
@@ -29,29 +41,38 @@ const MedicalRecord = () => {
 
                 <div className="card shadow-sm border-0 rounded-3 p-4 bg-white">
 
-                    <div className="row g-4 mb-4">
+                    <div className="row g-4 mb-2">
                         <div className="col-12 col-md-6">
-                            <h3 className="h5 text-dark fw-bold mb-3">Doctor Info</h3>
+                            <h3 className="h5 text-dark fw-bold mb-3">Doctor Contact Info</h3>
                             <div className="ps-2">
                                 <p className="mb-2 text-dark">
                                     <span
                                         className="fw-bold">Name:</span> {doctor ? `${doctor.firstName} ${doctor.lastName}` : 'N/A'}
                                 </p>
-                                <p className="mb-0 text-dark">
+                                <p className="mb-2 text-dark">
                                     <span className="fw-bold">Specialization:</span> {doctor?.specialization || 'N/A'}
+                                </p>
+                                <p className="mb-2 text-dark">
+                                    <span className="fw-bold">Email:</span> {doctor?.email || 'N/A'}
+                                </p>
+                                <p className="mb-2 text-dark">
+                                    <span className="fw-bold">Phone number:</span> {doctor?.phoneNumber || 'N/A'}
                                 </p>
                             </div>
                         </div>
 
                         <div className="col-12 col-md-6">
-                            <h3 className="h5 text-dark fw-bold mb-3">Patient Info</h3>
+                            <h3 className="h5 text-dark fw-bold mb-3">Patient Contact Info</h3>
                             <div className="ps-2">
                                 <p className="mb-2 text-dark">
                                     <span
                                         className="fw-bold">Name:</span> {patient ? `${patient.firstName} ${patient.lastName}` : 'N/A'}
                                 </p>
-                                <p className="mb-0 text-dark">
+                                <p className="mb-2 text-dark">
                                     <span className="fw-bold">Email:</span> {patient?.email || 'N/A'}
+                                </p>
+                                <p className="mb-2 text-dark">
+                                    <span className="fw-bold">Phone number:</span> {patient?.phoneNumber || 'N/A'}
                                 </p>
                             </div>
                         </div>
@@ -59,7 +80,28 @@ const MedicalRecord = () => {
 
                     <hr className="text-muted opacity-25 my-4"/>
 
-                    <div className="mb-4">
+                    <div className="mb-2">
+                        <h3 className="h5 text-dark fw-bold mb-3">Patient Medical Profile</h3>
+                        <div className="ps-2">
+                            <p className="mb-2 text-dark">
+                                <span className="fw-bold">Gender:</span> {patient?.gender || 'N/A'}
+                            </p>
+                            <p className="mb-2 text-dark">
+                                <span
+                                    className="fw-bold">Pregnancy status:</span> {formatPregnancyStatus(patient?.pregnancyStatus)}
+                            </p>
+                            <p className="mb-2 text-dark">
+                                <span className="fw-bold">Weight:</span> {patient?.weight || 'N/A'}
+                            </p>
+                            <p className="mb-2 text-dark">
+                                <span className="fw-bold">Height:</span> {patient?.height || 'N/A'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr className="text-muted opacity-25 my-4"/>
+
+                    <div className="mb-2">
                         <h3 className="h5 text-dark fw-bold mb-3">Appointment Info</h3>
                         <div className="ps-2">
                             <p className="mb-0 text-dark">
@@ -70,7 +112,7 @@ const MedicalRecord = () => {
 
                     <hr className="text-muted opacity-25 my-4"/>
 
-                    <div className="mb-4">
+                    <div className="mb-2">
                         <h3 className="h5 text-dark fw-bold mb-3">Medical Notes</h3>
                         <div className="ps-2 mb-3">
                             <p className="fw-bold text-dark mb-2">Diagnosis:</p>

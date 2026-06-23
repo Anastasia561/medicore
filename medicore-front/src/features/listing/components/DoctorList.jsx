@@ -78,6 +78,7 @@ const DoctorList = () => {
                             name={doc.firstName + " " + doc.lastName}
                             details={[
                                 {label: 'Email', value: doc.email},
+                                {label: 'Phone number', value: doc.phoneNumber},
                                 {label: 'Experience', value: `${doc.experience} years`},
                                 {label: 'Specialization', value: doc.specialization},
                                 {label: 'Employment date', value: formatDateStandard(doc.employmentDate)}
