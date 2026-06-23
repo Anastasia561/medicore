@@ -74,15 +74,8 @@ public record PatientRegisterDto(
     @AssertTrue(message = "Male patients must be marked as NOT_APPLICABLE")
     public boolean isPregnancyValid() {
         if (gender == null || pregnancyStatus == null) return true;
-
-        if (gender == Gender.MALE) {
-            return pregnancyStatus == PregnancyStatus.NOT_APPLICABLE;
-        }
-
-        if (pregnancyStatus == PregnancyStatus.PREGNANT) {
-            return gender == Gender.FEMALE;
-        }
-
+        if (gender == Gender.MALE) return pregnancyStatus == PregnancyStatus.NOT_APPLICABLE;
+        if (pregnancyStatus == PregnancyStatus.PREGNANT) return gender == Gender.FEMALE;
         return true;
     }
 }

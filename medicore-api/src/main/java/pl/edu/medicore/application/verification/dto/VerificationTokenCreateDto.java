@@ -1,4 +1,6 @@
-package pl.edu.medicore.application.verification;
+package pl.edu.medicore.application.verification.dto;
+
+import pl.edu.medicore.application.verification.TokenType;
 
 import java.time.Duration;
 

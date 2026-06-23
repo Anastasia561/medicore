@@ -24,13 +24,17 @@ public class Record {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "diagnosis", length = 100, nullable = false)
     private String diagnosis;
+
     @Column(name = "summary", nullable = false)
     private String summary;
+
     @OneToOne
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
+
     @OneToMany(mappedBy = "record", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
 }

@@ -20,14 +20,16 @@ import java.util.UUID;
 @Setter
 @Table(name = "test")
 public class Test {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "performed_date", nullable = false)
     private LocalDate date;
+
     @Column(nullable = false, unique = true)
     private UUID storageKey;
+
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;

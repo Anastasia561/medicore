@@ -19,10 +19,13 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(name = "street", length = 40, nullable = false)
     private String street;
+
     @Column(name = "number", nullable = false)
     private Integer number;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "city_id")
     private City city;

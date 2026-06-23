@@ -25,18 +25,26 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDate date;
+
     private LocalTime startTime;
+
     private LocalTime endTime;
+
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+
     private boolean reminderSent;
+
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private Patient patient;
+
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
+
     @OneToOne(mappedBy = "appointment")
     private Record record;
 }

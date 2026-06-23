@@ -20,16 +20,22 @@ public class Prescription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "medicine", length = 60, nullable = false)
     private String medicine;
+
     @Column(name = "dosage", length = 20, nullable = false)
     private String dosage;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
+
     @Column(name = "end_date")
     private LocalDate endDate;
+
     @Column(name = "frequency", length = 50, nullable = false)
     private String frequency;
+
     @ManyToOne
     @JoinColumn(name = "record_id")
     private Record record;

@@ -7,6 +7,7 @@ public record AuthRequestDto(
         @NotBlank(message = "Email is required")
         @Email(message = "Email must be in valid format")
         String email,
+
         @NotBlank(message = "Password is required")
         String password) {
 }

@@ -22,13 +22,17 @@ public class Consultation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "day", nullable = false)
     private Workday workday;
+
     @Column(name = "start_work_time", nullable = false)
     private LocalTime startTime;
+
     @Column(name = "end_work_time", nullable = false)
     private LocalTime endTime;
+
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;

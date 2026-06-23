@@ -9,12 +9,15 @@ public record AddressDto(
         @NotBlank(message = "Country name is required")
         @Size(max = 30, message = "Country name must be at most 30 characters")
         String country,
+
         @NotBlank(message = "City name is required")
         @Size(max = 30, message = "City name must be at most 30 characters")
         String city,
+
         @NotBlank(message = "City name is required")
         @Size(max = 40, message = "City name must be at most 30 characters")
         String street,
+
         @NotNull(message = "House number is required")
         @Positive(message = "House number must be greater than 0")
         Integer number

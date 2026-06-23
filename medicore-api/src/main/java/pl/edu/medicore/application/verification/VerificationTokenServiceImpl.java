@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.edu.medicore.application.verification.dto.VerificationTokenCreateDto;
 
 import java.time.Duration;
 import java.time.Instant;

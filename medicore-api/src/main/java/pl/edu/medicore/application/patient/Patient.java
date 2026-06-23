@@ -13,8 +13,10 @@ import pl.edu.medicore.application.person.Person;
 @Setter
 public class Patient extends Person {
     private Double weight;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PregnancyStatus pregnancyStatus;
+
     private Double height;
 }

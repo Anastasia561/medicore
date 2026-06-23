@@ -21,10 +21,13 @@ import java.util.Set;
 public class Doctor extends Person {
     @Column(name = "experience", nullable = false)
     private Integer experience;
+
     @Column(name = "employment_date", nullable = false)
     private LocalDate employmentDate;
+
     @Enumerated(EnumType.STRING)
     private Specialization specialization;
+
     @OneToMany(mappedBy = "doctor", fetch = FetchType.EAGER)
     private Set<Consultation> consultations = new HashSet<>();
 }

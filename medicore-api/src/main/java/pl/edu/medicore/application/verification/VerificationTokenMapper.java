@@ -2,6 +2,7 @@ package pl.edu.medicore.application.verification;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import pl.edu.medicore.application.verification.dto.VerificationTokenCreateDto;
 
 import java.time.Instant;
 
