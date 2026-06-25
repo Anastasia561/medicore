@@ -24,7 +24,7 @@ public class Address {
     private String street;
 
     @Column(name = "number", nullable = false)
-    private Integer number;
+    private String number;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "city_id")

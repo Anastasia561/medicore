@@ -16,11 +16,11 @@ VALUES ('New York', 1),
 
 -- ADDRESS
 INSERT INTO address (street, number, city_id)
-VALUES ('5th Avenue', 101, 1),
-       ('Unter den Linden', 45, 2),
-       ('Nowy Świat', 15, 3),
-       ('Shibuya Street', 23, 4),
-       ('Paulista Ave', 321, 5);
+VALUES ('5th Avenue', '101A', 1),
+       ('Unter den Linden', '45', 2),
+       ('Nowy Świat', '15', 3),
+       ('Shibuya Street', '23', 4),
+       ('Paulista Ave', '321-21', 5);
 
 
 -- PERSON
@@ -55,32 +55,32 @@ VALUES ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
        ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
         'Rafael', 'Garcia', 'rafael.garcia@example.com',
         'DOCTOR', 'ACTIVE', 'MALE',
-        '1980-01-01', '+111111111', 1),
+        '1980-01-01', '+1234567', 1),
 
        ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
         'Laura', 'Johnson', 'laura.johnson@example.com',
         'DOCTOR', 'ACTIVE', 'FEMALE',
-        '1985-02-02', '+222222222', 2),
+        '1985-02-02', '+78623452334', 2),
 
        ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
         'Tom', 'Adams', 'tom.adams@example.com',
         'DOCTOR', 'ACTIVE', 'MALE',
-        '1975-03-03', '+333333333', 3),
+        '1975-03-03', '+1246643224', 3),
 
        ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
         'Hannah', 'Brown', 'hannah.brown@example.com',
         'DOCTOR', 'ACTIVE', 'FEMALE',
-        '1988-04-04', '+444444444', 4),
+        '1988-04-04', '+12357643666', 4),
 
        ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
         'Kevin', 'Lee', 'kevin.lee@example.com',
         'DOCTOR', 'ACTIVE', 'MALE',
-        '1982-05-05', '+555555555', 5),
+        '1982-05-05', '+1346886433', 5),
 
        ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
         'Adam', 'Test', 'admin@example.com',
         'ADMIN', 'ACTIVE', 'MALE',
-        '1990-01-01', '+999999999', 1);
+        '1990-01-01', '+2345688645', 1);
 
 
 -- PATIENT

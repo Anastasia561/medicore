@@ -20,7 +20,7 @@ CREATE TABLE address
 (
     id      BIGSERIAL PRIMARY KEY,
     street  varchar(40) NOT NULL,
-    number  integer     NOT NULL,
+    number  varchar(10)  NOT NULL,
     city_id BIGINT      NOT NULL,
     CONSTRAINT address_city
         FOREIGN KEY (city_id) REFERENCES city (id)
