@@ -50,7 +50,19 @@
     padding: 10px;
     border-radius: 6px;
     border: 1px solid #ddd;
+    color: #333333;
+}
+
+.field input:disabled,
+.field select:disabled {
     background-color: #ffffff;
+    border-color: #e2e8f0;
+    opacity: 1;
+}
+
+.field input:disabled.permanently-disabled {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
 }
 
 .edit-btn {
@@ -67,4 +79,8 @@
 .edit-btn:hover {
     background: #3b82f6;
     color: white;
+}
+
+.full-width-field {
+    grid-column: span 2;
 }

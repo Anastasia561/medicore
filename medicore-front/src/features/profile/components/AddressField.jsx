@@ -1,18 +1,24 @@
 import Field from "./Field.jsx";
 import IconField from "./IconField.jsx";
 
-const AddressField = ({address, isEditing, onChange}) => {
+const AddressField = ({address, isEditing, register, errors}) => {
 
-    const formatAddress = (address) => {
-        if (!address) return "";
-
-        const {country, city, street, number} = address;
+    const formatAddress = (addr) => {
+        if (!addr) return "No address provided";
+        const {country, city, street, number} = addr;
         return `${street} ${number}, ${city}, ${country}`;
     };
 
     if (!isEditing) {
         return (
-            <IconField label="Address" value={formatAddress(address)} iconClass="fas fa-map-marker-alt"/>
+            <div className="full-width-field">
+                <IconField
+                    label="Address"
+                    value={formatAddress(address)}
+                    iconClass="fas fa-map-marker-alt"
+                    isEditing={isEditing}
+                />
+            </div>
         );
     }
 
@@ -20,35 +26,27 @@ const AddressField = ({address, isEditing, onChange}) => {
         <>
             <Field
                 label="Country"
-                value={address.country}
-                field="country"
-                onChange={(f, v) => onChange(f, v)}
                 isEditing={true}
-            />
+                register={register("address.country")}
+                error={errors?.address?.country}/>
 
             <Field
                 label="City"
-                value={address.city}
-                field="city"
-                onChange={(f, v) => onChange(f, v)}
                 isEditing={true}
-            />
+                register={register("address.city")}
+                error={errors?.address?.city}/>
 
             <Field
                 label="Street"
-                value={address.street}
-                field="street"
-                onChange={(f, v) => onChange(f, v)}
                 isEditing={true}
-            />
+                register={register("address.street")}
+                error={errors?.address?.street}/>
 
             <Field
                 label="Number"
-                value={address.number}
-                field="number"
-                onChange={(f, v) => onChange(f, v)}
                 isEditing={true}
-            />
+                register={register("address.number")}
+                error={errors?.address?.number}/>
         </>
     );
 };
