@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.edu.medicore.application.verification.dto.VerificationTokenCreateDto;
 
 import java.time.Duration;
 import java.time.Instant;

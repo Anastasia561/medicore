@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.doctor.dto.DoctorFilterDto;
 import pl.edu.medicore.application.doctor.dto.DoctorInvitationRequestDto;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
@@ -51,6 +53,8 @@ class DoctorServiceTest {
     private UrlBuilder urlBuilder;
     @Mock
     private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private DoctorServiceImpl doctorService;
 
@@ -118,7 +122,8 @@ class DoctorServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Doctor doctor = new Doctor();
-        DoctorResponseDto responseDto = new DoctorResponseDto(HashId.of(6L), "John", "Doe", "test@mail.com",
+        DoctorResponseDto responseDto = new DoctorResponseDto(HashId.of(6L), "John", "Doe",
+                "test@mail.com", "1112345555",
                 Specialization.DERMATOLOGIST, 10, LocalDate.of(2023, 10, 10));
 
         Page<Doctor> doctorPage = new PageImpl<>(List.of(doctor));
@@ -142,7 +147,8 @@ class DoctorServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Doctor doctor = new Doctor();
-        DoctorResponseDto responseDto = new DoctorResponseDto(HashId.of(6L), "John", "Doe", "test@mail.com",
+        DoctorResponseDto responseDto = new DoctorResponseDto(HashId.of(6L), "John", "Doe",
+                "test@mail.com", "12345678",
                 Specialization.DERMATOLOGIST, 10, LocalDate.of(2023, 10, 10));
 
         Page<Doctor> doctorPage = new PageImpl<>(List.of(doctor));
@@ -208,9 +214,12 @@ class DoctorServiceTest {
 
     @Test
     void shouldRegisterDoctor_whenInputIsValid() {
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token123", "test@gmail.com",
                 "John", "Doe", "password123", "password123",
-                Gender.MALE, 10, Specialization.DERMATOLOGIST);
+                Gender.MALE, 10, Specialization.DERMATOLOGIST,
+                LocalDate.of(1990, 10, 10), "12345678", address);
 
         Doctor doctor = new Doctor();
         doctor.setId(1L);
@@ -220,6 +229,7 @@ class DoctorServiceTest {
         when(doctorMapper.toEntity(dto)).thenReturn(doctor);
         when(doctorMapper.toEmailDto(doctor)).thenReturn(emailDto);
         when(doctorRepository.save(doctor)).thenReturn(doctor);
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPass");
 
         long result = doctorService.register(dto);
 
@@ -235,9 +245,12 @@ class DoctorServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenPasswordsDoNotMatch() {
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token123", "test@gmail.com",
                 "John", "Doe", "password123", "password",
-                Gender.MALE, 10, Specialization.DERMATOLOGIST);
+                Gender.MALE, 10, Specialization.DERMATOLOGIST,
+                LocalDate.of(1990, 10, 10), "12345678", address);
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,

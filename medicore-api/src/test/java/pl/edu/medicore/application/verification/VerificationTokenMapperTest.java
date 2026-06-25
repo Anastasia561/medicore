@@ -3,6 +3,7 @@ package pl.edu.medicore.application.verification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import pl.edu.medicore.application.verification.dto.VerificationTokenCreateDto;
 
 import java.time.Duration;
 

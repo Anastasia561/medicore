@@ -7,12 +7,13 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
-import pl.edu.medicore.application.appointment.dto.AppointmentForDoctorDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForPatientDto;
+import pl.edu.medicore.application.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.Specialization;
 import pl.edu.medicore.application.email.dto.AppointmentNotificationEmailDto;
 import pl.edu.medicore.application.patient.Patient;
+import pl.edu.medicore.application.record.Record;
 import pl.edu.medicore.common.config.properties.SchedulingProperties;
 import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.encryption.HashIdMapper;
@@ -46,19 +47,23 @@ class AppointmentMapperTest {
     }
 
     @Test
-    void shouldMapToDoctorAppointmentDto_whenInputIsValid() {
+    void shouldMapToAppointmentInfoDto_whenInputIsValid() {
         Appointment appointment = new Appointment();
         Patient patient = new Patient();
         patient.setFirstName("John");
         patient.setLastName("Doe");
         patient.setPhoneNumber("1234567890");
 
+        Record record = new Record();
+        record.setId(1L);
+
         appointment.setDate(LocalDate.of(2026, 10, 12));
         appointment.setStartTime(LocalTime.of(20, 10));
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointment.setPatient(patient);
+        appointment.setRecord(record);
 
-        AppointmentForDoctorDto result = appointmentMapper.toDoctorDto(appointment);
+        AppointmentInfoDto result = appointmentMapper.toInfoDto(appointment);
         assertEquals("John", result.getFirstName());
         assertEquals("Doe", result.getLastName());
         assertEquals("1234567890", result.getPhoneNumber());
@@ -73,6 +78,7 @@ class AppointmentMapperTest {
         Doctor doctor = new Doctor();
         doctor.setFirstName("John");
         doctor.setLastName("Doe");
+        doctor.setPhoneNumber("1234567890");
         doctor.setSpecialization(Specialization.DERMATOLOGIST);
 
         appointment.setDate(LocalDate.of(2026, 10, 12));
@@ -83,6 +89,7 @@ class AppointmentMapperTest {
         AppointmentForPatientDto result = appointmentMapper.toPatientDto(appointment);
         assertEquals("John", result.getFirstName());
         assertEquals("Doe", result.getLastName());
+        assertEquals("1234567890", result.getPhoneNumber());
         assertEquals(AppointmentStatus.COMPLETED, result.getStatus());
         assertEquals(LocalDate.of(2026, 10, 12), result.getDate());
         assertEquals(LocalTime.of(20, 10), result.getStartTime());
@@ -146,8 +153,8 @@ class AppointmentMapperTest {
     }
 
     @Test
-    void shouldReturnNull_whenAppointmentForDoctorIsNull() {
-        assertNull(appointmentMapper.toDoctorDto(null));
+    void shouldReturnNull_whenAppointmentForInfoIsNull() {
+        assertNull(appointmentMapper.toInfoDto(null));
     }
 
     @Test

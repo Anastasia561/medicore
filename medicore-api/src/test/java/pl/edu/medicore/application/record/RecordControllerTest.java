@@ -181,11 +181,11 @@ class RecordControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].date").value("2026-04-06"))
                 .andExpect(jsonPath("$.data.content[0].patient.firstName").value("Taro"))
                 .andExpect(jsonPath("$.data.content[0].patient.lastName").value("Yamada"))
-                .andExpect(jsonPath("$.data.content[0].patient.email").value("taro.yamada@example.com"))
+                .andExpect(jsonPath("$.data.content[0].patient.phoneNumber").value("+81123456789"))
                 .andExpect(jsonPath("$.data.content[1].date").value("2026-03-08"))
                 .andExpect(jsonPath("$.data.content[1].patient.firstName").value("Anna"))
                 .andExpect(jsonPath("$.data.content[1].patient.lastName").value("Smith"))
-                .andExpect(jsonPath("$.data.content[1].patient.email").value("anna.smith@example.com"));
+                .andExpect(jsonPath("$.data.content[1].patient.phoneNumber").value("+49123456789"));
     }
 
     @Test
@@ -200,6 +200,6 @@ class RecordControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].date").value("2026-03-08"))
                 .andExpect(jsonPath("$.data.content[0].patient.firstName").value("Anna"))
                 .andExpect(jsonPath("$.data.content[0].patient.lastName").value("Smith"))
-                .andExpect(jsonPath("$.data.content[0].patient.email").value("anna.smith@example.com"));
+                .andExpect(jsonPath("$.data.content[0].patient.phoneNumber").value("+49123456789"));
     }
 }

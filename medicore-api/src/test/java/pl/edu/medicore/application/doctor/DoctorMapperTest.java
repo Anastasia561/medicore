@@ -3,6 +3,8 @@ package pl.edu.medicore.application.doctor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import pl.edu.medicore.application.address.AddressMapper;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.application.doctor.dto.DoctorResponseDto;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
@@ -24,10 +26,15 @@ class DoctorMapperTest {
     void setUp() throws NoSuchFieldException, IllegalAccessException {
         doctorMapper = Mappers.getMapper(DoctorMapper.class);
         HashIdMapper hashIdMapper = new HashIdMapper();
+        AddressMapper addressMapper = Mappers.getMapper(AddressMapper.class);
 
         Field hashIdMapperField = doctorMapper.getClass().getDeclaredField("hashIdMapper");
         hashIdMapperField.setAccessible(true);
         hashIdMapperField.set(doctorMapper, hashIdMapper);
+
+        Field addressMapperField = doctorMapper.getClass().getDeclaredField("addressMapper");
+        addressMapperField.setAccessible(true);
+        addressMapperField.set(doctorMapper, addressMapper);
     }
 
     @Test
@@ -51,14 +58,18 @@ class DoctorMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "test@gmail.com",
                 "John", "Doe", "pass", "pass", Gender.MALE, 10,
-                Specialization.DERMATOLOGIST);
+                Specialization.DERMATOLOGIST, LocalDate.of(1990, 10, 10),
+                "12344555", address);
 
         Doctor entity = doctorMapper.toEntity(dto);
         assertEquals("John", entity.getFirstName());
         assertEquals("Doe", entity.getLastName());
         assertEquals(UserStatus.ACTIVE, entity.getStatus());
+        assertEquals(address.city(), entity.getAddress().getCity().getName());
         assertEquals(Role.DOCTOR, entity.getRole());
         assertEquals(Specialization.DERMATOLOGIST, entity.getSpecialization());
     }
@@ -76,7 +87,7 @@ class DoctorMapperTest {
     }
 
     @Test
-    void shouldReturnNull_whenPatientIsNullForEmailDto() {
+    void shouldReturnNull_whenDoctorIsNullForEmailDto() {
         assertNull(doctorMapper.toEmailDto(null));
     }
 

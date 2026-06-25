@@ -17,7 +17,9 @@ import pl.edu.medicore.application.appointment.AppointmentStatus;
 import pl.edu.medicore.application.appointment.AppointmentService;
 import pl.edu.medicore.application.doctor.dto.DoctorForRecordDto;
 import pl.edu.medicore.application.doctor.Specialization;
-import pl.edu.medicore.application.patient.dto.PatientForRecordDto;
+import pl.edu.medicore.application.patient.PregnancyStatus;
+import pl.edu.medicore.application.patient.dto.PatientForRecordFullDto;
+import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.prescription.Prescription;
 import pl.edu.medicore.application.prescription.PrescriptionMapper;
@@ -61,8 +63,11 @@ class RecordServiceTest {
         long id = 1L;
         HashId idHash = HashId.of(id);
 
-        DoctorForRecordDto doctor = new DoctorForRecordDto("fTest", "fLast", Specialization.DERMATOLOGIST);
-        PatientForRecordDto patient = new PatientForRecordDto("fTest", "fLast", "test@gmail.com");
+        DoctorForRecordDto doctor = new DoctorForRecordDto("fTest", "fLast",
+                Specialization.DERMATOLOGIST, "test@gmail.com", "1234567");
+        PatientForRecordFullDto patient = new PatientForRecordFullDto("fTest", "fLast",
+                "test@gmail.com", "123456", 90.0, 230.0, PregnancyStatus.NOT_APPLICABLE,
+                Gender.MALE);
 
         Record record = new Record();
         RecordDto dto = new RecordDto(doctor, patient, LocalDate.of(2026, 10, 2), "Test",

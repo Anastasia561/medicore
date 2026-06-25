@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import pl.edu.medicore.application.appointment.dto.AppointmentCreateDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentFilterDto;
-import pl.edu.medicore.application.appointment.dto.AppointmentForDoctorDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentForPatientDto;
 import pl.edu.medicore.application.appointment.dto.AppointmentInfoDto;
 import pl.edu.medicore.application.person.Person;
@@ -96,7 +95,7 @@ class AppointmentServiceTest {
         assertEquals(1, result.size());
         assertEquals(patientDto, result.getFirst());
         verify(appointmentMapper, times(1)).toPatientDto(appointment);
-        verify(appointmentMapper, never()).toDoctorDto(any());
+        verify(appointmentMapper, never()).toInfoDto(any());
         verify(appointmentRepository, times(1)).findAll(any(Specification.class), any(Sort.class));
     }
 
@@ -111,18 +110,18 @@ class AppointmentServiceTest {
         doctor.setRole(Role.DOCTOR);
 
         Appointment appointment = new Appointment();
-        AppointmentForDoctorDto doctorDto = new AppointmentForDoctorDto();
+        AppointmentInfoDto doctorDto = new AppointmentInfoDto();
 
         when(personService.getById(userId)).thenReturn(doctor);
         when(appointmentRepository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of(appointment));
-        when(appointmentMapper.toDoctorDto(appointment)).thenReturn(doctorDto);
+        when(appointmentMapper.toInfoDto(appointment)).thenReturn(doctorDto);
 
         List<? extends AppointmentInfoDto> result = appointmentService.getAppointmentsInRange(userId, filter);
 
         assertEquals(1, result.size());
         assertEquals(doctorDto, result.getFirst());
 
-        verify(appointmentMapper, times(1)).toDoctorDto(appointment);
+        verify(appointmentMapper, times(1)).toInfoDto(appointment);
         verify(appointmentMapper, never()).toPatientDto(any());
         verify(appointmentRepository, times(1)).findAll(any(Specification.class), any(Sort.class));
     }

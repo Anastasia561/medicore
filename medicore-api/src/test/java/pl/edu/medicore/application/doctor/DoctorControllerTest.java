@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.doctor.dto.DoctorInvitationRequestDto;
 import pl.edu.medicore.application.doctor.dto.DoctorRegistrationDto;
 import pl.edu.medicore.application.person.Gender;
@@ -17,6 +18,7 @@ import pl.edu.medicore.application.verification.TokenType;
 import pl.edu.medicore.application.verification.VerificationToken;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -117,6 +119,7 @@ class DoctorControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].firstName").value("Rafael"))
                 .andExpect(jsonPath("$.data.content[0].lastName").value("Garcia"))
                 .andExpect(jsonPath("$.data.content[0].email").value("rafael.garcia@example.com"))
+                .andExpect(jsonPath("$.data.content[0].phoneNumber").value("+1234567"))
                 .andExpect(jsonPath("$.data.content[0].specialization").value("CARDIOLOGIST"))
                 .andExpect(jsonPath("$.data.content[0].employmentDate").value("2015-06-01"))
                 .andExpect(jsonPath("$.data.content[0].experience").value(10));
@@ -134,6 +137,7 @@ class DoctorControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].firstName").value("Rafael"))
                 .andExpect(jsonPath("$.data.content[0].lastName").value("Garcia"))
                 .andExpect(jsonPath("$.data.content[0].email").value("rafael.garcia@example.com"))
+                .andExpect(jsonPath("$.data.content[0].phoneNumber").value("+1234567"))
                 .andExpect(jsonPath("$.data.content[0].specialization").value("CARDIOLOGIST"))
                 .andExpect(jsonPath("$.data.content[0].employmentDate").value("2015-06-01"))
                 .andExpect(jsonPath("$.data.content[0].experience").value(10));
@@ -151,6 +155,7 @@ class DoctorControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].firstName").value("Rafael"))
                 .andExpect(jsonPath("$.data.content[0].lastName").value("Garcia"))
                 .andExpect(jsonPath("$.data.content[0].email").value("rafael.garcia@example.com"))
+                .andExpect(jsonPath("$.data.content[0].phoneNumber").value("+1234567"))
                 .andExpect(jsonPath("$.data.content[0].specialization").value("CARDIOLOGIST"))
                 .andExpect(jsonPath("$.data.content[0].employmentDate").value("2015-06-01"))
                 .andExpect(jsonPath("$.data.content[0].experience").value(10));
@@ -207,9 +212,12 @@ class DoctorControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400_whenValidationErrorsInDoctorRegistration() throws Exception {
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "", null,
                 "TestL", "StrongPass123!", "StrongPass123!", null,
-                10, Specialization.CARDIOLOGIST);
+                10, Specialization.CARDIOLOGIST,
+                LocalDate.of(1990, 10, 10), "1234567", address);
 
         performRequest(HttpMethod.POST, "/doctors/register", dto)
                 .andExpect(status().isBadRequest())
@@ -220,9 +228,12 @@ class DoctorControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400_whenTokenIsInvalidForDoctorRegistration() throws Exception {
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token123", "test@gmail.com", "TestF",
                 "TestL", "StrongPass123!", "StrongPass123!", Gender.FEMALE,
-                10, Specialization.CARDIOLOGIST);
+                10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
+                "1234567", address);
 
         performRequest(HttpMethod.POST, "/doctors/register", dto)
                 .andExpect(status().isBadRequest())
@@ -233,9 +244,12 @@ class DoctorControllerTest extends AbstractIntegrationTest {
     void shouldSuccessfullyRegisterDoctor_whenInputIsValid() throws Exception {
         insertVerificationToken();
 
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "test@gmail.com", "TestF",
                 "TestL", "StrongPass123!", "StrongPass123!", Gender.FEMALE,
-                10, Specialization.CARDIOLOGIST);
+                10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
+                "1234567", address);
 
         ResultActions resultActions = performRequest(HttpMethod.POST, "/doctors/register", dto)
                 .andExpect(status().isCreated());
@@ -264,9 +278,12 @@ class DoctorControllerTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn400_whenPasswordsDoNotMatchForDoctorRegistration() throws Exception {
         insertVerificationToken();
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "test@gmail.com", "TestF",
                 "TestL", "StrongPass123!", "StrongPass", Gender.FEMALE,
-                10, Specialization.CARDIOLOGIST);
+                10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
+                "1234567", address);
 
         performRequest(HttpMethod.POST, "/doctors/register", dto)
                 .andExpect(status().isBadRequest())

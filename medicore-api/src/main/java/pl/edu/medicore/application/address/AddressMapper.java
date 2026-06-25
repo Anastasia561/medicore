@@ -8,7 +8,7 @@ import pl.edu.medicore.application.address.dto.AddressDto;
 public interface AddressMapper {
     @Mapping(source = "city.name", target = "city")
     @Mapping(source = "city.country.name", target = "country")
-    AddressDto addressToPatientAddressDto(Address address);
+    AddressDto toAddressDto(Address address);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "city", target = "city.name")
