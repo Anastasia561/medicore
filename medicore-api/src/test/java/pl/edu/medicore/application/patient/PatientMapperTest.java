@@ -3,7 +3,7 @@ package pl.edu.medicore.application.patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
@@ -63,10 +63,11 @@ class PatientMapperTest {
 
     @Test
     void shouldMapToEntity_whenInputIsValid() {
-        PatientAddressDto address = new PatientAddressDto("Poland", "Warsaw",
-                "Test street", 10);
+        AddressDto address = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "123", "123", Gender.MALE, 56.8, 167.9, false, LocalDate.of(1990, 10, 10),
+                "123", "123", Gender.MALE, 56.8, 167.9,
+                PregnancyStatus.NOT_APPLICABLE, LocalDate.of(1990, 10, 10),
                 "123456", address);
 
         Patient entity = patientMapper.toEntity(dto);

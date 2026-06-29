@@ -8,7 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.edu.medicore.AbstractIntegrationTest;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.city.City;
 import pl.edu.medicore.application.coutry.Country;
@@ -66,7 +66,7 @@ class PatientControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].address.country").value("USA"))
                 .andExpect(jsonPath("$.data.content[0].address.city").value("New York"))
                 .andExpect(jsonPath("$.data.content[0].address.street").value("5th Avenue"))
-                .andExpect(jsonPath("$.data.content[0].address.number").value(101));
+                .andExpect(jsonPath("$.data.content[0].address.number").value("101A"));
     }
 
     @Test
@@ -87,14 +87,15 @@ class PatientControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].address.country").value("USA"))
                 .andExpect(jsonPath("$.data.content[0].address.city").value("New York"))
                 .andExpect(jsonPath("$.data.content[0].address.street").value("5th Avenue"))
-                .andExpect(jsonPath("$.data.content[0].address.number").value(101));
+                .andExpect(jsonPath("$.data.content[0].address.number").value("101A"));
     }
 
     @Test
     void shouldReturn400_whenValidationErrorsInRegisterPatient() throws Exception {
-        PatientAddressDto addressDto = new PatientAddressDto(null, "Warsaw", "Street", 10);
+        AddressDto addressDto = new AddressDto(null, "Warsaw", "Street", "10");
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", null, "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, true, LocalDate.of(2010, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8,
+                PregnancyStatus.PREGNANT, LocalDate.of(2010, 7, 2), "123", addressDto);
 
 
         performRequest(HttpMethod.POST, "/patients/register", dto)
@@ -106,9 +107,10 @@ class PatientControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400_whenPasswordsDoNotMatchForPatientRegistration() throws Exception {
-        PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
+        AddressDto addressDto = new AddressDto("Poland", "Warsaw", "Street", "10");
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "StrongPass1235!", "StrongPass123!", Gender.MALE, 67.8, 167.9, false, LocalDate.of(2003, 7, 2),
+                "StrongPass1235!", "StrongPass123!", Gender.MALE, 67.8, 167.9,
+                PregnancyStatus.NOT_APPLICABLE, LocalDate.of(2003, 7, 2),
                 "123456789", addressDto);
 
 
@@ -119,9 +121,10 @@ class PatientControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldRegisterPatient_whenInputIsValid() throws Exception {
-        PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
+        AddressDto addressDto = new AddressDto("Poland", "Warsaw", "Street", "10");
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "TestF", "TestL",
-                "StrongPass123!", "StrongPass123!", Gender.MALE, 67.8, 178.9, false, LocalDate.of(2003, 7, 2),
+                "StrongPass123!", "StrongPass123!", Gender.MALE, 67.8, 178.9,
+                PregnancyStatus.NOT_APPLICABLE, LocalDate.of(2003, 7, 2),
                 "123456789", addressDto);
 
 
@@ -207,7 +210,7 @@ class PatientControllerTest extends AbstractIntegrationTest {
 
         Address address = new Address();
         address.setStreet("5th Avenue");
-        address.setNumber(101);
+        address.setNumber("101");
         address.setCity(city);
 
         Patient patient = new Patient();
@@ -216,6 +219,7 @@ class PatientControllerTest extends AbstractIntegrationTest {
         patient.setEmail("test@gmail.com");
         patient.setPassword("encoded_password");
         patient.setRole(Role.PATIENT);
+        patient.setPregnancyStatus(PregnancyStatus.NOT_APPLICABLE);
         patient.setStatus(UserStatus.UNVERIFIED);
         patient.setGender(Gender.MALE);
         patient.setWeight(67.8);

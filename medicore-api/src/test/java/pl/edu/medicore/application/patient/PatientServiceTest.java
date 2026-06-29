@@ -13,7 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
@@ -62,7 +62,7 @@ class PatientServiceTest {
         Patient patient = new Patient();
         PatientResponseDto dto = new PatientResponseDto(HashId.of(1L), "John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
-                new PatientAddressDto("Poland", "Warsaw", "Street", 10));
+                new AddressDto("Poland", "Warsaw", "Street", "10"));
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Patient> patientPage = new PageImpl<>(List.of(patient));
@@ -82,7 +82,7 @@ class PatientServiceTest {
         Patient patient = new Patient();
         PatientResponseDto dto = new PatientResponseDto(HashId.of(1L), "John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
-                new PatientAddressDto("Poland", "Warsaw", "Street", 10));
+                new AddressDto("Poland", "Warsaw", "Street", "10"));
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Patient> patientPage = new PageImpl<>(List.of(patient));
@@ -103,7 +103,7 @@ class PatientServiceTest {
         Patient patient = new Patient();
         PatientResponseDto dto = new PatientResponseDto(HashId.of(1L), "John", "Doe", "test@gmail.com",
                 "123", LocalDate.of(1990, 10, 10),
-                new PatientAddressDto("Poland", "Warsaw", "Street", 10));
+                new AddressDto("Poland", "Warsaw", "Street", "10"));
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Patient> patientPage = new PageImpl<>(List.of(patient));
@@ -180,9 +180,10 @@ class PatientServiceTest {
 
     @Test
     void shouldRegisterPatient_whenInputIsValid() {
-        PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
+        AddressDto addressDto = new AddressDto("Poland", "Warsaw", "Street", "10");
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, false, LocalDate.of(2006, 7, 2), "123", addressDto);
+                "pass", "pass", Gender.MALE, 67.8, 167.8,
+                PregnancyStatus.NOT_APPLICABLE, LocalDate.of(2006, 7, 2), "123", addressDto);
 
         Address address = new Address();
         Patient patient = new Patient();
@@ -209,9 +210,10 @@ class PatientServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenPasswordsDoNotMatch() {
-        PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
+        AddressDto addressDto = new AddressDto("Poland", "Warsaw", "Street", "10");
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass1", "pass2", Gender.MALE, 67.8, 167.9, false, LocalDate.of(2006, 7, 2),
+                "pass1", "pass2", Gender.MALE, 67.8, 167.9,
+                PregnancyStatus.NOT_APPLICABLE, LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -225,9 +227,10 @@ class PatientServiceTest {
 
     @Test
     void shouldNotSendEmail_whenSavingPatientFails() {
-        PatientAddressDto addressDto = new PatientAddressDto("Poland", "Warsaw", "Street", 10);
+        AddressDto addressDto = new AddressDto("Poland", "Warsaw", "Street", "10");
         PatientRegisterDto dto = new PatientRegisterDto("test@gmail.com", "John", "Doe",
-                "pass", "pass", Gender.MALE, 67.8, 167.8, false, LocalDate.of(2006, 7, 2),
+                "pass", "pass", Gender.MALE, 67.8, 167.8,
+                PregnancyStatus.NOT_APPLICABLE, LocalDate.of(2006, 7, 2),
                 "123", addressDto);
 
         Address address = new Address();

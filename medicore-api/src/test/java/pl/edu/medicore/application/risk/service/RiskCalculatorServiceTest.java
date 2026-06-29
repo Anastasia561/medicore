@@ -1,6 +1,7 @@
 package pl.edu.medicore.application.risk.service;
 
 import org.junit.jupiter.api.Test;
+import pl.edu.medicore.application.patient.PregnancyStatus;
 import pl.edu.medicore.application.person.Gender;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +16,7 @@ class RiskCalculatorServiceTest {
     @Test
     void shouldReturnNullForAnemiaRisk_whenAnyInputIsNull() {
         Double result = riskCalculatorService.calculateAnemiaRiskPercentage(
-                null, 40.0, 4.5, Gender.MALE, false);
+                null, 40.0, 4.5, Gender.MALE, PregnancyStatus.UNKNOWN);
 
         assertNull(result);
     }
@@ -23,7 +24,7 @@ class RiskCalculatorServiceTest {
     @Test
     void shouldReturnZeroRisk_whenAllValuesAboveCutoff() {
         Double result = riskCalculatorService.calculateAnemiaRiskPercentage(
-                150.0, 45.0, 5.0, Gender.MALE, false);
+                150.0, 45.0, 5.0, Gender.MALE, PregnancyStatus.NOT_APPLICABLE);
 
         assertEquals(0.0, result);
     }
@@ -31,7 +32,7 @@ class RiskCalculatorServiceTest {
     @Test
     void shouldCalculateRisk_whenValuesBelowCutoff() {
         Double result = riskCalculatorService.calculateAnemiaRiskPercentage(
-                10.0, 30.0, 3.5, Gender.MALE, false);
+                10.0, 30.0, 3.5, Gender.MALE, PregnancyStatus.NOT_APPLICABLE);
 
         assertNotNull(result);
         assertTrue(result > 0);
@@ -40,7 +41,7 @@ class RiskCalculatorServiceTest {
     @Test
     void shouldReturnZero_whenValuesEqualToCutoff() {
         Double result = riskCalculatorService.calculateAnemiaRiskPercentage(
-                130.0, 41.0, 4.2, Gender.MALE, false);
+                130.0, 41.0, 4.2, Gender.MALE, PregnancyStatus.NOT_APPLICABLE);
 
         assertEquals(0.0, result);
     }
@@ -48,10 +49,10 @@ class RiskCalculatorServiceTest {
     @Test
     void shouldGiveHigherRisk_forLowerValues() {
         Double mild = riskCalculatorService.calculateAnemiaRiskPercentage(
-                120.0, 38.0, 4.0, Gender.MALE, false);
+                120.0, 38.0, 4.0, Gender.MALE, PregnancyStatus.NOT_APPLICABLE);
 
         Double severe = riskCalculatorService.calculateAnemiaRiskPercentage(
-                80.0, 25.0, 3.0, Gender.MALE, false);
+                80.0, 25.0, 3.0, Gender.MALE, PregnancyStatus.NOT_APPLICABLE);
 
         assertTrue(severe > mild);
     }
@@ -59,7 +60,7 @@ class RiskCalculatorServiceTest {
     @Test
     void shouldReturnNullForDiabetesRisk_whenAnyInputIsNull() {
         Double result = riskCalculatorService.calculateDiabetesRisk(
-                null, 1.75, 110.0, Gender.MALE, 50);
+                null, 1.75, 110.0, Gender.MALE, null);
 
         assertNull(result);
     }

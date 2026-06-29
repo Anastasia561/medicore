@@ -3,7 +3,7 @@ package pl.edu.medicore.application.profile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.doctor.Doctor;
@@ -12,8 +12,6 @@ import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Person;
 import pl.edu.medicore.application.profile.dto.DoctorProfileResponseDto;
-import pl.edu.medicore.application.profile.dto.PatientProfileResponseDto;
-import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
 
@@ -43,11 +41,17 @@ class ProfileMapperTest {
         person.setLastName("Lee");
         person.setEmail("test@gmail.com");
 
+        Address address = new Address();
+        address.setStreet("test");
+        address.setNumber("10");
+        person.setAddress(address);
+
         ProfileResponseDto dto = profileMapper.toDto(person);
 
         assertEquals("Kevin", dto.getFirstName());
         assertEquals("Lee", dto.getLastName());
         assertEquals("test@gmail.com", dto.getEmail());
+        assertEquals("test", dto.getAddress().street());
     }
 
     @Test
@@ -66,48 +70,11 @@ class ProfileMapperTest {
         assertEquals("Lee", dto.getLastName());
         assertEquals("test@gmail.com", dto.getEmail());
         assertEquals(LocalDate.of(1990, 10, 2), dto.getEmploymentDate());
-        assertEquals(10, dto.getExperience());
         assertEquals(Specialization.DERMATOLOGIST, dto.getSpecialization());
     }
 
     @Test
-    void shouldMapToPatientProfileDto_whenInputIsValid() {
-        Patient patient = new Patient();
-        patient.setFirstName("Kevin");
-        patient.setLastName("Lee");
-        patient.setEmail("test@gmail.com");
-        patient.setBirthDate(LocalDate.of(1990, 10, 2));
-        patient.setPhoneNumber("123");
-        Address address = new Address();
-        address.setStreet("test");
-        address.setNumber(10);
-        patient.setAddress(address);
-
-        PatientProfileResponseDto dto = profileMapper.toPatientDto(patient);
-
-        assertEquals("Kevin", dto.getFirstName());
-        assertEquals("Lee", dto.getLastName());
-        assertEquals("test@gmail.com", dto.getEmail());
-        assertEquals(LocalDate.of(1990, 10, 2), dto.getBirthDate());
-        assertEquals("test", dto.getAddress().street());
-        assertEquals("123", dto.getPhoneNumber());
-    }
-
-    @Test
-    void shouldUpdatePerson_whenInputIsValid() {
-        Person person = new Person();
-        person.setFirstName("Kevin");
-        person.setLastName("Lee");
-
-        ProfileUpdateDto dto = new ProfileUpdateDto("test", "testL");
-        profileMapper.updatePersonFromDto(dto, person);
-
-        assertEquals("test", person.getFirstName());
-        assertEquals("testL", person.getLastName());
-    }
-
-    @Test
-    void shouldUpdatePatientFromDto_whenInputIsValid() {
+    void shouldUpdateProfileFromDto_whenInputIsValid() {
         Patient patient = new Patient();
         patient.setFirstName("Kevin");
         patient.setLastName("Lee");
@@ -115,18 +82,17 @@ class ProfileMapperTest {
         patient.setPhoneNumber("123");
         Address address = new Address();
         address.setStreet("test");
-        address.setNumber(10);
+        address.setNumber("10");
         patient.setAddress(address);
 
-        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("test", "testL",
-                Gender.MALE, 50.7, 100.7, false,
-                LocalDate.of(1999, 10, 2), "1234",
-                new PatientAddressDto("test country", "test city", "test street", 10));
-        profileMapper.updatePatientFromDto(dto, patient);
+        ProfileUpdateDto dto = new ProfileUpdateDto("test", "testL",
+                Gender.MALE, "1234",
+                new AddressDto("test country", "test city", "test street", "10"));
+        profileMapper.updatePersonFromDto(dto, patient);
 
         assertEquals("test", patient.getFirstName());
         assertEquals("testL", patient.getLastName());
-        assertEquals(LocalDate.of(1999, 10, 2), patient.getBirthDate());
+        assertEquals(LocalDate.of(1990, 10, 2), patient.getBirthDate());
         assertEquals("test street", patient.getAddress().getStreet());
         assertEquals("1234", patient.getPhoneNumber());
     }
@@ -139,10 +105,5 @@ class ProfileMapperTest {
     @Test
     void shouldReturnNull_whenDoctorIsNull() {
         assertNull(profileMapper.toDoctorDto(null));
-    }
-
-    @Test
-    void shouldReturnNull_whenPatientIsNull() {
-        assertNull(profileMapper.toPatientDto(null));
     }
 }

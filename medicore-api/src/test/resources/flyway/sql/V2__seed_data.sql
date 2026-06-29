@@ -16,56 +16,80 @@ VALUES ('New York', 1),
 
 -- ADDRESS
 INSERT INTO address (street, number, city_id)
-VALUES ('5th Avenue', 101, 1),
-       ('Unter den Linden', 45, 2),
-       ('Nowy Świat', 15, 3),
-       ('Shibuya Street', 23, 4),
-       ('Paulista Ave', 321, 5);
+VALUES ('5th Avenue', '101A', 1),
+       ('Unter den Linden', '45', 2),
+       ('Nowy Świat', '15', 3),
+       ('Shibuya Street', '23', 4),
+       ('Paulista Ave', '321-21', 5);
 
 
 -- PERSON
-INSERT INTO person (first_name, last_name, email, password, role, status, gender)
-VALUES ('John', 'Doe', 'john.doe@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE', 'MALE'),
+INSERT INTO person
+(password, first_name, last_name, email, role, status, gender, birth_date, phone_number, address_id)
+VALUES ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'John', 'Doe', 'john.doe@example.com',
+        'PATIENT', 'ACTIVE', 'MALE',
+        '1990-05-15', '+123456789', 1),
 
-       ('Anna', 'Smith', 'anna.smith@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE', 'FEMALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Anna', 'Smith', 'anna.smith@example.com',
+        'PATIENT', 'ACTIVE', 'FEMALE',
+        '1985-07-20', '+49123456789', 2),
 
-       ('Piotr', 'Nowak', 'piotr.nowak@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE', 'MALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Piotr', 'Nowak', 'piotr.nowak@example.com',
+        'PATIENT', 'ACTIVE', 'MALE',
+        '1993-03-10', '+48123456789', 3),
 
-       ('Taro', 'Yamada', 'taro.yamada@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE', 'MALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Taro', 'Yamada', 'taro.yamada@example.com',
+        'PATIENT', 'ACTIVE', 'MALE',
+        '1978-11-05', '+81123456789', 4),
 
-       ('Maria', 'Ferreira', 'maria.ferreira@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'PATIENT', 'ACTIVE', 'FEMALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Maria', 'Ferreira', 'maria.ferreira@example.com',
+        'PATIENT', 'ACTIVE', 'FEMALE',
+        '1980-09-25', '+55123456789', 5),
 
-       ('Rafael', 'Garcia', 'rafael.garcia@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE', 'MALE'),
 
-       ('Laura', 'Johnson', 'laura.johnson@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE', 'FEMALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Rafael', 'Garcia', 'rafael.garcia@example.com',
+        'DOCTOR', 'ACTIVE', 'MALE',
+        '1980-01-01', '+1234567', 1),
 
-       ('Tom', 'Adams', 'tom.adams@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE', 'MALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Laura', 'Johnson', 'laura.johnson@example.com',
+        'DOCTOR', 'ACTIVE', 'FEMALE',
+        '1985-02-02', '+78623452334', 2),
 
-       ('Hannah', 'Brown', 'hannah.brown@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE', 'FEMALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Tom', 'Adams', 'tom.adams@example.com',
+        'DOCTOR', 'ACTIVE', 'MALE',
+        '1975-03-03', '+1246643224', 3),
 
-       ('Kevin', 'Lee', 'kevin.lee@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'DOCTOR', 'ACTIVE', 'MALE'),
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Hannah', 'Brown', 'hannah.brown@example.com',
+        'DOCTOR', 'ACTIVE', 'FEMALE',
+        '1988-04-04', '+12357643666', 4),
 
-       ('Adam', 'Test', 'admin@example.com',
-        '$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG', 'ADMIN', 'ACTIVE', 'MALE');
--- pass 111
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Kevin', 'Lee', 'kevin.lee@example.com',
+        'DOCTOR', 'ACTIVE', 'MALE',
+        '1982-05-05', '+1346886433', 5),
+
+       ('$2a$10$vLrzSWN6uhaiMxMaiKwG4u77Dzu81A4/V.vL.hU0Ns2Gsz56HnIKG',
+        'Adam', 'Test', 'admin@example.com',
+        'ADMIN', 'ACTIVE', 'MALE',
+        '1990-01-01', '+2345688645', 1);
+
 
 -- PATIENT
-INSERT INTO patient (id, birth_date, phone_number, address_id, weight, height, pregnant)
-VALUES (1, '1990-05-15', '+123456789', 1, 70.5, 170.3, false),
-       (2, '1985-07-20', '+49123456789', 2, 80.4, 190.0, true),
-       (3, '1993-03-10', '+48123456789', 3, 56.9, 169.8, false),
-       (4, '1978-11-05', '+81123456789', 4, 70.3, 184, false),
-       (5, '1980-09-25', '+55123456789', 5, 69.4, 179.4, false);
+INSERT INTO patient (id, weight, height, pregnancy_status)
+VALUES (1, 70.5, 170.3, 'NOT_APPLICABLE'),
+       (2, null, null, 'PREGNANT'),
+       (3, 56.9, 169.8, 'NOT_APPLICABLE'),
+       (4, 70.3, 184.0, 'NOT_APPLICABLE'),
+       (5, 69.4, 179.4, 'NOT_PREGNANT');
 
 -- DOCTOR
 INSERT INTO doctor (id, experience, employment_date, specialization)
@@ -74,7 +98,6 @@ VALUES (6, 10, '2015-06-01', 'CARDIOLOGIST'),
        (8, 15, '2010-03-20', 'NEUROLOGIST'),
        (9, 7, '2017-11-05', 'PEDIATRICIAN'),
        (10, 12, '2012-01-10', 'ONCOLOGIST');
-
 
 -- APPOINTMENT
 INSERT INTO appointment (date, start_time, end_time, status, patient_id, doctor_id)

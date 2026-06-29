@@ -6,35 +6,31 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.doctor.Doctor;
 import pl.edu.medicore.application.doctor.DoctorService;
 import pl.edu.medicore.application.patient.Patient;
-import pl.edu.medicore.application.patient.PatientService;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.Person;
 import pl.edu.medicore.application.person.Role;
 import pl.edu.medicore.application.person.PersonService;
 import pl.edu.medicore.application.profile.dto.DoctorProfileResponseDto;
-import pl.edu.medicore.application.profile.dto.PatientProfileResponseDto;
-import pl.edu.medicore.application.profile.dto.PatientProfileUpdateDto;
 import pl.edu.medicore.application.profile.dto.ProfileResponseDto;
 import pl.edu.medicore.application.profile.dto.ProfileUpdateDto;
 import pl.edu.medicore.common.encryption.HashId;
-
-import java.time.LocalDate;
+import pl.edu.medicore.infrastructure.messaging.event.PatientUpdateEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ProfileServiceTest {
     @Mock
     private PersonService personService;
-    @Mock
-    private PatientService patientService;
     @Mock
     private DoctorService doctorService;
     @Mock
@@ -45,22 +41,22 @@ class ProfileServiceTest {
     private ProfileServiceImpl profileService;
 
     @Test
-    void shouldReturnPatientProfile_whenRoleIsPatient() {
+    void shouldReturnPersonProfile_whenRoleIsPatient() {
         long id = 1L;
         HashId hashId = new HashId(id);
 
         Patient patient = new Patient();
-        PatientProfileResponseDto dto = new PatientProfileResponseDto();
+        ProfileResponseDto dto = new ProfileResponseDto();
 
-        when(patientService.getById(hashId)).thenReturn(patient);
-        when(profileMapper.toPatientDto(patient)).thenReturn(dto);
+        when(personService.getById(hashId)).thenReturn(patient);
+        when(profileMapper.toDto(patient)).thenReturn(dto);
 
         ProfileResponseDto result = profileService.getProfileById(hashId, Role.PATIENT);
 
         assertEquals(dto, result);
 
-        verify(patientService).getById(hashId);
-        verify(profileMapper).toPatientDto(patient);
+        verify(personService).getById(hashId);
+        verify(profileMapper).toDto(patient);
         verifyNoInteractions(doctorService);
     }
 
@@ -81,7 +77,7 @@ class ProfileServiceTest {
 
         verify(doctorService).getById(hashId);
         verify(profileMapper).toDoctorDto(doctor);
-        verifyNoInteractions(patientService);
+        verifyNoInteractions(personService);
     }
 
     @Test
@@ -100,24 +96,7 @@ class ProfileServiceTest {
 
         verify(personService).getById(hashId);
         verify(profileMapper).toDto(person);
-        verifyNoInteractions(doctorService, patientService);
-    }
-
-    @Test
-    void shouldUpdateProfile_whenInputIsValid() {
-        long patientId = 1L;
-        HashId hashId = new HashId(patientId);
-
-        ProfileUpdateDto dto = new ProfileUpdateDto("testF", "testL");
-        Person person = new Person();
-
-        when(personService.getById(hashId)).thenReturn(person);
-
-        profileService.updateProfile(dto, hashId);
-
-        verify(personService).getById(hashId);
-        verify(profileMapper).updatePersonFromDto(dto, person);
-        verifyNoInteractions(doctorService, patientService, publisher);
+        verifyNoInteractions(doctorService);
     }
 
     @Test
@@ -125,19 +104,41 @@ class ProfileServiceTest {
         long id = 1L;
         HashId hashId = new HashId(id);
 
-        PatientProfileUpdateDto dto = new PatientProfileUpdateDto("test", "testL",
-                Gender.MALE, 50.7, 100.7, false,
-                LocalDate.of(1999, 10, 2), "1234",
-                new PatientAddressDto("test country", "test city", "test street", 10));
+        ProfileUpdateDto dto = new ProfileUpdateDto("test", "testL",
+                Gender.MALE, "1234",
+                new AddressDto("test country", "test city", "test street", "10"));
 
         Patient patient = new Patient();
 
-        when(patientService.getById(hashId)).thenReturn(patient);
+        when(personService.getById(hashId)).thenReturn(patient);
 
-        profileService.updatePatientProfile(dto, hashId);
+        profileService.updateProfile(dto, hashId, Role.PATIENT);
 
-        verify(patientService).getById(hashId);
-        verify(profileMapper).updatePatientFromDto(dto, patient);
-        verifyNoInteractions(doctorService, personService);
+        verify(personService).getById(hashId);
+        verify(profileMapper).updatePersonFromDto(dto, patient);
+        verify(publisher).publishEvent(any(PatientUpdateEvent.class));
+
+        verifyNoMoreInteractions(personService);
+        verifyNoInteractions(doctorService);
+    }
+
+    @Test
+    void shouldUpdateDoctorProfile_whenInputIsValid() {
+        long id = 1L;
+        HashId hashId = new HashId(id);
+
+        ProfileUpdateDto dto = new ProfileUpdateDto("test", "testL",
+                Gender.MALE, "1234",
+                new AddressDto("test country", "test city", "test street", "10"));
+
+        Patient patient = new Patient();
+
+        when(personService.getById(hashId)).thenReturn(patient);
+
+        profileService.updateProfile(dto, hashId, Role.DOCTOR);
+
+        verify(personService).getById(hashId);
+        verify(profileMapper).updatePersonFromDto(dto, patient);
+        verifyNoInteractions(doctorService, publisher);
     }
 }

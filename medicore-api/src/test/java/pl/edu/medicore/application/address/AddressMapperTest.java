@@ -3,7 +3,7 @@ package pl.edu.medicore.application.address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import pl.edu.medicore.application.address.dto.PatientAddressDto;
+import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.city.City;
 import pl.edu.medicore.application.coutry.Country;
 
@@ -20,17 +20,17 @@ class AddressMapperTest {
 
     @Test
     void shouldMapAddressDtoToEntity_whenInputIsValid() {
-        PatientAddressDto dto = new PatientAddressDto("Poland", "Warsaw",
-                "Test street", 10);
+        AddressDto dto = new AddressDto("Poland", "Warsaw",
+                "Test street", "10");
         Address result = addressMapper.toEntity(dto);
         assertEquals("Poland", result.getCity().getCountry().getName());
         assertEquals("Warsaw", result.getCity().getName());
         assertEquals("Test street", result.getStreet());
-        assertEquals(10, result.getNumber());
+        assertEquals("10", result.getNumber());
     }
 
     @Test
-    void shouldMapAddressToPatientAddressDto_whenInputIsValid() {
+    void shouldMapAddressToAddressDto_whenInputIsValid() {
         Address address = new Address();
 
         Country country = new Country();
@@ -42,18 +42,18 @@ class AddressMapperTest {
 
         address.setCity(city);
         address.setStreet("Test street");
-        address.setNumber(10);
+        address.setNumber("10");
 
-        PatientAddressDto result = addressMapper.addressToPatientAddressDto(address);
+        AddressDto result = addressMapper.toAddressDto(address);
         assertEquals("Poland", result.country());
         assertEquals("Warsaw", result.city());
         assertEquals("Test street", result.street());
-        assertEquals(10, result.number());
+        assertEquals("10", result.number());
     }
 
     @Test
     void shouldReturnNull_whenAddressIsNull() {
-        assertNull(addressMapper.addressToPatientAddressDto(null));
+        assertNull(addressMapper.toAddressDto(null));
     }
 
     @Test
