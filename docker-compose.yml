@@ -15,13 +15,30 @@ services:
       - FRONT_BASE_URL=${FRONT_BASE_URL}
       - AWS_S3_REGION=${AWS_S3_REGION}
       - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_ENDPOINT_URL=${AWS_ENDPOINT_URL}
+      - AWS_S3_PUBLIC_ENDPOINT=${AWS_S3_PUBLIC_ENDPOINT}
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
     ports:
       - "8080:8080"
-    volumes:
-      - ~/.aws:/root/.aws:ro
     depends_on:
       postgres:
         condition: service_healthy
+      localstack:
+        condition: service_healthy
+        
+  localstack:
+    container_name: medicore_localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"          
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=${AWS_S3_REGION:-us-east-1}
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - ./init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh
 
   frontend:
     container_name: medicore_frontend
@@ -65,3 +82,4 @@ services:
 
 volumes:
   pgdata:
+  localstack_data:

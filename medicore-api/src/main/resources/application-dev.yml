@@ -17,6 +17,8 @@ app:
     s3:
       bucket: ${AWS_S3_BUCKET}
       region: ${AWS_S3_REGION}
+      endpoint: ${AWS_ENDPOINT_URL}
+      public-endpoint: ${AWS_S3_PUBLIC_ENDPOINT:}
   salt: ${SALT}
 
 openapi:
