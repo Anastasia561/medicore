@@ -45,7 +45,7 @@ export const useLogin = ({setAuth, navigate, setGeneralError, setFormError}) => 
                         });
                     });
                 }
-                setGeneralError("Validation failed");
+                setGeneralError(data?.error?.message);
 
             } else if (status === 401) {
                 setGeneralError("Invalid email or password");
