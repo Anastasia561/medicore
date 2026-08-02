@@ -1,7 +1,7 @@
 import {useParams, useNavigate} from "react-router-dom";
 import {useForm, useWatch} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {appointmentSchema} from "./validation/AppointmentSchema.js";
+import {appointmentSchema} from "./validation/appointmentSchema.js";
 import {useAvailableSlots} from "./hooks/useAvailableSlots";
 import {useCreateAppointment} from "./hooks/useCreateAppointment";
 import {useState} from "react";

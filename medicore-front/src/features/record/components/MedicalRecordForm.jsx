@@ -1,7 +1,7 @@
 import {useParams, useNavigate} from "react-router-dom";
 import {useForm, useFieldArray} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {recordCreateSchema} from "../validation/RecordCreateSchema.js";
+import {recordCreateSchema} from "../validation/recordCreateSchema.js";
 import {useCreateMedicalRecord} from "../hooks/useCreateMedicalRecord.jsx";
 import {useState} from "react";
 

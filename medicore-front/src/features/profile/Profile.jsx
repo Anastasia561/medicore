@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {profileSchema} from "./validation/ProfileSchema.js";
+import {profileSchema} from "./validation/profileSchema.js";
 import {useProfile} from "./hooks/useProfile.jsx";
 import {useUpdateProfile} from "./hooks/useUpdateProfile.jsx";
 import useAuth from "../../hooks/useAuth.jsx";

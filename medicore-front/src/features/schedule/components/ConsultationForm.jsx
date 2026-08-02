@@ -3,7 +3,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import {useState} from "react";
 import {useCreateSchedule} from "../hooks/useCreateSchedule.jsx";
 import {useUpdateSchedule} from "../hooks/useUpdateSchedule.jsx";
-import {scheduleSchema} from "../validation/ScheduleSchema.js";
+import {scheduleSchema} from "../validation/scheduleSchema.js";
 
 const ConsultationForm = ({onSubmit, onCancel, doctorId, initialData}) => {
 

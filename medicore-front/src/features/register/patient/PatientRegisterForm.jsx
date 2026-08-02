@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useForm, FormProvider} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {registerSchema} from './validation/PatientRegistrationSchema.js';
+import {registerSchema} from './validation/patientRegistrationSchema.js';
 import {useRegisterPatient} from './hooks/useRegisterPatient';
 import logo from '../../../assets/logo.png';
 
