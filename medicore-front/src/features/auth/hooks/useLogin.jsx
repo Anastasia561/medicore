@@ -26,7 +26,7 @@ export const useLogin = ({setAuth, navigate, setGeneralError, setFormError}) => 
         },
         onError: (err) => {
             if (!err?.response) {
-                setGeneralError("Server is not responding. Try again later.");
+                setGeneralError("Server is not responding");
                 return;
             }
 
@@ -52,7 +52,7 @@ export const useLogin = ({setAuth, navigate, setGeneralError, setFormError}) => 
             } else if (status === 403) {
                 navigate("/unauthorized");
             } else {
-                setGeneralError("Something went wrong. Please try again");
+                setGeneralError("Something went wrong");
             }
         }
     });

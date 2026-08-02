@@ -17,7 +17,7 @@ export const useDeleteSchedule = (doctorId) => {
         },
         onError: (err) => {
             if (!err?.response) {
-                toast.error("Server is not responding.");
+                toast.error("Server is not responding");
                 return;
             }
             const {status} = err.response;

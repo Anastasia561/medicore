@@ -17,7 +17,7 @@ export const useRegisterPatient = (setError, setGeneralError) => {
         },
         onError: (err) => {
             if (!err?.response) {
-                setGeneralError("Server is not responding. Try again later.");
+                setGeneralError("Server is not responding");
                 return;
             }
 
@@ -32,17 +32,17 @@ export const useRegisterPatient = (setError, setGeneralError) => {
                     if (emailError) {
                         setGeneralError(emailError.message);
                     } else {
-                        setGeneralError(data?.error?.message || "Validation failed. Please check your inputs.");
+                        setGeneralError(data?.error?.message || "Validation failed");
                     }
 
                     validationErrors.forEach((errObj) => {
                         setError(errObj.field, {message: errObj.message});
                     });
                 } else {
-                    setGeneralError(data?.error?.message || "Invalid input.");
+                    setGeneralError(data?.error?.message || "Invalid input");
                 }
             } else {
-                setGeneralError("Something went wrong. Please try again");
+                setGeneralError("Something went wrong");
             }
         },
     });
