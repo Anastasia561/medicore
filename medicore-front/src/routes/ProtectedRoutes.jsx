@@ -3,7 +3,6 @@ import PersistLogin from '../features/auth/components/PersistLogin.jsx';
 import ProtectedLayout from '../layouts/ProtectedLayout';
 import RequireAuth from '../features/auth/components/RequireAuth.jsx';
 
-import Home from '../pages/Home';
 import Profile from '../features/profile/Profile';
 import DoctorList from '../features/listing/components/DoctorList';
 import AppointmentListing from '../features/appointments/AppointmentListing.jsx'
@@ -13,16 +12,20 @@ import MedicalRecord from "../features/record/components/MedicalRecord.jsx";
 import RecordListing from "../features/record/RecordListing.jsx";
 import MedicalRecordForm from "../features/record/components/MedicalRecordForm.jsx";
 import AppointmentBookingForm from "../features/appointments/AppointmentBookingForm.jsx";
+import Statistics from "../pages/Statistics.jsx";
 
 export const ProtectedRoutes = (
     <Route path="/" element={<PersistLogin/>}>
         <Route element={<ProtectedLayout/>}>
 
             <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR"]}/>}>
-                <Route path="home" element={<Home/>}/>
                 <Route path="profile" element={<Profile/>}/>
                 <Route path="doctors/:doctorId/schedule" element={<DoctorSchedule/>}/>
                 <Route path="appointments/:userId" element={<AppointmentListing/>}/>
+            </Route>
+
+            <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN"]}/>}>
+                <Route path="statistics" element={<Statistics/>}/>
             </Route>
 
             <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_PATIENT"]}/>}>

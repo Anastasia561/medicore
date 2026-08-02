@@ -8,10 +8,10 @@ const NavBar = () => {
     const {mutateAsync: logout} = useLogout();
     const navigate = useNavigate();
     const {auth} = useAuth();
+    const landingPath = auth?.role === "ROLE_ADMIN" ? "/statistics" : "/appointments";
 
     const navLinks = [
-        {to: "/home", label: "Home", roles: ["ROLE_ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR"]},
-        {to: "/hh", label: "Statistics", roles: ["ROLE_ADMIN"]},
+        {to: "/statistics", label: "Statistics", roles: ["ROLE_ADMIN"]},
         {to: "/patients", label: "Patients", roles: ["ROLE_ADMIN", "ROLE_DOCTOR"]},
         {to: "/doctors", label: "Doctors", roles: ["ROLE_ADMIN", "ROLE_PATIENT"]},
         {to: "/appointments", label: "Appointments", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
@@ -29,7 +29,7 @@ const NavBar = () => {
     return (
         <div className="header">
 
-            <NavLink to="/home" className="header-left">
+            <NavLink to={landingPath} className="header-left">
                 <img src={logo} alt="Logo" className="logo"/>
                 <h1 className="title">MediCore</h1>
             </NavLink>

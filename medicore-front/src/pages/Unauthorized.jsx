@@ -14,7 +14,7 @@ const Unauthorized = () => {
                 You don’t have permission to view this page.
             </p>
 
-            <button onClick={() => navigate("/home")} className="btn btn-primary">
+            <button onClick={() => navigate("/")} className="btn btn-primary">
                 Go Home
             </button>
         </div>

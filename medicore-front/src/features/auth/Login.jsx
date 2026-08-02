@@ -10,7 +10,6 @@ import {yupResolver} from "@hookform/resolvers/yup/src/index.ts";
 const Login = () => {
     const {setAuth} = useAuth();
     const navigate = useNavigate();
-    const from = "/home";
 
     const [generalError, setGeneralError] = useState('');
 
@@ -22,7 +21,7 @@ const Login = () => {
     })
 
     const loginMutation = useLogin({
-        setAuth, navigate, from, setGeneralError, setFormError: setError,
+        setAuth, navigate, setGeneralError, setFormError: setError,
     });
 
     const onSubmit = async (data) => {

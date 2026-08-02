@@ -2,20 +2,27 @@ import {useMutation} from "@tanstack/react-query";
 import {loginRequest} from "../../../api/auth.js";
 import {jwtDecode} from "jwt-decode";
 
-export const useLogin = ({setAuth, navigate, from, setGeneralError, setFormError}) => {
+const redirectPathByRole = {
+    ROLE_PATIENT: "/appointments",
+    ROLE_DOCTOR: "/appointments",
+    ROLE_ADMIN: "/statistics",
+};
+
+export const useLogin = ({setAuth, navigate, setGeneralError, setFormError}) => {
     return useMutation({
         mutationFn: loginRequest,
 
         onSuccess: (data) => {
             const accessToken = data?.accessToken;
             const decoded = jwtDecode(accessToken);
+            const redirectPath = redirectPathByRole[decoded.role] ?? "/";
 
             setAuth({
                 accessToken,
                 role: decoded.role,
             });
 
-            navigate(from, {replace: true});
+            navigate(redirectPath, {replace: true});
         },
         onError: (err) => {
             if (!err?.response) {

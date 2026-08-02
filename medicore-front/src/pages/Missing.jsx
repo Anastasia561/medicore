@@ -14,7 +14,7 @@ const Missing = () => {
                 The page you are looking for doesn’t exist or has been moved.
             </p>
 
-            <button onClick={() => navigate("/home")} className="btn btn-primary">
+            <button onClick={() => navigate("/")} className="btn btn-primary">
                 Go Home
             </button>
         </div>
