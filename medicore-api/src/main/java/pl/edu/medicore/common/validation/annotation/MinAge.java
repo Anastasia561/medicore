@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 public @interface MinAge {
     int value();
 
-    String message() default "Student must be at least {value} years old";
+    String message() default "You must be at least {value} years old";
 
     Class<?>[] groups() default {};
 
