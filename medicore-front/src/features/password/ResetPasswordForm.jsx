@@ -1,12 +1,11 @@
 import {useEffect, useState} from 'react';
-import {Link, useNavigate, useSearchParams} from 'react-router-dom';
+import {Link, useSearchParams} from 'react-router-dom';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {resetPasswordSchema} from './validation/resetPasswordSchema.js';
 import {useResetPassword} from './hooks/useResetPassword.jsx';
 
 const ResetPasswordForm = () => {
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [generalError, setGeneralError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -123,7 +122,8 @@ const ResetPasswordForm = () => {
                                 >
                                     <i className={`bi ${showRepeatPassword ? 'bi-eye' : 'bi-eye-slash'}`}></i>
                                 </button>
-                                {errors.repeatPassword && <div className="invalid-feedback">{errors.repeatPassword.message}</div>}
+                                {errors.repeatPassword &&
+                                    <div className="invalid-feedback">{errors.repeatPassword.message}</div>}
                             </div>
                         </div>
 

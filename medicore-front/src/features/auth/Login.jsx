@@ -12,13 +12,14 @@ const Login = () => {
     const navigate = useNavigate();
 
     const [generalError, setGeneralError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const {
         register, handleSubmit,
         setError, formState: {errors}
     } = useForm({
         resolver: yupResolver(loginSchema),
-    })
+    });
 
     const loginMutation = useLogin({
         setAuth, navigate, setGeneralError, setFormError: setError,
@@ -29,7 +30,7 @@ const Login = () => {
             email: data.username,
             password: data.password,
         });
-    }
+    };
 
     return (
         <div className="test text-center mt-4 mb-5">
@@ -56,7 +57,7 @@ const Login = () => {
 
                         <h4 className="mb-4">Log in</h4>
 
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                        <form onSubmit={handleSubmit(onSubmit)} noValidate className="text-start">
                             <div className="mb-3">
                                 <label htmlFor="username" className="form-label">
                                     Username
@@ -66,27 +67,39 @@ const Login = () => {
                                     id="username"
                                     className={`form-control ${errors.username ? 'is-invalid' : ''}`}
                                     type="text"
+                                    disabled={loginMutation.isPending}
                                 />
                                 {errors.username && <div className="invalid-feedback">{errors.username.message}</div>}
                             </div>
-
 
                             <div className="mb-3">
                                 <label htmlFor="password" className="form-label">
                                     Password
                                 </label>
-                                <input
-                                    {...register("password")}
-                                    id="password"
-                                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                                    type="password"
-                                />
-                                {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
+                                <div className={`input-group ${errors.password ? 'has-validation' : ''}`}>
+                                    <input
+                                        {...register("password")}
+                                        id="password"
+                                        className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                                        type={showPassword ? 'text' : 'password'}
+                                        disabled={loginMutation.isPending}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-secondary"
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                        disabled={loginMutation.isPending}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        <i className={`bi ${showPassword ? 'bi-eye' : 'bi-eye-slash'}`}></i>
+                                    </button>
+                                    {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
+                                </div>
                             </div>
 
                             <div className="d-grid">
-                                <button className="btn btn-primary">
-                                    Log in
+                                <button className="btn btn-primary" disabled={loginMutation.isPending}>
+                                    {loginMutation.isPending ? 'Logging in...' : 'Log in'}
                                 </button>
                             </div>
 
@@ -101,7 +114,7 @@ const Login = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;
