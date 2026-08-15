@@ -1,11 +1,11 @@
 import {useState} from 'react';
 import useAuth from '../../hooks/useAuth.jsx';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import {useLogin} from "./hooks/useLogin.jsx";
 import {loginSchema} from "./validation/loginSchema.js";
 import {useForm} from 'react-hook-form';
-import {yupResolver} from "@hookform/resolvers/yup/src/index.ts";
+import {yupResolver} from "@hookform/resolvers/yup";
 
 const Login = () => {
     const {setAuth} = useAuth();
@@ -88,6 +88,12 @@ const Login = () => {
                                 <button className="btn btn-primary">
                                     Log in
                                 </button>
+                            </div>
+
+                            <div className="text-center mt-3">
+                                <Link to="/reset-password/request" className="small text-decoration-none">
+                                    Forgot password?
+                                </Link>
                             </div>
 
                         </form>
