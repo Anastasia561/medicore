@@ -98,13 +98,13 @@ class PersonServiceTest {
         Person person = new Person();
         person.setPassword("password");
 
-        PasswordResetDto dto = new PasswordResetDto("token", "test@gmail.com",
+        PasswordResetDto dto = new PasswordResetDto("token",
                 "pass1", "pass1");
 
         when(personRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(person));
         when(passwordEncoder.encode("pass1")).thenReturn("encodedPassword");
 
-        personService.updatePassword(dto);
+        personService.updatePassword("test@gmail.com", dto);
 
         assertEquals("encodedPassword", person.getPassword());
         verify(passwordEncoder).encode("pass1");
@@ -112,7 +112,7 @@ class PersonServiceTest {
 
     @Test
     void shouldThrowException_whenPasswordsDoNotMatch() {
-        PasswordResetDto dto = new PasswordResetDto("token", "test@gmail.com",
+        PasswordResetDto dto = new PasswordResetDto("token",
                 "pass1", "pass2");
 
         Person person = new Person();
@@ -120,7 +120,7 @@ class PersonServiceTest {
         when(personRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(person));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> personService.updatePassword(dto));
+                () -> personService.updatePassword("test@gmail.com", dto));
 
         assertEquals("Passwords don't match", exception.getMessage());
         verifyNoInteractions(passwordEncoder);

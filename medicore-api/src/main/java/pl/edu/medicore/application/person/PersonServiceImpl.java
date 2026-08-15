@@ -32,8 +32,8 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public void updatePassword(PasswordResetDto dto) {
-        Person person = getByEmail(dto.email());
+    public void updatePassword(String email, PasswordResetDto dto) {
+        Person person = getByEmail(email);
 
         if (!dto.password().equals(dto.repeatPassword()))
             throw new IllegalArgumentException("Passwords don't match");

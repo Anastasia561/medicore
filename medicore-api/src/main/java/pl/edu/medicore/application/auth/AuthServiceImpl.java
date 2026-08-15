@@ -117,10 +117,10 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     public void resetPassword(PasswordResetDto dto) {
-        verificationTokenService.validateToken(dto.token(), TokenType.PASSWORD_RESET, dto.email());
-        personService.updatePassword(dto);
+        String email = verificationTokenService.validateTokenAndGetEmail(dto.token(), TokenType.PASSWORD_RESET);
+        personService.updatePassword(email, dto);
 
-        ConfirmationEmailDto emailDto = personMapper.toEmailDto(personService.getByEmail(dto.email()));
-        eventPublisher.publishEvent(new SendEmailEvent<>(dto.email(), EmailType.PASSWORD_RESET_CONFIRM, emailDto));
+        ConfirmationEmailDto emailDto = personMapper.toEmailDto(personService.getByEmail(email));
+        eventPublisher.publishEvent(new SendEmailEvent<>(email, EmailType.PASSWORD_RESET_CONFIRM, emailDto));
     }
 }

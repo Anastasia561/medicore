@@ -144,7 +144,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400_whenValidationErrorsForPasswordReset() throws Exception {
-        PasswordResetDto dto = new PasswordResetDto("", "john.doe@example.com",
+        PasswordResetDto dto = new PasswordResetDto("",
                 "StrongPass123!", null);
 
         performRequest(HttpMethod.POST, "/auth/reset-password", dto)
@@ -158,7 +158,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
     void shouldReturn400_whenPasswordsDoNotMatchForReset() throws Exception {
         insertVerificationToken();
 
-        PasswordResetDto dto = new PasswordResetDto("token", "john.doe@example.com",
+        PasswordResetDto dto = new PasswordResetDto(createVerificationToken("john.doe@example.com", "token"),
                 "StrongPass123!", "StrongPass");
 
         performRequest(HttpMethod.POST, "/auth/reset-password", dto)
@@ -170,9 +170,8 @@ class AuthControllerTest extends AbstractIntegrationTest {
     void shouldResetPassword_whenInputIsValid() throws Exception {
         insertVerificationToken();
 
-        PasswordResetDto dto = new PasswordResetDto("token", "john.doe@example.com",
+        PasswordResetDto dto = new PasswordResetDto(createVerificationToken("john.doe@example.com", "token"),
                 "StrongPass123!", "StrongPass123!");
-
 
         performRequest(HttpMethod.POST, "/auth/reset-password", dto)
                 .andExpect(status().isNoContent());
@@ -198,5 +197,12 @@ class AuthControllerTest extends AbstractIntegrationTest {
         em.persist(token);
         em.flush();
         em.clear();
+    }
+
+    private String createVerificationToken(String email, String rawToken) {
+        String encodedEmail = java.util.Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(email.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        return encodedEmail + "." + rawToken;
     }
 }

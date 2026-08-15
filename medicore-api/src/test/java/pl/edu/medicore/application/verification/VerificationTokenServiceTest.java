@@ -42,7 +42,7 @@ class VerificationTokenServiceTest {
     @Test
     void shouldCreateToken_whenInputIsValid() {
         String email = "test@mail.com";
-        TokenType tokenType = TokenType.EMAIL_VERIFICATION;
+        TokenType tokenType = TokenType.PASSWORD_RESET;
 
         String encodedToken = "encoded-token";
 
@@ -57,6 +57,8 @@ class VerificationTokenServiceTest {
         assertNotNull(createdToken);
         assertFalse(createdToken.isBlank());
         assertFalse(createdToken.equals(createdToken.substring(createdToken.indexOf('.') + 1)));
+        assertEquals(email, new String(Base64.getUrlDecoder()
+                .decode(createdToken.substring(0, createdToken.indexOf('.'))), StandardCharsets.UTF_8));
 
         String rawToken = createdToken.substring(createdToken.indexOf('.') + 1);
         verify(passwordEncoder).encode(rawToken);
@@ -69,7 +71,7 @@ class VerificationTokenServiceTest {
         String email = "test@mail.com";
         String rawToken = "raw-token";
         String tokenHash = "encoded-token";
-        TokenType type = TokenType.EMAIL_VERIFICATION;
+        TokenType type = TokenType.PASSWORD_RESET;
         String tokenWithEmail = Base64.getUrlEncoder()
                 .withoutPadding()
                 .encodeToString(email.getBytes(StandardCharsets.UTF_8)) + "." + rawToken;

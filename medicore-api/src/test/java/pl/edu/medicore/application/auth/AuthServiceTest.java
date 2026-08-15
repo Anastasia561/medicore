@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -255,7 +256,7 @@ class AuthServiceTest {
         person.setLastName("Doe");
         person.setEmail(email);
 
-        String token = "reset-token";
+        String token = createVerificationToken(email, "reset-token");
         String link = "http://reset-link";
 
         when(verificationTokenService.findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET)).thenReturn(null);
@@ -301,7 +302,7 @@ class AuthServiceTest {
         person.setLastName("Doe");
         person.setEmail(email);
 
-        String token = "reset-token";
+        String token = createVerificationToken(email, "reset-token");
         String link = "http://reset-link";
 
         when(verificationTokenService.findLatestByEmailAndTokenType(email, TokenType.PASSWORD_RESET))
@@ -316,36 +317,45 @@ class AuthServiceTest {
 
     @Test
     void shouldUpdatePasswordAndSendEmail_whenTokenIsValid() {
-        PasswordResetDto dto = new PasswordResetDto("valid-token", "test@mail.com",
+        PasswordResetDto dto = new PasswordResetDto("valid-token",
                 "newPassword", "newPassword");
 
         Person person = new Person();
         ConfirmationEmailDto emailDto = new ConfirmationEmailDto("John", "Doe");
 
-        when(personService.getByEmail(dto.email())).thenReturn(person);
+        when(verificationTokenService.validateTokenAndGetEmail(dto.token(), TokenType.PASSWORD_RESET))
+                .thenReturn("test@mail.com");
+        when(personService.getByEmail("test@mail.com")).thenReturn(person);
         when(personMapper.toEmailDto(person)).thenReturn(emailDto);
 
         authService.resetPassword(dto);
 
-        verify(verificationTokenService).validateToken(dto.token(), TokenType.PASSWORD_RESET, dto.email());
-        verify(personService).updatePassword(dto);
-        verify(personService).getByEmail(dto.email());
+        verify(verificationTokenService).validateTokenAndGetEmail(dto.token(), TokenType.PASSWORD_RESET);
+        verify(personService).updatePassword("test@mail.com", dto);
+        verify(personService).getByEmail("test@mail.com");
         verify(personMapper).toEmailDto(person);
     }
 
     @Test
     void shouldNotUpdatePassword_whenTokenIsInvalid() {
-        PasswordResetDto dto = new PasswordResetDto("valid-token", "test@mail.com",
+        PasswordResetDto dto = new PasswordResetDto("valid-token",
                 "newPassword", "newPassword");
 
         doThrow(new IllegalArgumentException("Invalid token"))
                 .when(verificationTokenService)
-                .validateToken(dto.token(), TokenType.PASSWORD_RESET, dto.email());
+                .validateTokenAndGetEmail(dto.token(), TokenType.PASSWORD_RESET);
 
         assertThrows(IllegalArgumentException.class,
                 () -> authService.resetPassword(dto));
 
-        verify(personService, never()).updatePassword(any());
+        verify(personService, never()).updatePassword(anyString(), any());
         verifyNoInteractions(eventPublisher);
+    }
+
+    private String createVerificationToken(String email, String rawToken) {
+        String encodedEmail = java.util.Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(email.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        return encodedEmail + "." + rawToken;
     }
 }

@@ -30,7 +30,7 @@ class VerificationTokenServiceImpl implements VerificationTokenService {
         VerificationTokenCreateDto dto = new VerificationTokenCreateDto(tokenType, tokenHash, normalizedEmail, duration);
         tokenRepository.save(tokenMapper.toEntity(dto));
 
-        if (tokenType == TokenType.EMAIL_VERIFICATION) {
+        if (tokenType == TokenType.EMAIL_VERIFICATION || tokenType == TokenType.PASSWORD_RESET) {
             return encodeEmailWithToken(normalizedEmail, rawToken);
         }
 
@@ -87,7 +87,7 @@ class VerificationTokenServiceImpl implements VerificationTokenService {
     }
 
     private String decodeEmailFromToken(String token, TokenType type) {
-        if (type != TokenType.EMAIL_VERIFICATION || token == null || token.isBlank()) {
+        if ((type != TokenType.EMAIL_VERIFICATION && type != TokenType.PASSWORD_RESET) || token == null || token.isBlank()) {
             return null;
         }
 

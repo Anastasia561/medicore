@@ -9,7 +9,7 @@ public interface PersonService {
 
     Person getById(HashId id);
 
-    void updatePassword(PasswordResetDto dto);
+    void updatePassword(String email, PasswordResetDto dto);
 
     boolean existsByEmail(String email);
 }
