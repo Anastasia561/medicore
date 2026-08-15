@@ -51,7 +51,7 @@ public class PatientController {
     @Operation(summary = "Verify email after registration for profile activation")
     @PostMapping("/verify-email")
     public void verifyEmail(@Valid @RequestBody PatientVerificationRequestDto dto) {
-        tokenService.validateToken(dto.token(), TokenType.EMAIL_VERIFICATION, dto.email());
-        patientService.updateStatus(dto.email(), UserStatus.ACTIVE);
+        String email = tokenService.validateTokenAndGetEmail(dto.token(), TokenType.EMAIL_VERIFICATION);
+        patientService.updateStatus(email, UserStatus.ACTIVE);
     }
 }

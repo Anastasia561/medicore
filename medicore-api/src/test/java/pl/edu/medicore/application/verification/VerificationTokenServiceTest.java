@@ -9,8 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.edu.medicore.application.verification.dto.VerificationTokenCreateDto;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,11 +52,13 @@ class VerificationTokenServiceTest {
         when(tokenMapper.toEntity(any())).thenReturn(entity);
         when(tokenRepository.save(entity)).thenReturn(entity);
 
-        String rawToken = tokenService.createToken(email, tokenType, Duration.ofMinutes(5));
+        String createdToken = tokenService.createToken(email, tokenType, Duration.ofMinutes(5));
 
-        assertNotNull(rawToken);
-        assertFalse(rawToken.isBlank());
+        assertNotNull(createdToken);
+        assertFalse(createdToken.isBlank());
+        assertFalse(createdToken.equals(createdToken.substring(createdToken.indexOf('.') + 1)));
 
+        String rawToken = createdToken.substring(createdToken.indexOf('.') + 1);
         verify(passwordEncoder).encode(rawToken);
         verify(tokenMapper).toEntity(any(VerificationTokenCreateDto.class));
         verify(tokenRepository).save(entity);
@@ -66,6 +70,9 @@ class VerificationTokenServiceTest {
         String rawToken = "raw-token";
         String tokenHash = "encoded-token";
         TokenType type = TokenType.EMAIL_VERIFICATION;
+        String tokenWithEmail = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(email.getBytes(StandardCharsets.UTF_8)) + "." + rawToken;
 
         VerificationToken token = new VerificationToken();
         token.setTokenHash(tokenHash);
@@ -74,8 +81,9 @@ class VerificationTokenServiceTest {
         )).thenReturn(List.of(token));
         when(passwordEncoder.matches(rawToken, tokenHash)).thenReturn(true);
 
-        tokenService.validateToken(rawToken, type, email);
+        String validatedEmail = tokenService.validateTokenAndGetEmail(tokenWithEmail, type);
 
+        assertEquals(email, validatedEmail);
         verify(tokenRepository).delete(token);
         verify(passwordEncoder).matches(rawToken, tokenHash);
     }

@@ -20,8 +20,10 @@ import pl.edu.medicore.application.person.UserStatus;
 import pl.edu.medicore.application.verification.TokenType;
 import pl.edu.medicore.application.verification.VerificationToken;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Base64;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -154,7 +156,7 @@ class PatientControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400_whenValidationErrorsInEmailVerification() throws Exception {
-        PatientVerificationRequestDto dto = new PatientVerificationRequestDto("test@gmail.com", null);
+        PatientVerificationRequestDto dto = new PatientVerificationRequestDto(null);
 
         performRequest(HttpMethod.POST, "/patients/verify-email", dto)
                 .andExpect(status().isBadRequest())
@@ -165,7 +167,7 @@ class PatientControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400_whenTokenIsInvalidForEmailVerification() throws Exception {
-        PatientVerificationRequestDto dto = new PatientVerificationRequestDto("test@gmail.com", "token");
+        PatientVerificationRequestDto dto = new PatientVerificationRequestDto("token");
 
         performRequest(HttpMethod.POST, "/patients/verify-email", dto)
                 .andExpect(status().isBadRequest())
@@ -176,7 +178,7 @@ class PatientControllerTest extends AbstractIntegrationTest {
     void shouldSuccessfullyValidatePatientEmail_whenInputIsValid() throws Exception {
         insertUnverifiedPatientAndVerificationToken();
 
-        PatientVerificationRequestDto dto = new PatientVerificationRequestDto("test@gmail.com", "token");
+        PatientVerificationRequestDto dto = new PatientVerificationRequestDto(createVerificationToken("test@gmail.com", "token"));
 
         performRequest(HttpMethod.POST, "/patients/verify-email", dto)
                 .andExpect(status().isOk());
@@ -232,5 +234,12 @@ class PatientControllerTest extends AbstractIntegrationTest {
         em.persist(patient);
         em.flush();
         em.clear();
+    }
+
+    private String createVerificationToken(String email, String rawToken) {
+        String encodedEmail = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(email.getBytes(StandardCharsets.UTF_8));
+        return encodedEmail + "." + rawToken;
     }
 }
