@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout';
 import Login from '../features/auth/Login.jsx';
 import PublicHome from '../pages/PublicHome.jsx';
 import PatientRegisterForm from '../features/register/patient/PatientRegisterForm.jsx';
+import VerifyEmailPage from '../features/register/patient/VerifyEmailPage.jsx';
 import Unauthorized from '../pages/Unauthorized';
 
 export const PublicRoutes = (
@@ -10,6 +11,7 @@ export const PublicRoutes = (
         <Route index element={<PublicHome/>}/>
         <Route path="login" element={<Login/>}/>
         <Route path="register" element={<PatientRegisterForm/>}/>
+        <Route path="verify-email" element={<VerifyEmailPage/>}/>
         <Route path="unauthorized" element={<Unauthorized/>}/>
     </Route>
 );
