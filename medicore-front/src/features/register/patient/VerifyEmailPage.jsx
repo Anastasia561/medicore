@@ -1,18 +1,12 @@
-import {useEffect} from 'react';
 import {Link, useSearchParams} from 'react-router-dom';
 import {useVerifyEmail} from './hooks/useVerifyEmail';
+import {SuccessCard} from "../../../components/SuccessCard.jsx";
 
 const VerifyEmailPage = () => {
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token')?.replace(/\s/g, '+');
 
-    const {mutate: verifyEmail, isPending, isSuccess, isError, error} = useVerifyEmail();
-
-    useEffect(() => {
-        if (token) {
-            verifyEmail(token);
-        }
-    }, [token, verifyEmail]);
+    const {isLoading, isSuccess, isError, error, refetch} = useVerifyEmail(token);
 
     const errorMessage = error?.response?.data?.message || error?.response?.data?.error || 'Verification failed. The link may be expired or invalid.';
 
@@ -32,7 +26,7 @@ const VerifyEmailPage = () => {
         );
     }
 
-    if (isPending) {
+    if (isLoading) {
         return (
             <div className="container py-5">
                 <div className="card shadow-sm border-0 mx-auto" style={{maxWidth: '500px'}}>
@@ -50,15 +44,12 @@ const VerifyEmailPage = () => {
 
     if (isSuccess) {
         return (
-            <div className="container py-5">
-                <div className="card shadow-sm border-0 mx-auto" style={{maxWidth: '500px'}}>
-                    <div className="card-body p-4 text-center">
-                        <div className="text-success fs-1 mb-3">✓</div>
-                        <h2 className="h4 fw-bold mb-2">Email verified</h2>
-                        <p className="text-muted mb-0">Your account is now active. Redirecting to login...</p>
-                    </div>
-                </div>
-            </div>
+            <SuccessCard
+                title="Email verified"
+                message="Your account is now active and ready to use."
+                buttonText="Go to login"
+                buttonLink="/login"
+            />
         );
     }
 
@@ -75,15 +66,15 @@ const VerifyEmailPage = () => {
                     )}
 
                     <p className="text-muted text-center mb-4">
-                        Your verification link was detected. Please continue to confirm your email.
+                        Verification failed. You can try again or return to the home page.
                     </p>
 
                     <div className="d-flex justify-content-between align-items-center gap-2">
                         <Link to="/" className="btn btn-outline-secondary">
                             Home
                         </Link>
-                        <button type="button" className="btn btn-primary" onClick={() => verifyEmail(token)}>
-                            Verify email
+                        <button type="button" className="btn btn-primary" onClick={() => refetch()}>
+                            Try again
                         </button>
                     </div>
                 </div>

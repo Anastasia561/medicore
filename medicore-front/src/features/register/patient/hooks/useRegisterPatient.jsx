@@ -1,19 +1,17 @@
 import {useMutation} from "@tanstack/react-query";
 import axios from "../../../../api/axios.js";
-import toast from "react-hot-toast";
-import {useNavigate} from "react-router-dom";
 
-export const useRegisterPatient = (setError, setGeneralError) => {
-    const navigate = useNavigate();
-
+export const useRegisterPatient = (setError, setGeneralError, onSuccess) => {
     return useMutation({
         mutationFn: async (patientData) => {
             const res = await axios.post("/patients/register", patientData);
             return res.data;
         },
-        onSuccess: () => {
-            toast.success("Registration successful\nPlease check email for verification");
-            navigate("/login");
+        onSuccess: (data, variables, context) => {
+            if (setGeneralError) setGeneralError("");
+            if (onSuccess) {
+                onSuccess(data, variables, context);
+            }
         },
         onError: (err) => {
             if (!err?.response) {

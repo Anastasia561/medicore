@@ -4,10 +4,12 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {resetPasswordSchema} from './validation/resetPasswordSchema.js';
 import {useResetPassword} from './hooks/useResetPassword.jsx';
+import {SuccessCard} from "../../components/SuccessCard.jsx";
 
 const ResetPasswordForm = () => {
     const [searchParams] = useSearchParams();
     const [generalError, setGeneralError] = useState('');
+    const [isSuccess, setIsSuccess] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showRepeatPassword, setShowRepeatPassword] = useState(false);
     const token = searchParams.get('token') || '';
@@ -22,7 +24,6 @@ const ResetPasswordForm = () => {
         resolver: yupResolver(resetPasswordSchema),
         defaultValues: {
             token,
-            email: '',
             password: '',
             repeatPassword: '',
         },
@@ -30,7 +31,8 @@ const ResetPasswordForm = () => {
 
     const resetPasswordMutation = useResetPassword({
         setError,
-        setGeneralError
+        setGeneralError,
+        onSuccess: () => setIsSuccess(true),
     });
 
     useEffect(() => {
@@ -40,6 +42,17 @@ const ResetPasswordForm = () => {
     const onSubmit = (data) => {
         resetPasswordMutation.mutate(data);
     };
+
+    if (isSuccess) {
+        return (
+            <SuccessCard
+                title="Password reset successful"
+                message="Your password has been updated. You can now log in with your new credentials."
+                buttonText="Go to login"
+                buttonLink="/login"
+            />
+        );
+    }
 
     return (
         <div className="container py-5">
@@ -63,20 +76,6 @@ const ResetPasswordForm = () => {
                         <input type="hidden" {...register("token")} />
 
                         <div className="mb-3">
-                            <label htmlFor="email" className="form-label">
-                                Email address
-                            </label>
-                            <input
-                                {...register("email")}
-                                id="email"
-                                type="email"
-                                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                                disabled={resetPasswordMutation.isPending}
-                            />
-                            {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
-                        </div>
-
-                        <div className="mb-3">
                             <label htmlFor="password" className="form-label">
                                 New password
                             </label>
@@ -95,7 +94,7 @@ const ResetPasswordForm = () => {
                                     disabled={resetPasswordMutation.isPending}
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
-                                    <i className={`bi ${showPassword ? 'bi-eye' : 'bi-eye-slash'}`}></i>
+                                    <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                                 </button>
                                 {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
                             </div>
@@ -120,7 +119,7 @@ const ResetPasswordForm = () => {
                                     disabled={resetPasswordMutation.isPending}
                                     aria-label={showRepeatPassword ? "Hide password" : "Show password"}
                                 >
-                                    <i className={`bi ${showRepeatPassword ? 'bi-eye' : 'bi-eye-slash'}`}></i>
+                                    <i className={`bi ${showRepeatPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                                 </button>
                                 {errors.repeatPassword &&
                                     <div className="invalid-feedback">{errors.repeatPassword.message}</div>}

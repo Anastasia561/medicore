@@ -10,6 +10,7 @@ import {Step2Password} from './components/Step2Password';
 import {Step3ContactDetails} from './components/Step3ContactDetails';
 import {Step4Address} from './components/Step4Address';
 import {Step5MedicalInfo} from './components/Step5MedicalInfo';
+import {SuccessCard} from "../../../components/SuccessCard.jsx";
 
 const STEP_FIELDS = {
     1: ['firstName', 'lastName', 'birthDate'],
@@ -34,6 +35,8 @@ const STEP_HEADING = [
 const PatientRegisterForm = () => {
     const [step, setStep] = useState(1);
     const [generalError, setGeneralError] = useState('');
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [registeredEmail, setRegisteredEmail] = useState('');
 
     const methods = useForm({
         resolver: yupResolver(registerSchema),
@@ -43,7 +46,11 @@ const PatientRegisterForm = () => {
 
     const {trigger, handleSubmit, setError} = methods;
 
-    const {mutate: registerPatient, isPending} = useRegisterPatient(setError, setGeneralError);
+    const {mutate: registerPatient, isPending} = useRegisterPatient(
+        setError,
+        setGeneralError,
+        () => setIsSuccess(true)
+    );
 
     const nextStep = async () => {
         const isValid = await trigger(STEP_FIELDS[step]);
@@ -53,10 +60,32 @@ const PatientRegisterForm = () => {
     const prevStep = () => setStep((prev) => prev - 1);
 
     const onSubmit = (data) => {
+        setRegisteredEmail(data.email);
         registerPatient(data);
     };
 
     const currentStepMeta = STEP_HEADING[step - 1];
+
+    if (isSuccess) {
+        return (
+            <SuccessCard
+                title="Registration successful"
+                message={
+                    <>
+                        We've sent a verification link to{' '}
+                        {registeredEmail ? (
+                            <span className="fw-semibold text-dark">{registeredEmail}</span>
+                        ) : (
+                            'your email'
+                        )}
+                        . Please check your inbox to verify your account.
+                    </>
+                }
+                buttonText="Back to login"
+                buttonLink="/login"
+            />
+        );
+    }
 
     return (
         <div className="container py-4 py-md-5">
@@ -92,8 +121,7 @@ const PatientRegisterForm = () => {
                             )}
 
                             <FormProvider {...methods}>
-                                <form
-                                    onSubmit={handleSubmit(onSubmit)}>
+                                <form onSubmit={handleSubmit(onSubmit)}>
                                     {step === 1 && <Step1PersonalInfo/>}
                                     {step === 2 && <Step2Password/>}
                                     {step === 3 && <Step3ContactDetails/>}

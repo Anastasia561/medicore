@@ -1,24 +1,21 @@
 import {useMutation} from '@tanstack/react-query';
 import axios from "../../../api/axios.js";
-import {useNavigate} from "react-router-dom";
-import toast from "react-hot-toast";
 
-export const useResetPassword = ({setError, setGeneralError}) => {
-    const navigate = useNavigate();
-
+export const useResetPassword = ({setError, setGeneralError, onSuccess}) => {
     return useMutation({
-        mutationFn: async ({token, email, password, repeatPassword}) => {
+        mutationFn: async ({token, password, repeatPassword}) => {
             const response = await axios.post("/auth/reset-password", {
                 token,
-                email,
                 password,
                 repeatPassword
             });
             return response.data;
         },
-        onSuccess: () => {
-            toast.success("Password reset successfully");
-            navigate("/login");
+        onSuccess: (data, variables, context) => {
+            if (setGeneralError) setGeneralError("");
+            if (onSuccess) {
+                onSuccess(data, variables, context);
+            }
         },
         onError: (err) => {
             const backendErrors = err.response?.data?.errors;
