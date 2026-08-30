@@ -35,7 +35,7 @@ const DoctorList = () => {
             headerActions={
                 <div>
                     {auth?.role === 'ROLE_ADMIN' && (
-                        <Link to="/admin/doctors/register" className="btn btn-primary">
+                        <Link to="/doctors/register" className="btn btn-primary">
                             <i className="fas fa-user-plus me-1"></i>
                             <span>Add Doctor</span>
                         </Link>

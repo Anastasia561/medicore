@@ -1,52 +1,48 @@
 import {useState} from 'react';
-import {useForm, FormProvider} from 'react-hook-form';
+import {FormProvider, useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {registerSchema} from './validation/patientRegistrationSchema.js';
-import {useRegisterPatient} from './hooks/useRegisterPatient';
 import logo from '../../../assets/logo.png';
-
+import {SuccessCard} from '../../../components/SuccessCard.jsx';
+import {useRegisterDoctor} from './hooks/useRegisterDoctor.js';
+import {doctorRegisterSchema} from './validation/doctorRegistrationSchema.js';
 import {Step1PersonalInfo} from '../components/Step1PersonalInfo.jsx';
 import {Step2Password} from '../components/Step2Password.jsx';
-import {Step3ContactDetails} from './components/Step3ContactDetails.jsx';
 import {Step4Address} from '../components/Step4Address.jsx';
-import {Step5MedicalInfo} from './components/Step5MedicalInfo';
-import {SuccessCard} from "../../../components/SuccessCard.jsx";
+import {Step5ProfessionalInfo} from './components/Step5ProfessionalInfo.jsx';
+import {Step3ContactInfo} from "./components/Step3ContactInfo.jsx";
 
 const STEP_FIELDS = {
     1: ['firstName', 'lastName', 'birthDate'],
     2: ['password', 'repeatPassword'],
-    3: ['phoneNumber', 'email'],
+    3: ['phoneNumber'],
     4: ['address.country', 'address.city', 'address.street', 'address.number'],
-    5: ['gender', 'weight', 'height', 'pregnancyStatus'],
+    5: ['gender', 'specialization', 'experience'],
 };
 
 const STEP_HEADING = [
-    {id: 1, title: "Personal Details", subtitle: "Tell us a bit about yourself"},
-    {id: 2, title: "Account Security", subtitle: "Set up your login credentials"},
-    {id: 3, title: "Contact Information", subtitle: "How can we reach you?"},
-    {id: 4, title: "Address Details", subtitle: "Where are you located?"},
-    {
-        id: 5,
-        title: "Medical Details",
-        subtitle: "Help us tailor your care. These fields are optional and can be updated anytime in your medical profile"
-    },
+    {id: 1, title: 'Personal Details', subtitle: 'Tell us a bit about yourself'},
+    {id: 2, title: 'Account Security', subtitle: 'Set up your login credentials'},
+    {id: 3, title: 'Contact Information', subtitle: 'How can we reach you?'},
+    {id: 4, title: 'Address Details', subtitle: 'Where are you located?'},
+    {id: 5, title: 'Professional Details', subtitle: 'Share your clinical background'},
 ];
 
-const PatientRegisterForm = () => {
+const DoctorRegisterForm = ({inviteToken}) => {
     const [step, setStep] = useState(1);
     const [generalError, setGeneralError] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
-    const [registeredEmail, setRegisteredEmail] = useState('');
 
     const methods = useForm({
-        resolver: yupResolver(registerSchema),
+        resolver: yupResolver(doctorRegisterSchema),
         mode: 'onTouched',
-        defaultValues: {pregnancyStatus: 'NOT_APPLICABLE'},
+        defaultValues: {
+            token: inviteToken,
+        },
     });
 
     const {trigger, handleSubmit, setError} = methods;
 
-    const {mutate: registerPatient, isPending} = useRegisterPatient(
+    const {mutate: registerDoctor, isPending} = useRegisterDoctor(
         setError,
         setGeneralError,
         () => setIsSuccess(true)
@@ -60,28 +56,32 @@ const PatientRegisterForm = () => {
     const prevStep = () => setStep((prev) => prev - 1);
 
     const onSubmit = (data) => {
-        setRegisteredEmail(data.email);
-        registerPatient(data);
+        registerDoctor(data);
     };
 
     const currentStepMeta = STEP_HEADING[step - 1];
+
+    if (!inviteToken) {
+        return (
+            <div className="container py-5">
+                <div className="card shadow-sm border-0 mx-auto" style={{maxWidth: '540px'}}>
+                    <div className="card-body p-4 text-center">
+                        <h2 className="h4 fw-bold mb-3">Doctor registration</h2>
+                        <div className="alert alert-danger mb-0" role="alert">
+                            Invalid registration link. Missing invite token.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (isSuccess) {
         return (
             <SuccessCard
                 title="Registration successful"
-                message={
-                    <>
-                        We've sent a verification link to{' '}
-                        {registeredEmail ? (
-                            <span className="fw-semibold text-dark">{registeredEmail}</span>
-                        ) : (
-                            'your email'
-                        )}
-                        . Please check your inbox to verify your account.
-                    </>
-                }
-                buttonText="Back to login"
+                message="Your doctor account has been successfully created. You can now log in using the email your invitation was sent to."
+                buttonText="Go to login"
                 buttonLink="/login"
             />
         );
@@ -92,13 +92,7 @@ const PatientRegisterForm = () => {
             <div className="row justify-content-center">
                 <div className="col-lg-8 col-xl-7">
                     <div className="text-center mb-4">
-                        <img
-                            src={logo}
-                            alt="MediCore Logo"
-                            width="100"
-                            height="70"
-                            className="mb-2"
-                        />
+                        <img src={logo} alt="MediCore Logo" width="100" height="70" className="mb-2" />
                         <h2 className="fw-bold mb-1">MediCore</h2>
                     </div>
 
@@ -122,27 +116,25 @@ const PatientRegisterForm = () => {
 
                             <FormProvider {...methods}>
                                 <form onSubmit={handleSubmit(onSubmit)}>
+                                    <input type="hidden" {...methods.register('token')} />
                                     {step === 1 && <Step1PersonalInfo/>}
                                     {step === 2 && <Step2Password/>}
-                                    {step === 3 && <Step3ContactDetails/>}
+                                    {step === 3 && <Step3ContactInfo/>}
                                     {step === 4 && <Step4Address/>}
-                                    {step === 5 && <Step5MedicalInfo/>}
+                                    {step === 5 && <Step5ProfessionalInfo/>}
 
                                     <div className="d-flex justify-content-between mt-4">
                                         {step > 1 && (
-                                            <button type="button" onClick={prevStep}
-                                                    className="btn btn-outline-secondary">
+                                            <button type="button" onClick={prevStep} className="btn btn-outline-secondary">
                                                 Previous
                                             </button>
                                         )}
                                         {step < 5 ? (
-                                            <button type="button" onClick={nextStep}
-                                                    className="btn btn-primary ms-auto">
+                                            <button type="button" onClick={nextStep} className="btn btn-primary ms-auto">
                                                 Next
                                             </button>
                                         ) : (
-                                            <button type="submit" disabled={isPending}
-                                                    className="btn btn-success ms-auto">
+                                            <button type="submit" disabled={isPending} className="btn btn-success ms-auto">
                                                 {isPending ? 'Registering...' : 'Submit'}
                                             </button>
                                         )}
@@ -157,4 +149,4 @@ const PatientRegisterForm = () => {
     );
 };
 
-export default PatientRegisterForm;
+export default DoctorRegisterForm;
