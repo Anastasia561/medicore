@@ -79,16 +79,17 @@ class DoctorServiceImpl implements DoctorService {
     @Override
     @Transactional
     public long register(DoctorRegistrationDto dto) {
-        verificationTokenService.validateToken(dto.token(), TokenType.DOCTOR_INVITATION, dto.email());
+        String email = verificationTokenService.validateTokenAndGetEmail(dto.token(), TokenType.DOCTOR_INVITATION);
 
         if (!dto.password().equals(dto.repeatPassword()))
             throw new IllegalArgumentException("Passwords don't match");
 
         Doctor entity = doctorMapper.toEntity(dto);
         entity.setPassword(passwordEncoder.encode(dto.password()));
+        entity.setEmail(email);
 
         ConfirmationEmailDto emailDto = doctorMapper.toEmailDto(entity);
-        eventPublisher.publishEvent(new SendEmailEvent<>(dto.email(), EmailType.REGISTRATION_CONFIRMATION, emailDto));
+        eventPublisher.publishEvent(new SendEmailEvent<>(email, EmailType.REGISTRATION_CONFIRMATION, emailDto));
         return doctorRepository.save(entity).getId();
     }
 }

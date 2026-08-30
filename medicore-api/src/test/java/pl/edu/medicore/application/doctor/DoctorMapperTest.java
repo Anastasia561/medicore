@@ -60,7 +60,7 @@ class DoctorMapperTest {
     void shouldMapToEntity_whenInputIsValid() {
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "test@gmail.com",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto("token",
                 "John", "Doe", "pass", "pass", Gender.MALE, 10,
                 Specialization.DERMATOLOGIST, LocalDate.of(1990, 10, 10),
                 "12344555", address);

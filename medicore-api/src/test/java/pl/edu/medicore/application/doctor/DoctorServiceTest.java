@@ -216,7 +216,7 @@ class DoctorServiceTest {
     void shouldRegisterDoctor_whenInputIsValid() {
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token123", "test@gmail.com",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto("token123",
                 "John", "Doe", "password123", "password123",
                 Gender.MALE, 10, Specialization.DERMATOLOGIST,
                 LocalDate.of(1990, 10, 10), "12345678", address);
@@ -235,8 +235,7 @@ class DoctorServiceTest {
 
         assertEquals(1L, result);
 
-        verify(verificationTokenService).validateToken("token123", TokenType.DOCTOR_INVITATION,
-                "test@gmail.com");
+        verify(verificationTokenService).validateTokenAndGetEmail("token123", TokenType.DOCTOR_INVITATION);
 
         verify(doctorMapper).toEntity(dto);
         verify(doctorMapper).toEmailDto(doctor);
@@ -247,7 +246,7 @@ class DoctorServiceTest {
     void shouldThrowIllegalArgumentException_whenPasswordsDoNotMatch() {
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token123", "test@gmail.com",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto("token123",
                 "John", "Doe", "password123", "password",
                 Gender.MALE, 10, Specialization.DERMATOLOGIST,
                 LocalDate.of(1990, 10, 10), "12345678", address);
@@ -259,8 +258,7 @@ class DoctorServiceTest {
 
         assertEquals("Passwords don't match", exception.getMessage());
 
-        verify(verificationTokenService).validateToken("token123", TokenType.DOCTOR_INVITATION,
-                "test@gmail.com");
+        verify(verificationTokenService).validateTokenAndGetEmail("token123", TokenType.DOCTOR_INVITATION);
 
         verifyNoInteractions(doctorMapper, doctorRepository, eventPublisher);
     }

@@ -21,10 +21,10 @@ public record DoctorRegistrationDto(
         @NotBlank(message = "Token is required")
         String token,
 
-        @NotBlank(message = "Email is required")
-        @Email(message = "Email should be valid")
-        @UniqueEmail
-        String email,
+//        @NotBlank(message = "Email is required")
+//        @Email(message = "Email should be valid")
+//        @UniqueEmail
+//        String email,
 
         @NotBlank(message = "First name is required")
         @Size(max = 20, message = "First name must be at most 20 characters")

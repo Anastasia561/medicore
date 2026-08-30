@@ -214,7 +214,7 @@ class DoctorControllerTest extends AbstractIntegrationTest {
     void shouldReturn400_whenValidationErrorsInDoctorRegistration() throws Exception {
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "", null,
+        DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "",
                 "TestL", "StrongPass123!", "StrongPass123!", null,
                 10, Specialization.CARDIOLOGIST,
                 LocalDate.of(1990, 10, 10), "1234567", address);
@@ -223,14 +223,14 @@ class DoctorControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.message").value("Validation failed"))
                 .andExpect(jsonPath("$.error.validationErrors").isArray())
-                .andExpect(jsonPath("$.error.validationErrors.length()").value(3));
+                .andExpect(jsonPath("$.error.validationErrors.length()").value(2));
     }
 
     @Test
     void shouldReturn400_whenTokenIsInvalidForDoctorRegistration() throws Exception {
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token123", "test@gmail.com", "TestF",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto("token123",  "TestF",
                 "TestL", "StrongPass123!", "StrongPass123!", Gender.FEMALE,
                 10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
                 "1234567", address);
@@ -246,7 +246,7 @@ class DoctorControllerTest extends AbstractIntegrationTest {
 
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "test@gmail.com", "TestF",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto("token",  "TestF",
                 "TestL", "StrongPass123!", "StrongPass123!", Gender.FEMALE,
                 10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
                 "1234567", address);
@@ -280,7 +280,7 @@ class DoctorControllerTest extends AbstractIntegrationTest {
         insertVerificationToken();
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token", "test@gmail.com", "TestF",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto("token",  "TestF",
                 "TestL", "StrongPass123!", "StrongPass", Gender.FEMALE,
                 10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
                 "1234567", address);

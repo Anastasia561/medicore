@@ -30,17 +30,13 @@ class VerificationTokenServiceImpl implements VerificationTokenService {
         VerificationTokenCreateDto dto = new VerificationTokenCreateDto(tokenType, tokenHash, normalizedEmail, duration);
         tokenRepository.save(tokenMapper.toEntity(dto));
 
-        if (tokenType == TokenType.EMAIL_VERIFICATION || tokenType == TokenType.PASSWORD_RESET) {
-            return encodeEmailWithToken(normalizedEmail, rawToken);
-        }
-
-        return rawToken;
+        return encodeEmailWithToken(normalizedEmail, rawToken);
     }
 
     @Override
     @Transactional
     public String validateTokenAndGetEmail(String compositeToken, TokenType type) {
-        String email = decodeEmailFromToken(compositeToken, type);
+        String email = decodeEmailFromToken(compositeToken);
         if (email == null) {
             throw new IllegalArgumentException("Invalid or expired token");
         }
@@ -86,8 +82,8 @@ class VerificationTokenServiceImpl implements VerificationTokenService {
         return encodedEmail + "." + rawToken;
     }
 
-    private String decodeEmailFromToken(String token, TokenType type) {
-        if ((type != TokenType.EMAIL_VERIFICATION && type != TokenType.PASSWORD_RESET) || token == null || token.isBlank()) {
+    private String decodeEmailFromToken(String token) {
+        if (token == null || token.isBlank()) {
             return null;
         }
 
