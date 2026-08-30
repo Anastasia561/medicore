@@ -54,11 +54,17 @@ const DoctorSchedule = () => {
         <div className="schedule-container">
             <h2>{titleText}</h2>
 
-            <div className="schedule-grid">
-                {data.map(day => (
-                    <ScheduleDayCard key={day.id} day={day} onDelete={handleDelete} onUpdate={handleUpdate}/>
-                ))}
-            </div>
+            {!data || data.length === 0 ? (
+                <p className="text-muted text-center py-4">
+                    No consultation schedule available yet.
+                </p>
+            ) : (
+                <div className="schedule-grid">
+                    {data.map(day => (
+                        <ScheduleDayCard key={day.id} day={day} onDelete={handleDelete} onUpdate={handleUpdate}/>
+                    ))}
+                </div>
+            )}
 
             {auth?.role === 'ROLE_ADMIN' && (
                 <div className="d-flex justify-content-center mt-4">
@@ -86,7 +92,7 @@ const DoctorSchedule = () => {
                     cancelText="No, keep it"
                     onCancel={() => setConfirmId(null)}
                     onConfirm={() => {
-                        deleteConsultation(confirmId)
+                        deleteConsultation(confirmId);
                         setConfirmId(null);
                     }}
                 />

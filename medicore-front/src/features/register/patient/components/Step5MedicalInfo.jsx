@@ -1,5 +1,21 @@
 import {useFormContext} from 'react-hook-form';
 
+const genderOptions = [
+    {value: 'MALE', label: 'Male'},
+    {value: 'FEMALE', label: 'Female'},
+    {value: 'OTHER', label: 'Other'},
+];
+
+const malePregnancyOptions = [
+    {value: 'NOT_APPLICABLE', label: 'Not Applicable'},
+];
+
+const femalePregnancyOptions = [
+    {value: 'UNKNOWN', label: 'Unknown'},
+    {value: 'NOT_PREGNANT', label: 'Not Pregnant'},
+    {value: 'PREGNANT', label: 'Pregnant'},
+];
+
 export const Step5MedicalInfo = () => {
     const {register, watch, setValue, formState: {errors}} = useFormContext();
     const selectedGender = watch('gender');
@@ -17,6 +33,10 @@ export const Step5MedicalInfo = () => {
         }
     };
 
+    const currentPregnancyOptions = selectedGender === 'MALE'
+        ? malePregnancyOptions
+        : femalePregnancyOptions;
+
     return (
         <>
             <div className="mb-3">
@@ -28,9 +48,11 @@ export const Step5MedicalInfo = () => {
                     className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
                 >
                     <option value="">Select Gender</option>
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
-                    <option value="OTHER">Other</option>
+                    {genderOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
                 </select>
                 {errors.gender && <div className="invalid-feedback">{errors.gender.message}</div>}
             </div>
@@ -67,15 +89,11 @@ export const Step5MedicalInfo = () => {
                     className={`form-select ${errors.pregnancyStatus ? 'is-invalid' : ''}`}
                     disabled={selectedGender === 'MALE'}
                 >
-                    {selectedGender === 'MALE' ? (
-                        <option value="NOT_APPLICABLE">Not Applicable</option>
-                    ) : (
-                        <>
-                            <option value="UNKNOWN">Unknown</option>
-                            <option value="NOT_PREGNANT">Not Pregnant</option>
-                            <option value="PREGNANT">Pregnant</option>
-                        </>
-                    )}
+                    {currentPregnancyOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
                 </select>
                 {errors.pregnancyStatus && <div className="invalid-feedback">{errors.pregnancyStatus.message}</div>}
             </div>
