@@ -386,112 +386,11 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void shouldGetTotalAppointmentsTodayByDoctorId_whenAppointmentsExist() {
-        long doctorId = 1L;
-        HashId hashId = HashId.of(doctorId);
-
-        when(appointmentRepository.countByDateAndDoctorId(LocalDate.now(), doctorId)).thenReturn(1L);
-
-        assertEquals(1L, appointmentService.getTotalAppointmentsTodayByDoctorId(hashId));
-    }
-
-    @Test
-    void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistForTotalTodayAppointments() {
-        long doctorId = 1L;
-        HashId hashId = HashId.of(doctorId);
-
-        doThrow(new EntityNotFoundException("Doctor not found"))
-                .when(doctorService).checkExistsById(hashId);
-
-        EntityNotFoundException exception = assertThrows(
-                EntityNotFoundException.class,
-                () -> appointmentService.getTotalAppointmentsTodayByDoctorId(hashId)
-        );
-
-        assertEquals("Doctor not found", exception.getMessage());
-        verify(doctorService, times(1)).checkExistsById(hashId);
-        verifyNoInteractions(appointmentRepository);
-    }
-
-    @Test
     void shouldGetMonthlyStatistics_whenAppointmentsExist() {
         List<ConsultationStatisticsDto> list = new ArrayList<>();
         when(appointmentRepository.getMonthlyStatistics(2026)).thenReturn(list);
 
         assertEquals(list, appointmentService.getMonthlyStatistics());
-    }
-
-    @Test
-    void shouldReturnMonthlyStatisticsByDoctorId_whenAppointmentsExist() {
-        long doctorId = 1L;
-        HashId hashId = HashId.of(doctorId);
-
-        List<ConsultationStatisticsDto> stats = List.of(
-                new ConsultationStatisticsDto(1, AppointmentStatus.SCHEDULED, 10),
-                new ConsultationStatisticsDto(2, AppointmentStatus.COMPLETED, 4)
-        );
-
-        when(appointmentRepository.getMonthlyStatisticsByDoctorId(doctorId, LocalDate.now().getYear()))
-                .thenReturn(stats);
-
-        List<ConsultationStatisticsDto> result = appointmentService.getMonthlyStatisticsByDoctorId(hashId);
-
-        assertEquals(stats.size(), result.size());
-        assertEquals(stats, result);
-        verify(doctorService, times(1)).checkExistsById(hashId);
-        verify(appointmentRepository, times(1))
-                .getMonthlyStatisticsByDoctorId(doctorId, LocalDate.now().getYear());
-    }
-
-    @Test
-    void shouldThrowEntityNotFoundException_whenDoctorDoesNotExist() {
-        long doctorId = 1L;
-        HashId hashId = HashId.of(doctorId);
-
-        doThrow(new EntityNotFoundException("Doctor not found"))
-                .when(doctorService).checkExistsById(hashId);
-
-        EntityNotFoundException exception = assertThrows(
-                EntityNotFoundException.class,
-                () -> appointmentService.getMonthlyStatisticsByDoctorId(hashId)
-        );
-
-        assertEquals("Doctor not found", exception.getMessage());
-        verify(doctorService, times(1)).checkExistsById(hashId);
-        verifyNoInteractions(appointmentRepository);
-    }
-
-
-    @Test
-    void shouldCountDistinctPatientsByDoctorId_whenAppointmentsExist() {
-        long doctorId = 1L;
-        HashId hashId = HashId.of(doctorId);
-
-        when(appointmentRepository.countDistinctPatientsByDoctorId(doctorId)).thenReturn(5L);
-
-        long result = appointmentService.getDistinctPatientsByDoctorId(hashId);
-
-        assertEquals(5L, result);
-        verify(doctorService, times(1)).checkExistsById(hashId);
-        verify(appointmentRepository, times(1)).countDistinctPatientsByDoctorId(doctorId);
-    }
-
-    @Test
-    void shouldThrowEntityNotFoundException_whenDoctorDoesNotExistForDistinctPatientCount() {
-        long doctorId = 1L;
-        HashId hashId = HashId.of(doctorId);
-
-        doThrow(new EntityNotFoundException("Doctor not found"))
-                .when(doctorService).checkExistsById(hashId);
-
-        EntityNotFoundException exception = assertThrows(
-                EntityNotFoundException.class,
-                () -> appointmentService.getDistinctPatientsByDoctorId(hashId)
-        );
-
-        assertEquals("Doctor not found", exception.getMessage());
-        verify(doctorService, times(1)).checkExistsById(hashId);
-        verifyNoInteractions(appointmentRepository);
     }
 
     @Test

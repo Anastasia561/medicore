@@ -13,8 +13,6 @@ import pl.edu.medicore.application.patient.PatientService;
 import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
 import pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
-import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
-import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.List;
 
@@ -70,33 +68,5 @@ class StatisticsServiceTest {
         verify(doctorService).getDoctorBySpecialization();
         verify(appointmentService).getTotalAppointmentsToday();
         verify(appointmentService).getMonthlyStatistics();
-    }
-
-    @Test
-    void shouldReturnDoctorsStatistics_whenRecordsExist() {
-        long patients = 100;
-        long todayAppointments = 12;
-
-        HashId doctorId = new HashId(1L);
-
-        List<ConsultationStatisticsDto> monthlyStats = List.of(
-                new ConsultationStatisticsDto(1, AppointmentStatus.COMPLETED, 40),
-                new ConsultationStatisticsDto(2, AppointmentStatus.CANCELLED, 60)
-        );
-
-        when(appointmentService.getDistinctPatientsByDoctorId(doctorId)).thenReturn(patients);
-        when(appointmentService.getTotalAppointmentsTodayByDoctorId(doctorId)).thenReturn(todayAppointments);
-        when(appointmentService.getMonthlyStatisticsByDoctorId(doctorId)).thenReturn(monthlyStats);
-
-        DoctorStatisticsResponseDto result = statisticsService.getDoctorStatistics(doctorId);
-
-        assertNotNull(result);
-        assertEquals(patients, result.totalPatients());
-        assertEquals(todayAppointments, result.consultationsToday());
-        assertEquals(monthlyStats, result.monthlyConsultations());
-
-        verify(appointmentService).getDistinctPatientsByDoctorId(doctorId);
-        verify(appointmentService).getTotalAppointmentsTodayByDoctorId(doctorId);
-        verify(appointmentService).getMonthlyStatisticsByDoctorId(doctorId);
     }
 }

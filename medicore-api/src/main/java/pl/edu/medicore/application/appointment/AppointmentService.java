@@ -25,13 +25,7 @@ public interface AppointmentService {
 
     long getTotalAppointmentsToday();
 
-    long getTotalAppointmentsTodayByDoctorId(HashId id);
-
     List<ConsultationStatisticsDto> getMonthlyStatistics();
-
-    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(HashId id);
-
-    long getDistinctPatientsByDoctorId(HashId doctorId);
 
     List<Appointment> getAllAppointmentByStatusAndDate(AppointmentStatus status, LocalDate date);
 

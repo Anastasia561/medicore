@@ -5,12 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
-import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
-import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 @RestController
@@ -25,12 +22,5 @@ public class StatisticsController {
     @GetMapping("/admin")
     public ResponseWrapper<AdminStatisticsResponseDto> getAdminStatistics() {
         return ResponseWrapper.ok(statisticsService.getAdminStatistics());
-    }
-
-    @Operation(summary = "Get patient, appointments statistics for doctor")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
-    @GetMapping("/doctor/{id}")
-    public ResponseWrapper<DoctorStatisticsResponseDto> getDoctorStatistics(@PathVariable HashId id) {
-        return ResponseWrapper.ok(statisticsService.getDoctorStatistics(id));
     }
 }

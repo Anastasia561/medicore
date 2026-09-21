@@ -149,26 +149,8 @@ class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public long getTotalAppointmentsTodayByDoctorId(HashId id) {
-        doctorService.checkExistsById(id);
-        return appointmentRepository.countByDateAndDoctorId(LocalDate.now(), id.value());
-    }
-
-    @Override
     public List<ConsultationStatisticsDto> getMonthlyStatistics() {
         return appointmentRepository.getMonthlyStatistics(LocalDate.now().getYear());
-    }
-
-    @Override
-    public List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(HashId id) {
-        doctorService.checkExistsById(id);
-        return appointmentRepository.getMonthlyStatisticsByDoctorId(id.value(), LocalDate.now().getYear());
-    }
-
-    @Override
-    public long getDistinctPatientsByDoctorId(HashId doctorId) {
-        doctorService.checkExistsById(doctorId);
-        return appointmentRepository.countDistinctPatientsByDoctorId(doctorId.value());
     }
 
     @Override

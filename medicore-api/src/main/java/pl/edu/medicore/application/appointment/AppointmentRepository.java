@@ -22,8 +22,6 @@ interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpe
 
     long countByDate(LocalDate date);
 
-    long countByDateAndDoctorId(LocalDate date, long doctorId);
-
     @Query("""
             SELECT new pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto(
                  MONTH(a.date),
@@ -36,26 +34,6 @@ interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpe
             ORDER BY MONTH(a.date)
             """)
     List<ConsultationStatisticsDto> getMonthlyStatistics(int year);
-
-    @Query("""
-            SELECT new pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto(
-                 MONTH(a.date),
-                 a.status,
-                 COUNT(a)
-            )
-            FROM Appointment a
-            WHERE YEAR(a.date) = :year AND a.doctor.id= :id
-            GROUP BY MONTH(a.date), a.status
-            ORDER BY MONTH(a.date)
-            """)
-    List<ConsultationStatisticsDto> getMonthlyStatisticsByDoctorId(long id, int year);
-
-    @Query("""
-            SELECT COUNT(DISTINCT a.patient.id)
-            FROM Appointment a
-            WHERE a.doctor.id = :doctorId
-            """)
-    long countDistinctPatientsByDoctorId(long doctorId);
 
     @Query("""
             SELECT a FROM Appointment a WHERE a.status = :status AND a.date = :date

@@ -8,8 +8,6 @@ import pl.edu.medicore.application.patient.PatientService;
 import pl.edu.medicore.application.statistics.dto.AdminStatisticsResponseDto;
 import pl.edu.medicore.application.statistics.dto.ConsultationStatisticsDto;
 import pl.edu.medicore.application.statistics.dto.DoctorStatisticsDto;
-import pl.edu.medicore.application.statistics.dto.DoctorStatisticsResponseDto;
-import pl.edu.medicore.common.encryption.HashId;
 
 import java.util.List;
 
@@ -30,13 +28,5 @@ class StatisticsServiceImpl implements StatisticsService {
 
         return new AdminStatisticsResponseDto(totalPatients, totalDoctors, todayAppointments, monthlyConsultations,
                 doctorsBySpecialization);
-    }
-
-    @Override
-    public DoctorStatisticsResponseDto getDoctorStatistics(HashId id) {
-        long totalPatients = appointmentService.getDistinctPatientsByDoctorId(id);
-        long todayAppointments = appointmentService.getTotalAppointmentsTodayByDoctorId(id);
-        List<ConsultationStatisticsDto> monthlyConsultations = appointmentService.getMonthlyStatisticsByDoctorId(id);
-        return new DoctorStatisticsResponseDto(totalPatients, todayAppointments, monthlyConsultations);
     }
 }
