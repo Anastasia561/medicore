@@ -17,8 +17,10 @@ import pl.edu.medicore.application.person.UserStatus;
 import pl.edu.medicore.application.verification.TokenType;
 import pl.edu.medicore.application.verification.VerificationToken;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Base64;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,6 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class DoctorControllerTest extends AbstractIntegrationTest {
+    private static final String INVITED_EMAIL = "test@gmail.com";
+    private static final String RAW_TOKEN = "token";
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -242,11 +247,11 @@ class DoctorControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldSuccessfullyRegisterDoctor_whenInputIsValid() throws Exception {
-        insertVerificationToken();
+        String compositeToken = insertVerificationToken();
 
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token",  "TestF",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto(compositeToken,  "TestF",
                 "TestL", "StrongPass123!", "StrongPass123!", Gender.FEMALE,
                 10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
                 "1234567", address);
@@ -277,10 +282,10 @@ class DoctorControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400_whenPasswordsDoNotMatchForDoctorRegistration() throws Exception {
-        insertVerificationToken();
+        String compositeToken = insertVerificationToken();
         AddressDto address = new AddressDto("Poland", "Warsaw",
                 "Test street", "10");
-        DoctorRegistrationDto dto = new DoctorRegistrationDto("token",  "TestF",
+        DoctorRegistrationDto dto = new DoctorRegistrationDto(compositeToken,  "TestF",
                 "TestL", "StrongPass123!", "StrongPass", Gender.FEMALE,
                 10, Specialization.CARDIOLOGIST, LocalDate.of(1990, 10, 10),
                 "1234567", address);
@@ -290,13 +295,22 @@ class DoctorControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.error.message").value("Passwords don't match"));
     }
 
-    private void insertVerificationToken() {
-        String tokenHash = passwordEncoder.encode("token");
+    /**
+     * Persists a DOCTOR_INVITATION token and returns it in the composite
+     * {@code base64url(email).rawToken} form that the registration endpoint expects.
+     */
+    private String insertVerificationToken() {
+        String tokenHash = passwordEncoder.encode(RAW_TOKEN);
         VerificationToken token = new VerificationToken();
         token.setTokenHash(tokenHash);
         token.setTokenType(TokenType.DOCTOR_INVITATION);
-        token.setEmail("test@gmail.com");
+        token.setEmail(INVITED_EMAIL);
         token.setExpiresAt(Instant.now().plusSeconds(300));
         em.persist(token);
+
+        String encodedEmail = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(INVITED_EMAIL.getBytes(StandardCharsets.UTF_8));
+        return encodedEmail + "." + RAW_TOKEN;
     }
 }

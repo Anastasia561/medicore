@@ -84,6 +84,12 @@ public abstract class AbstractIntegrationTest {
         localStack.execInContainer("awslocal", "s3", "mb", "s3://test-bucket");
     }
 
+    static {
+        if (System.getProperty("api.version") == null) {
+            System.setProperty("api.version", "1.43");
+        }
+    }
+
     private static final LocalStackContainer localStack =
             new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.0"))
                     .withServices(LocalStackContainer.Service.S3);

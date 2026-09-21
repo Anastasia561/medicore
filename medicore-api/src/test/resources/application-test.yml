@@ -15,15 +15,15 @@ spring:
 testcontainers:
   postgres:
     image: postgres:15-alpine
-    username: ${TEST_USER}
-    password: ${TEST_PASSWORD}
-    database: ${TEST_DB}
+    username: ${TEST_USER:test}
+    password: ${TEST_PASSWORD:test}
+    database: ${TEST_DB:medicore_test}
 
 app:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:test-only-jwt-secret-at-least-32-bytes}
   aws:
     s3:
-      bucket: ${AWS_S3_BUCKET_TEST}
-      region: ${AWS_S3_REGION_TEST}
-  salt: ${SALT}
+      bucket: ${AWS_S3_BUCKET_TEST:test-bucket}
+      region: ${AWS_S3_REGION_TEST:us-east-1}
+  salt: ${SALT:test-salt}
