@@ -1,0 +1,94 @@
+.stats-page {
+    width: min(1100px, 92%);
+    margin: 2.5rem auto 3rem;
+}
+
+.stats-card {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.stat-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    display: grid;
+    place-items: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #1f2f4f;
+}
+
+.chart-plot,
+.chart-labels {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.chart-plot {
+    align-items: stretch;
+    height: 220px;
+}
+
+.chart-column,
+.chart-month {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.chart-column {
+    align-items: flex-end;
+}
+
+.chart-stack {
+    width: min(100%, 2.25rem);
+    display: flex;
+    flex-direction: column-reverse;
+    border-radius: 0.35rem 0.35rem 0 0;
+    overflow: hidden;
+}
+
+.chart-segment {
+    width: 100%;
+    flex-basis: 0;
+}
+
+.chart-labels {
+    margin-top: 0.45rem;
+}
+
+.chart-month {
+    font-size: 0.72rem;
+    color: #6c757d;
+}
+
+.chart-legend-swatch {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 0.2rem;
+    display: inline-block;
+}
+
+.spec-track {
+    height: 0.55rem;
+    background: #e9ecef;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.spec-fill {
+    height: 100%;
+    background: #0b5ed7;
+    border-radius: 999px;
+}

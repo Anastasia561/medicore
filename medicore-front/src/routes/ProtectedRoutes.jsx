@@ -12,7 +12,7 @@ import MedicalRecord from "../features/record/components/MedicalRecord.jsx";
 import RecordListing from "../features/record/RecordListing.jsx";
 import MedicalRecordForm from "../features/record/components/MedicalRecordForm.jsx";
 import AppointmentBookingForm from "../features/appointments/AppointmentBookingForm.jsx";
-import Statistics from "../pages/Statistics.jsx";
+import StatisticsDashboard from "../features/statistics/StatisticsDashboard.jsx";
 import DoctorInviteForm from "../features/register/doctor/DoctorInviteForm.jsx";
 
 export const ProtectedRoutes = (
@@ -26,7 +26,7 @@ export const ProtectedRoutes = (
             </Route>
 
             <Route element={<RequireAuth allowedRoles={["ROLE_ADMIN"]}/>}>
-                <Route path="statistics" element={<Statistics/>}/>
+                <Route path="statistics" element={<StatisticsDashboard/>}/>
                 <Route path="/doctors/register" element={<DoctorInviteForm/>}/>
             </Route>
 
