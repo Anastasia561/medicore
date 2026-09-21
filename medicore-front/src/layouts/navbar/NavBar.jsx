@@ -17,7 +17,7 @@ const NavBar = () => {
         {to: "/doctors", label: "Doctors", roles: ["ROLE_ADMIN", "ROLE_PATIENT"]},
         {to: "/appointments", label: "Appointments", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
         {to: "/records", label: "Records", roles: ["ROLE_PATIENT", "ROLE_DOCTOR"]},
-        {to: "/hh", label: "Lab results", roles: ["ROLE_PATIENT"]},
+        {to: "/lab-results", label: "Lab results", roles: ["ROLE_PATIENT"]},
         {to: "/hh", label: "Medical profile", roles: ["ROLE_PATIENT"]},
         {to: "/schedule", label: "Schedule", roles: ["ROLE_DOCTOR"]}
     ];
@@ -41,7 +41,7 @@ const NavBar = () => {
                     {navLinks
                         .filter(link => link.roles.includes(auth?.role))
                         .map(link => (
-                            <NavLink key={link.to} to={link.to} className="nav-item">
+                            <NavLink key={link.label} to={link.to} className="nav-item">
                                 {link.label}
                             </NavLink>
                         ))}
