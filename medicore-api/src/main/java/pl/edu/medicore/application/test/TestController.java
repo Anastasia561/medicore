@@ -39,6 +39,13 @@ public class TestController {
         return ResponseWrapper.ok(testService.getAllForPatient(user.getId()));
     }
 
+    @Operation(summary = "Get all blood tests for a patient")
+    @PreAuthorize("hasRole('DOCTOR')")
+    @GetMapping("/patient/{patientId}")
+    public ResponseWrapper<List<TestResponseDto>> getAllByPatientId(@PathVariable HashId patientId) {
+        return ResponseWrapper.ok(testService.getAllForPatient(patientId));
+    }
+
     @Operation(summary = "Get presigned url to view blood test file")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     @GetMapping("/view/{id}")
