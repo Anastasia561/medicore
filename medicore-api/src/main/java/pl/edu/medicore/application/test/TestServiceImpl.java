@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import pl.edu.medicore.application.patient.PatientService;
+import pl.edu.medicore.application.test.dto.TestResponseDto;
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
@@ -13,6 +14,7 @@ import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 import pl.edu.medicore.infrastructure.storage.contract.UrlGeneratorService;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,6 +58,13 @@ class TestServiceImpl implements TestService {
             storageService.deleteFile(storageKey);
             throw new RuntimeException("Failed to save test", e);
         }
+    }
+
+    @Override
+    public List<TestResponseDto> getAllForPatient(HashId patientId) {
+        return testRepository.findAllByPatientIdOrderByDateDesc(patientId.value()).stream()
+                .map(testMapper::toDto)
+                .toList();
     }
 
     @Override

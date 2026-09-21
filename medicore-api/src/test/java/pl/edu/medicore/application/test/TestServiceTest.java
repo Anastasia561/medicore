@@ -13,12 +13,14 @@ import pl.edu.medicore.infrastructure.messaging.event.FileUploadEvent;
 import pl.edu.medicore.infrastructure.storage.contract.StorageService;
 import pl.edu.medicore.application.patient.Patient;
 import pl.edu.medicore.application.patient.PatientService;
+import pl.edu.medicore.application.test.dto.TestResponseDto;
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.infrastructure.storage.contract.UrlGeneratorService;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -218,6 +220,33 @@ class TestServiceTest {
 
         assertEquals("Test not found", exception.getMessage());
         verify(testRepository, times(1)).existsById(testId);
+    }
+
+    @Test
+    void shouldReturnTestsForPatient_whenTestsExist() {
+        long patientId = 1L;
+        HashId patientHash = HashId.of(patientId);
+
+        pl.edu.medicore.application.test.Test first = new pl.edu.medicore.application.test.Test();
+        first.setId(10L);
+        first.setDate(LocalDate.of(2026, 2, 1));
+
+        pl.edu.medicore.application.test.Test second = new pl.edu.medicore.application.test.Test();
+        second.setId(11L);
+        second.setDate(LocalDate.of(2026, 1, 1));
+
+        TestResponseDto firstDto = new TestResponseDto(HashId.of(10L), first.getDate());
+        TestResponseDto secondDto = new TestResponseDto(HashId.of(11L), second.getDate());
+
+        when(testRepository.findAllByPatientIdOrderByDateDesc(patientId))
+                .thenReturn(List.of(first, second));
+        when(testMapper.toDto(first)).thenReturn(firstDto);
+        when(testMapper.toDto(second)).thenReturn(secondDto);
+
+        List<TestResponseDto> result = testService.getAllForPatient(patientHash);
+
+        assertEquals(List.of(firstDto, secondDto), result);
+        verify(testRepository).findAllByPatientIdOrderByDateDesc(patientId);
     }
 
     @Test

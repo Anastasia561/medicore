@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.medicore.application.auth.CustomUserDetails;
+import pl.edu.medicore.application.test.dto.TestResponseDto;
 import pl.edu.medicore.application.test.dto.TestUploadRequestDto;
 import pl.edu.medicore.common.encryption.HashId;
 import pl.edu.medicore.common.wrapper.ResponseWrapper;
 
 import java.net.URL;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tests")
@@ -28,6 +30,14 @@ import java.net.URL;
 @Tag(name = "Tests", description = "Endpoints for managing patients blood tests")
 public class TestController {
     private final TestService testService;
+
+    @Operation(summary = "Get all blood tests for the authenticated patient")
+    @PreAuthorize("hasRole('PATIENT')")
+    @GetMapping
+    public ResponseWrapper<List<TestResponseDto>> getAllForPatient(
+            @AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseWrapper.ok(testService.getAllForPatient(user.getId()));
+    }
 
     @Operation(summary = "Get presigned url to view blood test file")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")

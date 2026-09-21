@@ -69,6 +69,32 @@ class TestControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void shouldReturnTestsForPatient_whenTestsExist() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+
+        performRequest(HttpMethod.GET, "/tests", null)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].date").value("2025-01-11"));
+    }
+
+    @Test
+    void shouldReturn401_whenAccessedPatientTestsWithInvalidToken() throws Exception {
+        mockMvc.perform(get("/tests")
+                        .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldReturn403_whenAccessedPatientTestsAsAdmin() throws Exception {
+        obtainRoleBasedToken(Role.ADMIN);
+
+        performRequest(HttpMethod.GET, "/tests", null)
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void shouldReturnPresignedUrl_whenFileExists() throws Exception {
         obtainRoleBasedToken(Role.PATIENT);
         String id = idObfuscator.encode(1L);
