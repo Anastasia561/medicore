@@ -1,7 +1,10 @@
 import {useNavigate} from "react-router-dom";
+import useAuth from "../hooks/useAuth.jsx";
+import {getHomePath} from "../utils/homePath.js";
 
 const Missing = () => {
     const navigate = useNavigate();
+    const {auth} = useAuth();
 
     return (
         <div className="d-flex flex-column justify-content-center align-items-center vh-100 text-center bg-light">
@@ -14,7 +17,7 @@ const Missing = () => {
                 The page you are looking for doesn’t exist or has been moved.
             </p>
 
-            <button onClick={() => navigate("/")} className="btn btn-primary">
+            <button onClick={() => navigate(getHomePath(auth?.role))} className="btn btn-primary">
                 Go Home
             </button>
         </div>

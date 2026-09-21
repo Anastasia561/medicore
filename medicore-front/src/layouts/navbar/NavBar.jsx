@@ -3,12 +3,13 @@ import "./NavBar.css";
 import logo from "../../assets/logo.png";
 import {useLogout} from "../../features/auth/hooks/useLogout.jsx";
 import useAuth from "../../hooks/useAuth.jsx";
+import {getHomePath} from "../../utils/homePath.js";
 
 const NavBar = () => {
     const {mutateAsync: logout} = useLogout();
     const navigate = useNavigate();
     const {auth} = useAuth();
-    const landingPath = auth?.role === "ROLE_ADMIN" ? "/statistics" : "/appointments";
+    const landingPath = getHomePath(auth?.role);
 
     const navLinks = [
         {to: "/statistics", label: "Statistics", roles: ["ROLE_ADMIN"]},
