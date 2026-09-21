@@ -63,10 +63,19 @@ const PatientList = () => {
                                         Appointments
                                     </button>
                                 ) : (
-                                    <button
-                                        className="btn btn-outline-primary btn-sm">
-                                        Medical profile
-                                    </button>
+                                    <>
+                                        <button className="btn btn-outline-primary btn-sm">
+                                            Medical profile
+                                        </button>
+                                        <button
+                                            className="btn btn-outline-success btn-sm"
+                                            onClick={() => navigate(`/patients/${patient.id}/lab-results`, {
+                                                state: {userName: `${patient.firstName} ${patient.lastName}`}
+                                            })}
+                                        >
+                                            Lab results
+                                        </button>
+                                    </>
                                 )
                             )}
                         />

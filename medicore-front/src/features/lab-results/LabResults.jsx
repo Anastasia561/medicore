@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {useLocation, useParams} from "react-router-dom";
 import {useLabResults} from "./hooks/useLabResults.jsx";
 import {useUploadLabResult} from "./hooks/useUploadLabResult.jsx";
 import {useLabResultFileActions} from "./hooks/useLabResultFileActions.jsx";
@@ -6,15 +7,22 @@ import {formatDateStandard} from "../../utils/dateUtils.js";
 import ListContainer from "../listing/ListContainer.jsx";
 
 const LabResults = () => {
+    const {patientId} = useParams();
+    const {state} = useLocation();
+    const canUpload = !patientId;
+
     const [date, setDate] = useState("");
     const [file, setFile] = useState(null);
     const [actionId, setActionId] = useState(null);
 
-    const {data: results = [], isLoading, isError} = useLabResults();
+    const {data: results = [], isLoading, isError} = useLabResults(patientId);
     const {mutate: upload, isPending: isUploading} = useUploadLabResult();
     const {openView, download} = useLabResultFileActions();
 
     const today = new Date().toISOString().split("T")[0];
+    const title = patientId && state?.userName
+        ? `Lab results — ${state.userName}`
+        : "Lab results";
 
     const handleUpload = (event) => {
         event.preventDefault();
@@ -46,48 +54,50 @@ const LabResults = () => {
     }
 
     return (
-        <ListContainer title="Lab results">
-            <form className="border rounded-3 bg-light p-3 mb-4" onSubmit={handleUpload}>
-                <h3 className="h6 mb-3">Upload lab result</h3>
-                <div className="row g-3 align-items-end">
-                    <div className="col-md-4">
-                        <label htmlFor="lab-result-date" className="form-label small fw-semibold">
-                            Test date
-                        </label>
-                        <input
-                            id="lab-result-date"
-                            type="date"
-                            className="form-control"
-                            max={today}
-                            value={date}
-                            onChange={(event) => setDate(event.target.value)}
-                            required
-                        />
+        <ListContainer title={title}>
+            {canUpload && (
+                <form className="border rounded-3 bg-light p-3 mb-4" onSubmit={handleUpload}>
+                    <h3 className="h6 mb-3">Upload lab result</h3>
+                    <div className="row g-3 align-items-end">
+                        <div className="col-md-4">
+                            <label htmlFor="lab-result-date" className="form-label small fw-semibold">
+                                Test date
+                            </label>
+                            <input
+                                id="lab-result-date"
+                                type="date"
+                                className="form-control"
+                                max={today}
+                                value={date}
+                                onChange={(event) => setDate(event.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-5">
+                            <label htmlFor="lab-result-file" className="form-label small fw-semibold">
+                                PDF file
+                            </label>
+                            <input
+                                id="lab-result-file"
+                                type="file"
+                                className="form-control"
+                                accept="application/pdf,.pdf"
+                                onChange={(event) => setFile(event.target.files?.[0] || null)}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3">
+                            <button
+                                type="submit"
+                                className="btn btn-primary w-100"
+                                disabled={isUploading || !file || !date}
+                            >
+                                {isUploading ? "Uploading..." : "Upload"}
+                            </button>
+                        </div>
                     </div>
-                    <div className="col-md-5">
-                        <label htmlFor="lab-result-file" className="form-label small fw-semibold">
-                            PDF file
-                        </label>
-                        <input
-                            id="lab-result-file"
-                            type="file"
-                            className="form-control"
-                            accept="application/pdf,.pdf"
-                            onChange={(event) => setFile(event.target.files?.[0] || null)}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3">
-                        <button
-                            type="submit"
-                            className="btn btn-primary w-100"
-                            disabled={isUploading || !file || !date}
-                        >
-                            {isUploading ? "Uploading..." : "Upload"}
-                        </button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            )}
 
             <div className="card border-0 shadow-sm overflow-hidden" style={{minHeight: "200px"}}>
                 {isLoading ? (

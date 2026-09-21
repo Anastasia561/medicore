@@ -48,6 +48,7 @@ export const ProtectedRoutes = (
             <Route element={<RequireAuth allowedRoles={["ROLE_DOCTOR"]}/>}>
                 <Route path="schedule" element={<DoctorSchedule/>}/>
                 <Route path="appointments/complete/:appId" element={<MedicalRecordForm/>}/>
+                <Route path="patients/:patientId/lab-results" element={<LabResults/>}/>
             </Route>
 
 
