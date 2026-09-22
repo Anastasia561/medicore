@@ -12,8 +12,12 @@ import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
 import pl.edu.medicore.application.email.dto.VerificationEmailDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileUpdateDto;
+import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.UserStatus;
 import pl.edu.medicore.common.encryption.HashId;
+import pl.edu.medicore.infrastructure.messaging.event.PatientUpdateEvent;
 import pl.edu.medicore.infrastructure.messaging.event.SendEmailEvent;
 import pl.edu.medicore.application.email.EmailType;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
@@ -57,6 +61,21 @@ class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public PatientMedicalProfileDto getMedicalProfile(HashId id) {
+        return patientMapper.toMedicalProfileDto(getById(id));
+    }
+
+    @Override
+    @Transactional
+    public HashId updateMedicalProfile(HashId id, PatientMedicalProfileUpdateDto dto) {
+        Patient patient = getById(id);
+        validatePregnancyStatus(patient.getGender(), dto.pregnancyStatus());
+        patientMapper.updateMedicalProfileFromDto(dto, patient);
+        eventPublisher.publishEvent(new PatientUpdateEvent(id));
+        return id;
+    }
+
+    @Override
     @Transactional
     public long register(PatientRegisterDto dto) {
         if (!dto.password().equals(dto.repeatPassword()))
@@ -92,5 +111,14 @@ class PatientServiceImpl implements PatientService {
     @Override
     public long getTotalCount() {
         return patientRepository.count();
+    }
+
+    private void validatePregnancyStatus(Gender gender, PregnancyStatus pregnancyStatus) {
+        if (gender == Gender.MALE && pregnancyStatus != PregnancyStatus.NOT_APPLICABLE) {
+            throw new IllegalArgumentException("Male patients must be marked as NOT_APPLICABLE");
+        }
+        if (pregnancyStatus == PregnancyStatus.PREGNANT && gender != Gender.FEMALE) {
+            throw new IllegalArgumentException("Only female patients can be marked as PREGNANT");
+        }
     }
 }

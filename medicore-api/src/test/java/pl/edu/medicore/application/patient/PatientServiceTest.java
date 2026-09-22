@@ -17,11 +17,14 @@ import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileUpdateDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
 import pl.edu.medicore.application.person.Gender;
 import pl.edu.medicore.application.person.UserStatus;
 import pl.edu.medicore.common.encryption.HashId;
+import pl.edu.medicore.infrastructure.messaging.event.PatientUpdateEvent;
 import pl.edu.medicore.infrastructure.storage.UrlBuilder;
 import pl.edu.medicore.application.verification.VerificationTokenService;
 
@@ -176,6 +179,62 @@ class PatientServiceTest {
 
         assertEquals("Patient not found", ex.getMessage());
         verify(patientRepository).existsById(patientId);
+    }
+
+    @Test
+    void shouldReturnMedicalProfile_whenPatientExists() {
+        long patientId = 1L;
+        HashId hashId = HashId.of(patientId);
+        Patient patient = new Patient();
+        PatientMedicalProfileDto dto = new PatientMedicalProfileDto(
+                HashId.of(1L), 70.5, 170.3, PregnancyStatus.NOT_APPLICABLE, Gender.MALE);
+
+        when(patientRepository.findById(patientId)).thenReturn(Optional.of(patient));
+        when(patientMapper.toMedicalProfileDto(patient)).thenReturn(dto);
+
+        PatientMedicalProfileDto result = patientService.getMedicalProfile(hashId);
+
+        assertEquals(dto, result);
+        verify(patientRepository).findById(patientId);
+        verify(patientMapper).toMedicalProfileDto(patient);
+    }
+
+    @Test
+    void shouldUpdateMedicalProfileAndPublishEvent_whenInputIsValid() {
+        long patientId = 1L;
+        HashId hashId = HashId.of(patientId);
+        Patient patient = new Patient();
+        patient.setGender(Gender.MALE);
+        PatientMedicalProfileUpdateDto dto = new PatientMedicalProfileUpdateDto(
+                75.0, 172.0, PregnancyStatus.NOT_APPLICABLE);
+
+        when(patientRepository.findById(patientId)).thenReturn(Optional.of(patient));
+
+        HashId result = patientService.updateMedicalProfile(hashId, dto);
+
+        assertEquals(hashId, result);
+        verify(patientMapper).updateMedicalProfileFromDto(dto, patient);
+        verify(applicationEventPublisher).publishEvent(any(PatientUpdateEvent.class));
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentException_whenMalePatientMarkedPregnant() {
+        long patientId = 1L;
+        HashId hashId = HashId.of(patientId);
+        Patient patient = new Patient();
+        patient.setGender(Gender.MALE);
+        PatientMedicalProfileUpdateDto dto = new PatientMedicalProfileUpdateDto(
+                75.0, 172.0, PregnancyStatus.PREGNANT);
+
+        when(patientRepository.findById(patientId)).thenReturn(Optional.of(patient));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> patientService.updateMedicalProfile(hashId, dto)
+        );
+
+        assertEquals("Male patients must be marked as NOT_APPLICABLE", ex.getMessage());
+        verifyNoInteractions(applicationEventPublisher);
     }
 
     @Test

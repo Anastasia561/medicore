@@ -12,6 +12,7 @@ import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.city.City;
 import pl.edu.medicore.application.coutry.Country;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileUpdateDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientVerificationRequestDto;
 import pl.edu.medicore.application.person.Gender;
@@ -90,6 +91,92 @@ class PatientControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.content[0].address.city").value("New York"))
                 .andExpect(jsonPath("$.data.content[0].address.street").value("5th Avenue"))
                 .andExpect(jsonPath("$.data.content[0].address.number").value("101A"));
+    }
+
+    @Test
+    void shouldReturnOwnMedicalProfile_whenRequestedAsPatient() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+
+        performRequest(HttpMethod.GET, "/patients/medical-profile", null)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.weight").value(70.5))
+                .andExpect(jsonPath("$.data.height").value(170.3))
+                .andExpect(jsonPath("$.data.pregnancyStatus").value("NOT_APPLICABLE"))
+                .andExpect(jsonPath("$.data.gender").value("MALE"));
+    }
+
+    @Test
+    void shouldReturnMedicalProfileByPatientId_whenRequestedAsDoctor() throws Exception {
+        obtainRoleBasedToken(Role.DOCTOR);
+        String id = idObfuscator.encode(1L);
+
+        performRequest(HttpMethod.GET, "/patients/{patientId}/medical-profile", null, id)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.weight").value(70.5))
+                .andExpect(jsonPath("$.data.height").value(170.3))
+                .andExpect(jsonPath("$.data.pregnancyStatus").value("NOT_APPLICABLE"))
+                .andExpect(jsonPath("$.data.gender").value("MALE"));
+    }
+
+    @Test
+    void shouldReturn403_whenPatientAccessesAnotherMedicalProfile() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+        String id = idObfuscator.encode(1L);
+
+        performRequest(HttpMethod.GET, "/patients/{patientId}/medical-profile", null, id)
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldReturn401_whenAccessedMedicalProfileWithInvalidToken() throws Exception {
+        mockMvc.perform(get("/patients/medical-profile")
+                        .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldUpdateOwnMedicalProfile_whenInputIsValid() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+        PatientMedicalProfileUpdateDto dto = new PatientMedicalProfileUpdateDto(
+                75.0, 172.0, PregnancyStatus.NOT_APPLICABLE);
+
+        ResultActions resultActions = performRequest(HttpMethod.PUT, "/patients/medical-profile", dto)
+                .andExpect(status().isOk());
+
+        String hashId = JsonPath.read(
+                resultActions.andReturn().getResponse().getContentAsString(),
+                "$.data"
+        );
+        long internalId = idObfuscator.decode(hashId);
+
+        Patient patient = em.find(Patient.class, internalId);
+        assertEquals(75.0, patient.getWeight(), 0.001);
+        assertEquals(172.0, patient.getHeight(), 0.001);
+        assertEquals(PregnancyStatus.NOT_APPLICABLE, patient.getPregnancyStatus());
+    }
+
+    @Test
+    void shouldReturn400_whenUpdatingMedicalProfileWithInvalidPregnancyStatus() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+        PatientMedicalProfileUpdateDto dto = new PatientMedicalProfileUpdateDto(
+                75.0, 172.0, PregnancyStatus.PREGNANT);
+
+        performRequest(HttpMethod.PUT, "/patients/medical-profile", dto)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("Male patients must be marked as NOT_APPLICABLE"));
+    }
+
+    @Test
+    void shouldReturn400_whenValidationErrorsInUpdateMedicalProfile() throws Exception {
+        obtainRoleBasedToken(Role.PATIENT);
+        PatientMedicalProfileUpdateDto dto = new PatientMedicalProfileUpdateDto(
+                -1.0, 10.0, null);
+
+        performRequest(HttpMethod.PUT, "/patients/medical-profile", dto)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("Validation failed"))
+                .andExpect(jsonPath("$.error.validationErrors").isArray())
+                .andExpect(jsonPath("$.error.validationErrors.length()").value(3));
     }
 
     @Test

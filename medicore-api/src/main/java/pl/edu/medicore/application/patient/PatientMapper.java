@@ -2,8 +2,11 @@ package pl.edu.medicore.application.patient;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileUpdateDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
 import pl.edu.medicore.common.encryption.HashIdMapper;
@@ -12,10 +15,14 @@ import pl.edu.medicore.common.encryption.HashIdMapper;
 public interface PatientMapper {
     PatientResponseDto toPatientResponseDto(Patient patient);
 
+    PatientMedicalProfileDto toMedicalProfileDto(Patient patient);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", constant = "PATIENT")
     @Mapping(target = "status", constant = "UNVERIFIED")
     Patient toEntity(PatientRegisterDto dto);
+
+    void updateMedicalProfileFromDto(PatientMedicalProfileUpdateDto dto, @MappingTarget Patient patient);
 
     ConfirmationEmailDto toEmailDto(Patient patient);
 }

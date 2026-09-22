@@ -2,6 +2,8 @@ package pl.edu.medicore.application.patient;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileUpdateDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
 import pl.edu.medicore.application.person.UserStatus;
@@ -13,6 +15,10 @@ public interface PatientService {
     Patient getById(HashId id);
 
     void checkExistsById(HashId id);
+
+    PatientMedicalProfileDto getMedicalProfile(HashId id);
+
+    HashId updateMedicalProfile(HashId id, PatientMedicalProfileUpdateDto dto);
 
     long register(PatientRegisterDto dto);
 

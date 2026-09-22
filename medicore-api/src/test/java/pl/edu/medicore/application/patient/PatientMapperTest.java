@@ -7,6 +7,8 @@ import pl.edu.medicore.application.address.dto.AddressDto;
 import pl.edu.medicore.application.address.AddressMapper;
 import pl.edu.medicore.application.address.Address;
 import pl.edu.medicore.application.email.dto.ConfirmationEmailDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileDto;
+import pl.edu.medicore.application.patient.dto.PatientMedicalProfileUpdateDto;
 import pl.edu.medicore.application.patient.dto.PatientRegisterDto;
 import pl.edu.medicore.application.patient.dto.PatientResponseDto;
 import pl.edu.medicore.application.person.Gender;
@@ -59,6 +61,41 @@ class PatientMapperTest {
         assertEquals("1234567890", result.phoneNumber());
         assertEquals(LocalDate.of(1990, 10, 10), result.birthDate());
         assertEquals("Test street", result.address().street());
+    }
+
+    @Test
+    void shouldMapToMedicalProfileDto_whenInputIsValid() {
+        Patient patient = new Patient();
+        patient.setId(1L);
+        patient.setWeight(70.5);
+        patient.setHeight(170.3);
+        patient.setPregnancyStatus(PregnancyStatus.NOT_APPLICABLE);
+        patient.setGender(Gender.MALE);
+
+        PatientMedicalProfileDto result = patientMapper.toMedicalProfileDto(patient);
+
+        assertEquals(1L, result.id().value());
+        assertEquals(70.5, result.weight());
+        assertEquals(170.3, result.height());
+        assertEquals(PregnancyStatus.NOT_APPLICABLE, result.pregnancyStatus());
+        assertEquals(Gender.MALE, result.gender());
+    }
+
+    @Test
+    void shouldUpdateMedicalProfileFromDto_whenInputIsValid() {
+        Patient patient = new Patient();
+        patient.setWeight(70.5);
+        patient.setHeight(170.3);
+        patient.setPregnancyStatus(PregnancyStatus.NOT_APPLICABLE);
+
+        PatientMedicalProfileUpdateDto dto = new PatientMedicalProfileUpdateDto(
+                80.0, null, PregnancyStatus.UNKNOWN);
+
+        patientMapper.updateMedicalProfileFromDto(dto, patient);
+
+        assertEquals(80.0, patient.getWeight());
+        assertNull(patient.getHeight());
+        assertEquals(PregnancyStatus.UNKNOWN, patient.getPregnancyStatus());
     }
 
     @Test
