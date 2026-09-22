@@ -15,6 +15,7 @@ import AppointmentBookingForm from "../features/appointments/AppointmentBookingF
 import StatisticsDashboard from "../features/statistics/StatisticsDashboard.jsx";
 import DoctorInviteForm from "../features/register/doctor/DoctorInviteForm.jsx";
 import LabResults from "../features/lab-results/LabResults.jsx";
+import MedicalProfile from "../features/medical-profile/MedicalProfile.jsx";
 
 export const ProtectedRoutes = (
     <Route path="/" element={<PersistLogin/>}>
@@ -49,12 +50,14 @@ export const ProtectedRoutes = (
                 <Route path="schedule" element={<DoctorSchedule/>}/>
                 <Route path="appointments/complete/:appId" element={<MedicalRecordForm/>}/>
                 <Route path="patients/:patientId/lab-results" element={<LabResults/>}/>
+                <Route path="patients/:patientId/medical-profile" element={<MedicalProfile/>}/>
             </Route>
 
 
             <Route element={<RequireAuth allowedRoles={["ROLE_PATIENT"]}/>}>
                 <Route path="appointments/book/:doctorId" element={<AppointmentBookingForm/>}/>
                 <Route path="lab-results" element={<LabResults/>}/>
+                <Route path="medical-profile" element={<MedicalProfile/>}/>
             </Route>
 
         </Route>
