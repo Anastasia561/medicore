@@ -128,7 +128,7 @@ const AppointmentBookingForm = () => {
                         </div>
                     )}
 
-                    <div className="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+                    <div className="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4 pt-2 border-top">
                         <button type="button" className="btn btn-outline-secondary px-4"
                                 onClick={() => navigate(-1)}>
                             Cancel

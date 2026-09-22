@@ -83,17 +83,17 @@ const AppointmentListing = () => {
     if (isError) return <div className="alert alert-danger m-4">Failed to load appointments</div>;
 
     return (
-        <div className="container-fluid p-4 bg-light min-vh-100">
-            <h2 className="mb-4">
+        <div className="container-fluid px-3 px-md-4 py-4 bg-light min-vh-100">
+            <h2 className="mb-4 h3">
                 {userId
                     ? `Appointments for ${displayName}`
                     : "My Appointments"}
             </h2>
 
-            <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+            <div className="d-flex flex-column flex-lg-row flex-wrap justify-content-between align-items-stretch align-items-lg-end gap-3 mb-4">
 
-                <div className="d-flex gap-3 align-items-end">
-                    <div>
+                <div className="d-flex flex-column flex-sm-row gap-3 align-items-stretch align-items-sm-end">
+                    <div className="flex-grow-1">
                         <label className="form-label small fw-bold text-secondary mb-1">Start Date</label>
                         <input
                             type="date"
@@ -102,7 +102,7 @@ const AppointmentListing = () => {
                             onChange={(e) => setStartDate(e.target.value)}
                         />
                     </div>
-                    <div>
+                    <div className="flex-grow-1">
                         <label className="form-label small fw-bold text-secondary mb-1">Filter By Status</label>
                         <select
                             className="form-select"
@@ -118,15 +118,15 @@ const AppointmentListing = () => {
                     </div>
                 </div>
 
-                <div className="d-flex gap-2">
-                    <button onClick={handlePrevWeek} className="btn btn-outline-secondary">
-                        &larr; Previous Week
+                <div className="d-flex flex-wrap gap-2">
+                    <button onClick={handlePrevWeek} className="btn btn-outline-secondary flex-grow-1 flex-sm-grow-0">
+                        &larr; Previous
                     </button>
-                    <button onClick={() => setStartDate(getMonday(new Date()))} className="btn btn-outline-secondary">
+                    <button onClick={() => setStartDate(getMonday(new Date()))} className="btn btn-outline-secondary flex-grow-1 flex-sm-grow-0">
                         Today
                     </button>
-                    <button onClick={handleNextWeek} className="btn btn-outline-secondary">
-                        Next Week &rarr;
+                    <button onClick={handleNextWeek} className="btn btn-outline-secondary flex-grow-1 flex-sm-grow-0">
+                        Next &rarr;
                     </button>
                 </div>
             </div>
@@ -137,7 +137,7 @@ const AppointmentListing = () => {
 
                     return (
                         <div key={day} className="col">
-                            <div className="card h-100 shadow-sm border-light" style={{minHeight: '450px'}}>
+            <div className="card h-100 shadow-sm border-light" style={{minHeight: '280px'}}>
                                 <div className="card-body p-3">
                                     <h3 className="card-title h5 text-dark pb-2 mb-3 border-bottom border-2 border-light fw-semibold">
                                         {formatDateHeader(day)}

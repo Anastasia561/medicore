@@ -33,7 +33,7 @@ const Login = () => {
     };
 
     return (
-        <div className="test text-center mt-4 mb-5">
+        <div className="test text-center mt-4 mb-5 px-3">
 
             <div className="mb-4">
                 <img
@@ -47,8 +47,8 @@ const Login = () => {
             </div>
 
             <div className="row justify-content-center">
-                <div className="col-md-5">
-                    <div className="card shadow-lg p-4">
+                <div className="col-12 col-sm-10 col-md-6 col-lg-5">
+                    <div className="card shadow-lg p-3 p-sm-4">
                         {generalError && (
                             <div className="alert alert-danger py-2 text-center" role="alert">
                                 {generalError}

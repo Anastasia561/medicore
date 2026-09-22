@@ -1,6 +1,6 @@
 .footer {
     background-color: #f8f9fa;
-    padding: 1rem 0;
+    padding: 1rem 1rem;
     text-align: center;
     color: #6c757d;
 
@@ -11,4 +11,10 @@
 .footer-text {
     margin: 0;
     font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    .footer-text {
+        font-size: 0.8rem;
+    }
 }

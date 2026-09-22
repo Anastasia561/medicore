@@ -51,12 +51,12 @@ const MonthlyConsultations = ({rows}) => {
 
     return (
         <div className="stats-card">
-            <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-3 mb-3">
                 <div>
                     <h2 className="h5 mb-1">Consultations in {year}</h2>
                     <p className="text-muted small mb-0">Appointments grouped by month and status.</p>
                 </div>
-                <div className="text-end">
+                <div className="text-sm-end">
                     <div className="stat-value">{yearTotal.toLocaleString()}</div>
                     <div className="text-muted small">this year</div>
                 </div>

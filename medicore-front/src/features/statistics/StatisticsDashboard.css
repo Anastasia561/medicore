@@ -92,3 +92,27 @@
     background: #0b5ed7;
     border-radius: 999px;
 }
+
+@media (max-width: 768px) {
+    .stats-page {
+        width: 100%;
+        padding: 0 0.75rem;
+        margin: 1.25rem auto 2rem;
+    }
+
+    .stats-card {
+        padding: 1.15rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    .chart-plot {
+        height: 180px;
+    }
+
+    .chart-month {
+        font-size: 0.62rem;
+    }
+}

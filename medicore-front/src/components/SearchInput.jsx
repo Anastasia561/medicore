@@ -16,7 +16,7 @@ const SearchInput = ({onSearch, placeholder = "Search...", delay = 500}) => {
     }, [searchTerm]);
 
     return (
-        <div className="input-group" style={{maxWidth: '300px'}}>
+        <div className="input-group w-100" style={{maxWidth: '300px'}}>
             <span className="input-group-text bg-white border-end-0">
                 <i className="bi bi-search text-muted"></i>
             </span>

@@ -16,7 +16,7 @@ const DataCard = ({name, details, renderActions}) => {
                             ))}
                         </div>
 
-                        <div className="col-md-4 d-flex flex-column align-items-end justify-content-center gap-2">
+                        <div className="col-md-4 d-flex flex-column flex-sm-row flex-md-column align-items-stretch align-items-md-end justify-content-center gap-2 mt-3 mt-md-0">
                             {renderActions && renderActions()}
                         </div>
                     </div>

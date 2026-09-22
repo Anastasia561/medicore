@@ -4,11 +4,11 @@ const Pagination = ({currentPage, totalPages, onPageChange}) => {
     if (totalPages <= 1) return null;
 
     return (
-        <nav className="mt-4 d-flex justify-content-center">
-            <ul className="pagination shadow-sm">
+        <nav className="mt-4 d-flex justify-content-center overflow-auto">
+            <ul className="pagination shadow-sm flex-wrap mb-0 justify-content-center">
                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                     <button className="page-link" onClick={() => onPageChange(currentPage - 1)}>
-                        Previous
+                        Prev
                     </button>
                 </li>
 

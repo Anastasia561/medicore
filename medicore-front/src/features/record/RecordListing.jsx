@@ -36,14 +36,14 @@ const MedicalRecordListing = () => {
     const totalPages = data?.totalPages || 0;
 
     return (
-        <div className="container-fluid p-4 bg-light min-vh-100 d-flex justify-content-center">
+        <div className="container-fluid px-3 px-md-4 py-4 bg-light min-vh-100 d-flex justify-content-center">
             <div className="w-100" style={{maxWidth: '1000px'}}>
 
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 className="text-dark fw-semibold mb-0" style={{color: '#1a2b49'}}>
+                <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
+                    <h2 className="text-dark fw-semibold mb-0 h3" style={{color: '#1a2b49'}}>
                         Medical History Preview
                     </h2>
-                    <span className="badge bg-secondary px-3 py-2 rounded-pill">
+                    <span className="badge bg-secondary px-3 py-2 rounded-pill align-self-start">
                         Total Records: {data?.totalElements || 0}
                     </span>
                 </div>

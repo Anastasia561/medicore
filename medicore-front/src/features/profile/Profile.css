@@ -3,7 +3,7 @@
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding-top: 40px;
+    padding: 40px 1rem 2rem;
 }
 
 .profile-wrapper {
@@ -83,4 +83,23 @@
 
 .full-width-field {
     grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        padding-top: 1.5rem;
+    }
+
+    .profile-card {
+        padding: 1.25rem;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .full-width-field {
+        grid-column: span 1;
+    }
 }

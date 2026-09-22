@@ -43,11 +43,11 @@ const DoctorList = () => {
                 </div>
             }
         >
-            <div className="d-flex flex-wrap gap-3 p-3 mb-4 rounded shadow-sm border bg-light">
-                <div style={{flex: '1 1 300px'}}>
+            <div className="d-flex flex-column flex-sm-row flex-wrap gap-3 p-3 mb-4 rounded shadow-sm border bg-light">
+                <div className="flex-grow-1" style={{minWidth: 0, flexBasis: '280px'}}>
                     <SearchInput onSearch={handleSearch} placeholder="Search by name..."/>
                 </div>
-                <div style={{minWidth: '200px'}}>
+                <div className="flex-grow-1 flex-sm-grow-0" style={{minWidth: 0, flexBasis: '200px'}}>
                     <select
                         className="form-select"
                         onChange={(e) => setSpecialization(e.target.value)}
